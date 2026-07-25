@@ -1,0 +1,55 @@
+package com.nhom27.skyforce.entities.weapons;
+
+import com.nhom27.skyforce.entities.base.GameObject;
+import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.utils.AssetManager;
+
+import javafx.scene.shape.Rectangle;
+
+public class Bullet extends GameObject {
+    // Vector vận tốc của đạn
+    protected double speedX;
+    protected double speedY;
+
+    public Bullet(String nameImage, double startX, double startY, double speedX, double speedY) {
+        this(nameImage, startX, startY, speedX, speedY, AssetManager.getImage(nameImage).getWidth(),
+                AssetManager.getImage(nameImage).getHeight());
+        /*
+         * debug kiểm tra hitbox
+         * this.hitbox.setFill(Color.TRANSPARENT);
+         * this.hitbox.setStroke(Color.RED); // Viền đỏ
+         * this.hitbox.setStrokeWidth(2);
+         */
+    }
+
+    public Bullet(String nameImage, double startX, double startY, double speedX, double speedY, double sizeX,
+            double sizeY) {
+        super(nameImage, startX, startY);
+        this.speedX = speedX;
+        this.speedY = speedY;
+
+        this.hitbox = new Rectangle(sizeX, sizeY);
+        this.view.setFitHeight(sizeY);
+        this.view.setFitWidth(sizeX);
+
+        double angle = Math.toDegrees(Math.atan2(speedX, speedY));
+        this.setPos(startX, startY, angle);
+    }
+
+    public void update() {
+        x += speedX / 60;
+        y += speedY / 60;
+        this.setPos(x, y);
+        if (this.x < 0 || this.x > Main.WIDTH || this.y < 0 || this.y > Main.HEIGHT) {
+            this.isAlive = false;
+        }
+        ;
+    }
+    /*
+     * các class con StraightBullet và DiagonalBullet bị xóa bỏ
+     * Field incline được sinh ra để tạo độ nghiêng cho đạn
+     * incline dương: nghiêng sang phải
+     * incline âm: nghiêng sang trái
+     * incline bằng 0: không nghiêng (straight bullet)
+     */
+}

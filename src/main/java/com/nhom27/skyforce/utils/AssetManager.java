@@ -99,30 +99,6 @@ public class AssetManager {
         return Font.font(fonts.get(name).getFamily(), size);
     }
 
-    public static double[] getShapePlane1(double sizeX, double sizeY) {
-        double[] plane1 = new double[] { // vẽ viền theo máy bay số 1
-                0.425 * sizeX, 0.225 * sizeY,
-                0.575 * sizeX, 0.225 * sizeY,
-                0.575 * sizeX, 0.45 * sizeY,
-                0.9 * sizeX, 0.55 * sizeY,
-                0.5 * sizeX, 0.8 * sizeY,
-                0.1 * sizeX, 0.55 * sizeY,
-                0.425 * sizeX, 0.45 * sizeY,
-                0.425 * sizeX, 0.225 * sizeY,
-        };
-        return plane1;
-    }
-
-    public static double[] getBulletShape(double sizeX, double sizeY) {
-        double[] bullet1 = new double[] {
-                0, 0,
-                0, sizeY,
-                sizeX, sizeY,
-                sizeX, 0,
-        };
-        return bullet1;
-    }
-
     public static void loadAllAsset() {
         System.out.println("Đang tải các tài nguyên Ảnh: ");
         loadImage("logo_game", "/com/nhom27/skyforce/textures/menu/logoGame.png");
@@ -136,13 +112,24 @@ public class AssetManager {
         loadImage("button_yellow", "/com/nhom27/skyforce/textures/menu/buttonYellow.png");
         loadImage("button_square_blue", "/com/nhom27/skyforce/textures/menu/buttonSquareBlue.png");
         loadImage("button_pause_blue", "/com/nhom27/skyforce/textures/menu/buttonPauseBlue.png");
+
+        // Thực thể
+        loadImage("player_ship_1", "/com/nhom27/skyforce/textures/entities/player/player_ship_1_blue.png");
+        loadImage("Spaceship1Blue", "/com/nhom27/skyforce/textures/Spaceship_01_BLUE.png");
+        loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
+        loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");
+        loadImage("enemy_ship_3", "/com/nhom27/skyforce/textures/Spaceship_03_RED.png");
+        loadImage("powerup", "/com/nhom27/skyforce/textures/Flame_01.png");
+        loadImage("bullet_img", "/com/nhom27/skyforce/textures/Flame_01.png");
+        loadImage("enemy_straight", "/com/nhom27/skyforce/textures/entities/enemies/enemy_straight_black.png");
+        loadImage("enemy_sine_orbit", "/com/nhom27/skyforce/textures/entities/enemies/enemy_sine_orbit_black.png");
+
         System.out.println("Tải ảnh hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Âm Thanh: ");
         loadMusic("background_home_music", "/com/nhom27/skyforce/sounds/background.mp3");
         System.out.println("Tải nhạc hoàn tất!");
 
-        loadImage("Spaceship1Blue", "/com/nhom27/skyforce/textures/Spaceship1Blue.png");
         System.out.println("Đang tải các tài nguyên CSS: ");
         loadCss("styleButton", "/com/nhom27/skyforce/ui/buttons/styleButton.css");
         System.out.println("Tải CSS hoàn tất!");

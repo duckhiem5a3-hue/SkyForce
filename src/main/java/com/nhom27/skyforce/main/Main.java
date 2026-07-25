@@ -13,7 +13,7 @@ public class Main extends Application {
 
     // Kích thước của cửa sổ game
     public static final int WIDTH = 1200;
-    public static final int HEIGHT = 900;
+    public static final int HEIGHT = WIDTH * 3 / 4; // = 900
 
     @Override
     public void start(Stage primaryStage) {
