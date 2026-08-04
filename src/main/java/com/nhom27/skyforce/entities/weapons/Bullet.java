@@ -2,8 +2,6 @@ package com.nhom27.skyforce.entities.weapons;
 
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.main.Main;
-import com.nhom27.skyforce.utils.AssetManager;
-
 import javafx.scene.shape.Rectangle;
 
 public class Bullet extends GameObject {
@@ -11,15 +9,15 @@ public class Bullet extends GameObject {
     protected double speedX;
     protected double speedY;
 
+    // Tối ưu
     public Bullet(String nameImage, double startX, double startY, double speedX, double speedY) {
-        this(nameImage, startX, startY, speedX, speedY, AssetManager.getImage(nameImage).getWidth(),
-                AssetManager.getImage(nameImage).getHeight());
-        /*
-         * debug kiểm tra hitbox
-         * this.hitbox.setFill(Color.TRANSPARENT);
-         * this.hitbox.setStroke(Color.RED); // Viền đỏ
-         * this.hitbox.setStrokeWidth(2);
-         */
+        super(nameImage, startX, startY);
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.hitbox = new Rectangle(sizeX, sizeY);
+
+        double angle = 90 - Math.toDegrees(Math.atan2(-speedY, speedX));
+        this.setPos(startX - sizeX / 2, startY - sizeY, angle);
     }
 
     public Bullet(String nameImage, double startX, double startY, double speedX, double speedY, double sizeX,

@@ -46,7 +46,6 @@ public class GameManager {
 
     private Player player;
     private List<EnemyObject> enemies;
-    private List<Bullet> playerBullets;
     private List<PowerUp> powerUps;
 
     private AnimationTimer gameLoop;
@@ -54,9 +53,10 @@ public class GameManager {
 
     private int score;
     private int wave;
-    private long frameCount; // đếm số frame trôi qua
     private boolean isPaused;
     private boolean isGameOver;
+
+    private long lastEnemyWaveTime;
 
     private Label scoreLabel;
     private Label healthLabel;
@@ -65,10 +65,11 @@ public class GameManager {
     private Label buffStatusLabel;
     private StackPane gameOverOverlay;
 
+    private boolean isDebug = true;
+
     public GameManager(Pane gameLayoutPane) {
         this.gameLayoutPane = gameLayoutPane;
         this.enemies = new ArrayList<>();
-        this.playerBullets = new ArrayList<>();
         this.powerUps = new ArrayList<>();
         this.random = new Random();
 
@@ -79,24 +80,35 @@ public class GameManager {
         // Dọn dẹp và Thiết lập lại trạng thái màn chơi
         gameLayoutPane.getChildren().clear();
         enemies.clear();
-        playerBullets.clear();
         powerUps.clear();
 
+        lastEnemyWaveTime = 0;
         score = 0;
         wave = 1;
-        frameCount = 0;
         isPaused = false;
         isGameOver = false;
 
         // 1. Tạo đối tượng người chơi
-        player = new Player(Main.WIDTH / 2.0, Main.HEIGHT * (3.0 / 4.0));
+        player = new Player(Main.WIDTH * 0.5, Main.HEIGHT * 0.75);
+
         if (player.getView() != null) {
             gameLayoutPane.getChildren().add(player.getView());
         }
 
+        // Bật debug hiển thị Hitbox của Player nếu isDebug = true
+        if (isDebug && player.getHitbox() != null) {
+            player.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ mờ 30%
+            player.getHitbox().setStroke(Color.YELLOW); // Viền vàng
+            player.getHitbox().setStrokeWidth(2);
+
+            if (!gameLayoutPane.getChildren().contains(player.getHitbox())) {
+                gameLayoutPane.getChildren().add(player.getHitbox());
+            }
+        }
+
         // setup chuột
         // gameLayoutPane.setOnMouseMoved(e -> movePlayer(e.getX(), e.getY()));
-        gameLayoutPane.setOnMouseDragged(e -> movePlayer(e.getX(), e.getY()));
+        gameLayoutPane.setOnMouseDragged(e -> player.movePlayer(e.getX(), e.getY()));
 
         // 2. Setup HUD
         setupHUD();
@@ -105,21 +117,13 @@ public class GameManager {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                now = now / 1_000_000; // Đổi về mili giây
+                System.out.println(now + "ms");
                 if (!isPaused && !isGameOver) {
-                    updateGame();
+                    updateGame(now);
                 }
             }
         };
-    }
-
-    private void movePlayer(double mouseX, double mouseY) {
-        if (isPaused || isGameOver || player == null)
-            return;
-        // Đảm bảo máy bay người chơi luôn hiển thị trong khung hình
-        double clampedX = Math.min(Math.max((Player.sizeX / 2), mouseX), Main.WIDTH - Player.sizeX / 2);
-        double clampedY = Math.min(Math.max((Player.sizeY / 2), mouseY), Main.HEIGHT - Player.sizeY / 2);
-        // Căn cho con trỏ chuột trỏ vào trọng tâm máy bay
-        player.setPos(clampedX - (Player.sizeX / 2), clampedY - (Player.sizeY / 2));
     }
 
     private void setupHUD() {
@@ -171,17 +175,27 @@ public class GameManager {
         gameLayoutPane.getChildren().addAll(scoreBox, healthBox, waveBox, buffStatusLabel);
     }
 
-    private void updateGame() {
-        frameCount++;
-
+    private void updateGame(long now) {
         // Cập nhật logic người chơi
         if (player != null && player.isAlive()) {
             player.update();
 
             // Tự động bắn đạn của người chơi
-            if (player.getTimeSinceLastBullet() >= 12) {
-                firePlayerBullet();
-                player.setTimeSinceLastBullet(0);
+            if (now - player.getTimeSinceLastBullet() >= player.getFireRate()) {
+                for (Bullet bullet : player.fireBullet()) {
+                    gameLayoutPane.getChildren().add(bullet.getView());
+                    if (isDebug && bullet.getHitbox() != null) {
+                        bullet.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ mờ 30%
+                        bullet.getHitbox().setStroke(Color.YELLOW); // Viền vàng
+                        bullet.getHitbox().setStrokeWidth(2);
+
+                        if (!gameLayoutPane.getChildren().contains(bullet.getHitbox())) {
+                            gameLayoutPane.getChildren().add(bullet.getHitbox());
+                        }
+                    }
+
+                }
+                player.setTimeSinceLastBullet(now);
             }
 
             // Cập nhật thông báo cường hóa
@@ -193,18 +207,19 @@ public class GameManager {
         }
 
         // Cập nhật đạn của người chơi
-        Iterator<Bullet> bulletIter = playerBullets.iterator();
+        Iterator<Bullet> bulletIter = player.getBullets().iterator();
         while (bulletIter.hasNext()) {
             Bullet b = bulletIter.next();
             b.update();
             if (!b.isAlive()) {
                 gameLayoutPane.getChildren().remove(b.getView());
+                gameLayoutPane.getChildren().remove(b.getHitbox());
                 bulletIter.remove();
             }
         }
 
         // Triệu hồi kẻ địch
-        spawnEnemyWave();
+        spawnEnemyWave(now);
 
         // Cập nhật kẻ địch (xóa an toàn nhờ vào Iterator)
         Iterator<EnemyObject> enemyIter = enemies.iterator();
@@ -213,6 +228,9 @@ public class GameManager {
             e.update();
             if (!e.isAlive()) {
                 gameLayoutPane.getChildren().remove(e.getView());
+                if (e.getHitbox() != null) {
+                    gameLayoutPane.getChildren().remove(e.getHitbox());
+                }
                 enemyIter.remove();
             }
         }
@@ -240,37 +258,8 @@ public class GameManager {
         }
     }
 
-    private void firePlayerBullet() {
-        if (player == null)
-            return;
-        double startX = player.getX() + 35;
-        double startY = player.getY();
-
-        if (player.isGettingBuffed()) {
-            // Triple spread shot
-            Bullet b1 = new Bullet("bullet_img", startX, startY, 0, -800, 12, 24);
-            Bullet b2 = new Bullet("bullet_img", startX - 15, startY + 5, -250, -750, 12, 24);
-            Bullet b3 = new Bullet("bullet_img", startX + 15, startY + 5, 250, -750, 12, 24);
-
-            addBullet(b1);
-            addBullet(b2);
-            addBullet(b3);
-        } else {
-            // Single straight shot
-            Bullet b = new Bullet("bullet_img", startX, startY, 0, -800, 12, 24);
-            addBullet(b);
-        }
-    }
-
-    private void addBullet(Bullet bullet) {
-        playerBullets.add(bullet);
-        if (bullet.getView() != null) {
-            gameLayoutPane.getChildren().add(bullet.getView());
-        }
-    }
-
-    private void spawnEnemyWave() {
-        if (frameCount % Math.max(30, 90 - wave * 5) == 0) {
+    private void spawnEnemyWave(long now) {
+        if (now - lastEnemyWaveTime >= 1000) {
             int spawnType = random.nextInt(2);
             EnemyObject newEnemy = null;
 
@@ -287,7 +276,15 @@ public class GameManager {
                 if (newEnemy.getView() != null) {
                     gameLayoutPane.getChildren().add(newEnemy.getView());
                 }
+                if (isDebug && newEnemy.getHitbox() != null) {
+                    // Hiển thị hitbox: Nền đỏ mờ 30%, viền vàng sắc nét
+                    newEnemy.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
+                    newEnemy.getHitbox().setStroke(Color.YELLOW);
+                    newEnemy.getHitbox().setStrokeWidth(2);
+                    gameLayoutPane.getChildren().add(newEnemy.getHitbox());
+                }
             }
+            lastEnemyWaveTime = now;
         }
 
         // Tăng đợt tấn công lên sau mỗi 5000 điểm
@@ -299,7 +296,7 @@ public class GameManager {
     // Xử lý va chạm
     private void handleCollisions() {
         // 1. Player Bullets và Enemies
-        for (Bullet bullet : playerBullets) {
+        for (Bullet bullet : player.getBullets()) {
             if (!bullet.isAlive())
                 continue;
 

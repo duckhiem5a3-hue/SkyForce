@@ -15,6 +15,8 @@ public abstract class GameObject {
     protected ImageView view; // 2. Thuộc tính Giao diện (View)
     protected Boolean isAlive;
     protected Shape hitbox; // Thuộc tính đa giác (dùng để kiểm tra va chạm)
+    protected double sizeX;
+    protected double sizeY;
 
     public Node getView() {
         return this.view;
@@ -47,6 +49,14 @@ public abstract class GameObject {
         return y;
     }
 
+    public double getSizeX() {
+        return sizeX;
+    }
+
+    public double getSizeY() {
+        return sizeY;
+    }
+
     public void setPos(double currentX, double currentY, double rotateAngle) {
         setPos(currentX, currentY);
         if (this.view != null) {
@@ -72,26 +82,19 @@ public abstract class GameObject {
         }
     }
 
-    public GameObject(String nameImage, double startX, double startY, double sizeX, double sizeY) {
-        this(nameImage, startX, startY);
-        if (this.view != null) {
-            this.view.setFitHeight(sizeY);
-            this.view.setFitWidth(sizeX);
-        }
-    }
-
+    // Tối ưu
     public GameObject(String nameImage, double startX, double startY) {
         Image img = AssetManager.getImage(nameImage);
         if (img != null) {
             this.view = new ImageView(img);
+            sizeX = img.getWidth();
+            sizeY = img.getHeight();
+            this.view.setFitHeight(sizeY);
+            this.view.setFitWidth(sizeX);
         } else {
             this.view = new ImageView();
         }
-        this.x = startX;
-        this.y = startY;
         this.isAlive = true;
-        this.view.setLayoutX(x);
-        this.view.setLayoutY(y);
     }
 
     public abstract void update();

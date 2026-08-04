@@ -6,21 +6,23 @@ import java.util.Map;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 
 public class AssetManager {
 
-    public static final Map<String, Image> images = new HashMap<>();
+    public static final Map<String, SpriteInfo> spriteRegistry = new HashMap<>();
     public static final Map<String, Media> musics = new HashMap<>();
     public static final Map<String, String> stylesheets = new HashMap<>();
     public static final Map<String, Font> fonts = new HashMap<>();
 
     public static void loadImage(String name, String path) {
-        if (!images.containsKey(name)) {
+        if (!spriteRegistry.containsKey(name)) {
             URL imageUrl = AssetManager.class.getResource(path);
             if (imageUrl != null) {
                 Image image = new Image(imageUrl.toString());
-                images.put(name, image);
+                SpriteInfo spriteInfo = new SpriteInfo(image);
+                spriteRegistry.put(name, spriteInfo);
                 System.out.println("Tải thành công ảnh: " + name);
             } else {
                 System.out.println("Lỗi tải ảnh: " + name);
@@ -29,11 +31,33 @@ public class AssetManager {
     }
 
     public static Image getImage(String name) {
-        if (!images.containsKey(name)) {
+        if (!spriteRegistry.containsKey(name)) {
             System.out.println("Ảnh " + name + " chưa được lưu vào kho!");
             return null;
         }
-        return images.get(name);
+        return spriteRegistry.get(name).getImage();
+    }
+
+    public static void loadSpriteInfo(String name, String path, double[] hitbox) {
+        if (!spriteRegistry.containsKey(name)) {
+            URL imageUrl = AssetManager.class.getResource(path);
+            if (imageUrl != null) {
+                Image image = new Image(imageUrl.toString());
+                SpriteInfo spriteInfo = new SpriteInfo(image, hitbox);
+                spriteRegistry.put(name, spriteInfo);
+                System.out.println("Tải thành công ảnh: " + name + " và hitbox.");
+            } else {
+                System.out.println("Lỗi tải ảnh: " + name + "và hitbox");
+            }
+        }
+    }
+
+    public static SpriteInfo getSpriteInfo(String name) {
+        if (!spriteRegistry.containsKey(name)) {
+            System.out.println("Ảnh " + name + " chưa được lưu vào kho!");
+            return null;
+        }
+        return spriteRegistry.get(name);
     }
 
     public static void loadMusic(String name, String path) {
@@ -114,15 +138,61 @@ public class AssetManager {
         loadImage("button_pause_blue", "/com/nhom27/skyforce/textures/menu/buttonPauseBlue.png");
 
         // Thực thể
-        loadImage("player_ship_1", "/com/nhom27/skyforce/textures/entities/player/player_ship_1_blue.png");
+        loadSpriteInfo("player_ship_1", "/com/nhom27/skyforce/textures/entities/player/player_ship_1_blue.png",
+                new double[] {
+                        46, 0,
+                        52, 0,
+                        98, 60,
+                        98, 65,
+                        75, 65,
+                        62, 75,
+                        36, 75,
+                        23, 65,
+                        0, 65,
+                        0, 60,
+                        46, 0
+                });
         loadImage("Spaceship1Blue", "/com/nhom27/skyforce/textures/Spaceship_01_BLUE.png");
         loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
         loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");
         loadImage("enemy_ship_3", "/com/nhom27/skyforce/textures/Spaceship_03_RED.png");
         loadImage("powerup", "/com/nhom27/skyforce/textures/Flame_01.png");
-        loadImage("bullet_img", "/com/nhom27/skyforce/textures/Flame_01.png");
-        loadImage("enemy_straight", "/com/nhom27/skyforce/textures/entities/enemies/enemy_straight_black.png");
-        loadImage("enemy_sine_orbit", "/com/nhom27/skyforce/textures/entities/enemies/enemy_sine_orbit_black.png");
+        loadImage("bullet_player_1", "/com/nhom27/skyforce/textures/entities/weapons/laserBlue01.png");
+        loadImage("bullet_player_2", "/com/nhom27/skyforce/textures/entities/weapons/laserBlue02.png");
+        loadSpriteInfo("enemy_straight", "/com/nhom27/skyforce/textures/entities/enemies/enemy_straight_black.png",
+                new double[] {
+                        16, 0,
+                        36, 8,
+                        38, 17,
+                        55, 17,
+                        57, 8,
+                        76, 0,
+                        92, 25,
+                        71, 83,
+                        57, 78,
+                        62, 58,
+                        29, 58,
+                        34, 78,
+                        22, 83,
+                        0, 25
+                });
+        loadSpriteInfo("enemy_sine_orbit", "/com/nhom27/skyforce/textures/entities/enemies/enemy_sine_orbit_black.png",
+                new double[] {
+                        2, 2,
+                        17, 0,
+                        37, 13,
+                        61, 13,
+                        78, 0,
+                        93, 2,
+                        76, 74,
+                        66, 74,
+                        66, 78,
+                        60, 83,
+                        36, 83,
+                        30, 78,
+                        30, 74,
+                        20, 74
+                });
 
         System.out.println("Tải ảnh hoàn tất!");
 

@@ -9,14 +9,14 @@ public class PowerUp extends GameObject {
     protected double speed;
 
     public PowerUp(String nameImg, double startX, double startY) {
-        super(nameImg, startX, startY, 40, 40);
+        super(nameImg, startX, startY);
         this.speed = 220;
         this.hitbox = new Rectangle(40, 40);
         this.setPos(startX, startY);
     }
 
     public PowerUp(String nameImg, double startX, double startY, double speed) {
-        super(nameImg, startX, startY, 40, 40);
+        super(nameImg, startX, startY);
         this.speed = speed;
         this.hitbox = new Rectangle(40, 40);
         this.setPos(startX, startY);

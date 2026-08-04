@@ -9,9 +9,7 @@ public class SineOrbitEnemy extends EnemyObject {
     private double baseY;
 
     public SineOrbitEnemy(double startY) {
-        super("enemy_sine_orbit", 0, startY, sizeX, sizeY, new double[] {
-                0, 0, 70, 0, 70, 70, 0, 70
-        });
+        super("enemy_sine_orbit", 0, startY);
         this.baseY = startY;
         this.health = 70;
     }
