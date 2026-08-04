@@ -198,11 +198,8 @@ public class AssetManager {
 
         System.out.println("Đang tải các tài nguyên Âm Thanh: ");
         loadMusic("background_home_music", "/com/nhom27/skyforce/sounds/background.mp3");
+        loadMusic("background_play_music", "/com/nhom27/skyforce/sounds/background_play.mp3");
         System.out.println("Tải nhạc hoàn tất!");
-
-        System.out.println("Đang tải các tài nguyên CSS: ");
-        loadCss("styleButton", "/com/nhom27/skyforce/ui/buttons/styleButton.css");
-        System.out.println("Tải CSS hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Font: ");
         loadFont("font_kenvector_future", "/com/nhom27/skyforce/fonts/kenvector_future.ttf");

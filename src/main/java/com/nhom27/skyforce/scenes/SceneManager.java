@@ -35,7 +35,18 @@ public class SceneManager {
     }
 
     public void switchScene(String name) {
-        primaryStage.setScene(scenes.get(name));
+        if ("MenuScene".equals(name)) {
+            com.nhom27.skyforce.audio.AudioManager.getInstance().playMusic("background_home_music");
+            if (MenuScene.getInstance() != null) {
+                MenuScene.getInstance().onShown();
+            }
+        } else if ("PlayScene".equals(name)) {
+            com.nhom27.skyforce.audio.AudioManager.getInstance().playMusic("background_play_music");
+        }
+
+        if (scenes.containsKey(name)) {
+            primaryStage.setScene(scenes.get(name));
+        }
     }
 
 }

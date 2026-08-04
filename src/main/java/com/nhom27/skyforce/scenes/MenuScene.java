@@ -13,11 +13,18 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class MenuScene {
+    private static MenuScene instance;
     private Scene scene; // Lưu trữ bản 2D
     private CustomButton btnSound;
 
     public MenuScene() {
+        instance = this;
+        AudioManager.getInstance().playMusic("background_home_music");
         createMenuScene();
+    }
+
+    public static MenuScene getInstance() {
+        return instance;
     }
 
     private void createMenuScene() {
@@ -57,13 +64,10 @@ public class MenuScene {
             PlayScene playScene = new PlayScene();
             SceneManager.getInstance().switchScene(playScene.getScene());
         });
-        btnSound = new CustomButton("Music: On", "button_blue", () -> {
+        String soundStatus = AudioManager.getInstance().isMuted() ? "Music: Off" : "Music: On";
+        btnSound = new CustomButton(soundStatus, "button_blue", () -> {
             AudioManager.getInstance().toggleMute();
-            if (AudioManager.getInstance().isMuted()) {
-                btnSound.updateLabel("Music: Off");
-            } else {
-                btnSound.updateLabel("Music: On");
-            }
+            updateSoundButton();
         });
         CustomButton btnExit = new CustomButton("Exit", "button_blue", () -> {
             System.exit(0);
@@ -89,6 +93,17 @@ public class MenuScene {
 
         // Đóng gói "tường" thành "gói 2D"
         scene = new Scene(root, com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
+    }
+
+    public void onShown() {
+        updateSoundButton();
+        // Cập nhật thêm các thông số khác (điểm cao, tài nguyên...) khi hiển thị lại Menu
+    }
+
+    public void updateSoundButton() {
+        if (btnSound != null) {
+            btnSound.updateLabel(AudioManager.getInstance().isMuted() ? "Music: Off" : "Music: On");
+        }
     }
 
     public Scene getScene() {

@@ -20,20 +20,6 @@ public class Bullet extends GameObject {
         this.setPos(startX - sizeX / 2, startY - sizeY, angle);
     }
 
-    public Bullet(String nameImage, double startX, double startY, double speedX, double speedY, double sizeX,
-            double sizeY) {
-        super(nameImage, startX, startY);
-        this.speedX = speedX;
-        this.speedY = speedY;
-
-        this.hitbox = new Rectangle(sizeX, sizeY);
-        this.view.setFitHeight(sizeY);
-        this.view.setFitWidth(sizeX);
-
-        double angle = Math.toDegrees(Math.atan2(speedX, speedY));
-        this.setPos(startX, startY, angle);
-    }
-
     public void update() {
         x += speedX / 60;
         y += speedY / 60;

@@ -36,6 +36,7 @@ public class PlayScene {
     private Pane gamePane;
 
     public PlayScene() {
+        AudioManager.getInstance().playMusic("background_play_music");
         StackPane root = new StackPane();
 
         // 1. Nền Play
