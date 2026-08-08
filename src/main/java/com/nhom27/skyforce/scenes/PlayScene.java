@@ -2,6 +2,7 @@ package com.nhom27.skyforce.scenes;
 
 import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.managers.GameManager;
 import com.nhom27.skyforce.ui.buttons.CustomButton;
 import com.nhom27.skyforce.utils.AssetManager;
@@ -34,10 +35,12 @@ import javafx.scene.paint.Stop;
 public class PlayScene {
     private Scene scene;
     private StackPane root;
+    private Pane gamePane;
     private StackPane pauseOverlay;
+    private StackPane gameOverOverlay;
+
     private CustomButton btnSound;
     private GameManager gameManager;
-    private Pane gamePane;
 
     private Label scoreLabel;
     private Label healthLabel;
@@ -154,21 +157,6 @@ public class PlayScene {
         root.getChildren().addAll(hudLayout);
     }
 
-    public void updateHUD(int score, int wave, Player player) {
-        if (scoreLabel != null) {
-            scoreLabel.setText("SCORE: " + score);
-        }
-        if (waveLabel != null) {
-            waveLabel.setText("WAVE " + wave);
-        }
-        if (player != null && healthBar != null && healthLabel != null) {
-            double healthPercent = (double) player.getHealth() / player.getMaxHealth();
-            healthBar.setProgress(Math.max(0, healthPercent));
-            healthLabel.setText("HP: " + player.getHealth() + " / " +
-                    player.getMaxHealth());
-        }
-    }
-
     private void createPauseOverlay() {
         pauseOverlay = new StackPane();
         pauseOverlay.setBackground(
@@ -245,6 +233,63 @@ public class PlayScene {
         if (show) {
             pauseOverlay.toFront();
         }
+    }
+
+    public void updateHUD(int score, int wave, Player player) {
+        if (scoreLabel != null) {
+            scoreLabel.setText("SCORE: " + score);
+        }
+        if (waveLabel != null) {
+            waveLabel.setText("WAVE " + wave);
+        }
+        if (player != null && healthBar != null && healthLabel != null) {
+            double healthPercent = (double) player.getHealth() / player.getMaxHealth();
+            healthBar.setProgress(Math.max(0, healthPercent));
+            healthLabel.setText("HP: " + player.getHealth() + " / " +
+                    player.getMaxHealth());
+        }
+    }
+
+    public void showGameOverMenu(int score) {
+        gameOverOverlay = new StackPane();
+        gameOverOverlay.setPrefSize(Main.WIDTH, Main.HEIGHT);
+        gameOverOverlay.setBackground(
+                new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.75), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        VBox card = new VBox(20);
+        card.setAlignment(Pos.CENTER);
+        card.setMaxSize(400, 350);
+
+        LinearGradient cardGradient = new LinearGradient(
+                0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+                new Stop(0, Color.web("#2c3e50")),
+                new Stop(1, Color.web("#1a252f")));
+        CornerRadii radii = new CornerRadii(16);
+        card.setBackground(new Background(new BackgroundFill(cardGradient, radii, Insets.EMPTY)));
+        card.setBorder(new Border(
+                new BorderStroke(Color.rgb(231, 76, 60, 0.8), BorderStrokeStyle.SOLID, radii, new BorderWidths(2))));
+
+        Label titleLabel = new Label("GAME OVER");
+        titleLabel.setTextFill(Color.web("#e74c3c"));
+        titleLabel.setFont(AssetManager.getFont("font_kenvector_future", 32));
+
+        Label finalScoreLabel = new Label("FINAL SCORE: " + score);
+        finalScoreLabel.setTextFill(Color.WHITE);
+        finalScoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 18));
+
+        CustomButton btnRestart = new CustomButton("PLAY AGAIN", "button_blue", () -> {
+            gamePane.getChildren().remove(gameOverOverlay);
+            gameManager.restartGame();
+        });
+
+        CustomButton btnMainMenu = new CustomButton("HOME MENU", "button_blue", () -> {
+            SceneManager.getInstance().switchScene("MenuScene");
+        });
+
+        card.getChildren().addAll(titleLabel, finalScoreLabel, btnRestart, btnMainMenu);
+
+        gameOverOverlay.getChildren().add(card);
+        gamePane.getChildren().add(gameOverOverlay);
     }
 
     public Scene getScene() {
