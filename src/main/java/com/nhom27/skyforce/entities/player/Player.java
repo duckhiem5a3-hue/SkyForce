@@ -10,8 +10,12 @@ import com.nhom27.skyforce.utils.AssetManager;
 
 public class Player extends GameObject {
     protected int level;
+    protected int damage;
     protected int health;
     protected int maxHealth;
+    protected double speedBulletX;
+    protected double speedBulletY;
+
     protected boolean gettingBuffed;
     protected int timeInBuff;
     protected long timeSinceLastBullet;
@@ -20,14 +24,53 @@ public class Player extends GameObject {
 
     private void setDefault() {
         this.level = 1;
-        this.maxHealth = 100;
-        this.health = maxHealth;
         this.gettingBuffed = false;
         this.timeInBuff = 0;
         this.timeSinceLastBullet = 0;
-        this.fireRate = 200;
+        applyLevelStats();
     }
 
+    public void levelUp() {
+        // Giả sử max level là 5
+        if (this.level < 5) {
+            this.level++;
+            applyLevelStats();
+        }
+    }
+
+    private void applyLevelStats() {
+        switch (this.level) {
+            case 1:
+                this.damage = 20;
+                this.fireRate = 200;
+                this.maxHealth = 100;
+                this.speedBulletX = 0;
+                this.speedBulletY = -400;
+                break;
+            case 2:
+                this.damage = 30;
+                this.fireRate = 180;
+                this.maxHealth = 120;
+                // TODO: Sinh ra 1 máy bay con bên trái
+                break;
+            case 3:
+                this.damage = 45;
+                this.fireRate = 150;
+                // TODO: Sinh ra thêm 1 máy bay con bên phải
+                break;
+            case 4:
+                this.damage = 60;
+                this.fireRate = 120;
+                // TODO: Nâng cấp máy bay con lên loại bắn đạn laze
+                break;
+            case 5:
+                this.damage = 80;
+                this.fireRate = 100;
+                // TODO: Bật chế độ Tối thượng
+                break;
+        }
+        this.health = this.maxHealth;
+    }
     // public Player(Shape shape) {
     // super("player_ship_1", Main.WIDTH / 2, Main.HEIGHT * (3 / 4), sizeX, sizeY);
     // setDefault();
@@ -116,15 +159,15 @@ public class Player extends GameObject {
         double startY = y;
 
         if (gettingBuffed) {
-            Bullet b1 = new Bullet("bullet_player_1", startX, startY, 0, -800);
-            Bullet b2 = new Bullet("bullet_player_2", startX - 15, startY, -100, -300);
-            Bullet b3 = new Bullet("bullet_player_2", startX + 15, startY, 100, -300);
+            Bullet b1 = new Bullet("bullet_player_1", startX, startY, 0, -800, damage);
+            Bullet b2 = new Bullet("bullet_player_2", startX - 15, startY, -100, -300, damage);
+            Bullet b3 = new Bullet("bullet_player_2", startX + 15, startY, 100, -300, damage);
 
             bulletsToSpawn.add(b1);
             bulletsToSpawn.add(b2);
             bulletsToSpawn.add(b3);
         } else {
-            Bullet b = new Bullet("bullet_player_1", startX, startY, 0, -200);
+            Bullet b = new Bullet("bullet_player_1", startX, startY, speedBulletX, speedBulletY, damage);
             bulletsToSpawn.add(b);
         }
         addBullet(bulletsToSpawn);

@@ -32,6 +32,7 @@ public class GameManager {
 
     private int score;
     private int wave;
+    private int nextWaveScore;
     private boolean isPaused;
     private boolean isGameOver;
 
@@ -58,6 +59,7 @@ public class GameManager {
         lastEnemyWaveTime = 0;
         score = 0;
         wave = 1;
+        nextWaveScore = 500;
         isPaused = false;
         isGameOver = false;
 
@@ -208,9 +210,10 @@ public class GameManager {
             lastEnemyWaveTime = now;
         }
 
-        // Tăng đợt tấn công lên sau mỗi 5000 điểm
-        if (score % 500 == 0 && score > 0) {
+        // Tăng đợt tấn công lên sau mỗi 500 điểm
+        if (score >= nextWaveScore) {
             wave++;
+            nextWaveScore += 500;
         }
     }
 
@@ -227,12 +230,12 @@ public class GameManager {
 
                 if (isColliding(bullet, enemy)) {
                     bullet.setAlive(false);
-                    enemy.takeDamage(40);
+                    enemy.takeDamage(bullet.getDamage());
 
                     if (!enemy.isAlive()) {
                         score += 5;
-                        // tỉ lệ 30% rơi ra vật phẩm cường hóa
-                        if (random.nextDouble() < 0.30) {
+                        // tỉ lệ 10% rơi ra vật phẩm cường hóa
+                        if (random.nextDouble() < 0.10) {
                             spawnPowerUp(enemy.getX(), enemy.getY());
                         }
                     }
