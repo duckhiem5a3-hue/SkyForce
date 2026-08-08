@@ -13,6 +13,7 @@ import com.nhom27.skyforce.entities.items.PowerUp;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.scenes.PlayScene;
 import com.nhom27.skyforce.scenes.SceneManager;
 import com.nhom27.skyforce.ui.buttons.CustomButton;
 import com.nhom27.skyforce.utils.AssetManager;
@@ -21,9 +22,6 @@ import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
@@ -31,7 +29,6 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -43,6 +40,7 @@ import javafx.scene.shape.Shape;
 
 public class GameManager {
     private Pane gameLayoutPane;
+    PlayScene playScene;
 
     private Player player;
     private List<EnemyObject> enemies;
@@ -57,18 +55,13 @@ public class GameManager {
     private boolean isGameOver;
 
     private long lastEnemyWaveTime;
-
-    private Label scoreLabel;
-    private Label healthLabel;
-    private ProgressBar healthBar;
-    private Label waveLabel;
-    private Label buffStatusLabel;
     private StackPane gameOverOverlay;
 
     private boolean isDebug = true;
 
-    public GameManager(Pane gameLayoutPane) {
+    public GameManager(Pane gameLayoutPane, PlayScene playScene) {
         this.gameLayoutPane = gameLayoutPane;
+        this.playScene = playScene;
         this.enemies = new ArrayList<>();
         this.powerUps = new ArrayList<>();
         this.random = new Random();
@@ -110,9 +103,6 @@ public class GameManager {
         // gameLayoutPane.setOnMouseMoved(e -> movePlayer(e.getX(), e.getY()));
         gameLayoutPane.setOnMouseDragged(e -> player.movePlayer(e.getX(), e.getY()));
 
-        // 2. Setup HUD
-        setupHUD();
-
         // 3. Game Loop Setup
         gameLoop = new AnimationTimer() {
             @Override
@@ -124,55 +114,6 @@ public class GameManager {
                 }
             }
         };
-    }
-
-    private void setupHUD() {
-        // Điểm số
-        scoreLabel = new Label("SCORE: 0");
-        scoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 22));
-        scoreLabel.setTextFill(Color.GOLD);
-        scoreLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 5, 0.8, 0, 2));
-
-        HBox scoreBox = new HBox(scoreLabel);
-        scoreBox.setAlignment(Pos.TOP_RIGHT);
-        scoreBox.setLayoutX(Main.WIDTH - 260);
-        scoreBox.setLayoutY(20);
-        scoreBox.setPrefWidth(240);
-
-        // Thanh máu
-        healthBar = new ProgressBar(1.0);
-        healthBar.setPrefWidth(180);
-        healthBar.setPrefHeight(20);
-        healthBar.setStyle("-fx-accent: #2ecc71; -fx-control-inner-background: #34495e;");
-
-        healthLabel = new Label("HP: 100 / 100");
-        healthLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
-        healthLabel.setTextFill(Color.WHITE);
-
-        VBox healthBox = new VBox(5, healthLabel, healthBar);
-        healthBox.setLayoutX(120);
-        healthBox.setLayoutY(15);
-
-        // Màn
-        waveLabel = new Label("WAVE 1");
-        waveLabel.setFont(AssetManager.getFont("font_kenvector_future", 24));
-        waveLabel.setTextFill(Color.CYAN);
-        waveLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 8, 0.8, 0, 2));
-
-        HBox waveBox = new HBox(waveLabel);
-        waveBox.setAlignment(Pos.CENTER);
-        waveBox.setLayoutX((Main.WIDTH - 200) / 2.0);
-        waveBox.setLayoutY(15);
-        waveBox.setPrefWidth(200);
-
-        // Trạng thái cường hóa
-        buffStatusLabel = new Label("");
-        buffStatusLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
-        buffStatusLabel.setTextFill(Color.YELLOW);
-        buffStatusLabel.setLayoutX(120);
-        buffStatusLabel.setLayoutY(65);
-
-        gameLayoutPane.getChildren().addAll(scoreBox, healthBox, waveBox, buffStatusLabel);
     }
 
     private void updateGame(long now) {
@@ -193,17 +134,17 @@ public class GameManager {
                             gameLayoutPane.getChildren().add(bullet.getHitbox());
                         }
                     }
-
                 }
                 player.setTimeSinceLastBullet(now);
             }
 
-            // Cập nhật thông báo cường hóa
-            if (player.isGettingBuffed()) {
-                buffStatusLabel.setText("TRIPLE SHOT (" + (player.getTimeInBuff() / 60 + 1) + "s)");
-            } else {
-                buffStatusLabel.setText("");
-            }
+            // // Cập nhật thông báo cường hóa
+            // if (player.isGettingBuffed()) {
+            // buffStatusLabel.setText("TRIPLE SHOT (" + (player.getTimeInBuff() / 60 + 1) +
+            // "s)");
+            // } else {
+            // buffStatusLabel.setText("");
+            // }
         }
 
         // Cập nhật đạn của người chơi
@@ -250,7 +191,7 @@ public class GameManager {
         handleCollisions();
 
         // Update HUD
-        updateHUD();
+        playScene.updateHUD(score, wave, player);
 
         // Check Game Over
         if (player != null && (!player.isAlive() || player.getHealth() <= 0)) {
@@ -288,7 +229,7 @@ public class GameManager {
         }
 
         // Tăng đợt tấn công lên sau mỗi 5000 điểm
-        if (score % 5000 == 0) {
+        if (score % 500 == 0 && score > 0) {
             wave++;
         }
     }
@@ -309,7 +250,7 @@ public class GameManager {
                     enemy.takeDamage(40);
 
                     if (!enemy.isAlive()) {
-                        score += 100;
+                        score += 5;
                         // tỉ lệ 30% rơi ra vật phẩm cường hóa
                         if (random.nextDouble() < 0.30) {
                             spawnPowerUp(enemy.getX(), enemy.getY());
@@ -371,20 +312,6 @@ public class GameManager {
             return a.getView().getBoundsInParent().intersects(b.getView().getBoundsInParent());
         }
         return false;
-    }
-
-    private void updateHUD() {
-        if (scoreLabel != null) {
-            scoreLabel.setText("SCORE: " + score);
-        }
-        if (waveLabel != null) {
-            waveLabel.setText("WAVE " + wave);
-        }
-        if (player != null && healthBar != null && healthLabel != null) {
-            double healthPercent = (double) player.getHealth() / player.getMaxHealth();
-            healthBar.setProgress(Math.max(0, healthPercent));
-            healthLabel.setText("HP: " + player.getHealth() + " / " + player.getMaxHealth());
-        }
     }
 
     private void handleGameOver() {

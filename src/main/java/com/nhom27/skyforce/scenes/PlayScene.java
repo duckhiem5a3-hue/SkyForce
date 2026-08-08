@@ -1,6 +1,7 @@
 package com.nhom27.skyforce.scenes;
 
 import com.nhom27.skyforce.audio.AudioManager;
+import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.managers.GameManager;
 import com.nhom27.skyforce.ui.buttons.CustomButton;
 import com.nhom27.skyforce.utils.AssetManager;
@@ -9,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -20,6 +22,7 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -30,16 +33,33 @@ import javafx.scene.paint.Stop;
 
 public class PlayScene {
     private Scene scene;
+    private StackPane root;
     private StackPane pauseOverlay;
     private CustomButton btnSound;
     private GameManager gameManager;
     private Pane gamePane;
 
+    private Label scoreLabel;
+    private Label healthLabel;
+    private ProgressBar healthBar;
+    private Label waveLabel;
+    private Label buffStatusLabel;
+
     public PlayScene() {
         AudioManager.getInstance().playMusic("background_play_music");
-        StackPane root = new StackPane();
+        root = new StackPane();
 
-        // 1. Nền Play
+        setupBackground();
+        setupGameWorld();
+        setupHUD();
+
+        // Tạo Pause Overlay Menu
+        createPauseOverlay();
+
+        scene = new Scene(root, com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
+    }
+
+    private void setupBackground() {
         Image bgImage = AssetManager.getImage("background_play");
         ImageView bgImageView = null;
 
@@ -52,34 +72,104 @@ public class PlayScene {
             System.out.println("Lỗi: Không tìm thấy ảnh nền play!");
             root.setStyle("-fx-background-color: black;");
         }
+    }
 
-        // 2. Pane dành cho Game Manager
+    private void setupGameWorld() {
         gamePane = new Pane();
         gamePane.setPrefSize(com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
         root.getChildren().add(gamePane);
 
-        // 3. Khởi tạo GameManager và khởi chạy
-        gameManager = new GameManager(gamePane);
+        gameManager = new GameManager(gamePane, this);
         gameManager.startGame();
 
-        // 4. Tạo Nút Pause ở góc trên trái
+    }
+
+    private void setupHUD() {
+        StackPane hudLayout = new StackPane();
+
+        // NÚT PAUSE
         CustomButton btnPause = new CustomButton(50, 50, "button_pause_blue", () -> {
             if (gameManager != null) {
                 gameManager.pauseGame();
             }
             showPauseMenu(true);
         });
-        StackPane.setAlignment(btnPause, Pos.TOP_LEFT);
-        StackPane.setMargin(btnPause, new Insets(15, 0, 0, 10));
-        root.getChildren().add(btnPause);
 
-        // 5. Tạo Pause Overlay Menu
-        createPauseOverlay(root);
+        // THANH MÁU
+        healthBar = new ProgressBar(1.0);
+        healthBar.setPrefWidth(180);
+        healthBar.setPrefHeight(20);
+        healthBar.setStyle("-fx-accent: #2ecc71; -fx-control-inner-background: #34495e;");
 
-        scene = new Scene(root, com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
+        healthLabel = new Label("HP: 100 / 100");
+        healthLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
+        healthLabel.setTextFill(Color.WHITE);
+
+        VBox healthBox = new VBox(5, healthLabel, healthBar);
+        healthBox.setPickOnBounds(false);
+
+        // HÀNG THÔNG TIN (Gồm Pause + Máu)
+        HBox playerInfoRow = new HBox(7, btnPause, healthBox);
+        playerInfoRow.setPickOnBounds(false);
+
+        // TRẠNG THÁI CƯỜNG HÓA
+        buffStatusLabel = new Label("");
+        buffStatusLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
+        buffStatusLabel.setTextFill(Color.YELLOW);
+
+        // ==========================================
+        // LẮP RÁP CÁC PHÂN VÙNG CHÍNH LÊN MÀN HÌNH
+        // ==========================================
+
+        // 1. Góc trên bên trái
+        VBox topLeftPanel = new VBox(playerInfoRow, buffStatusLabel);
+        topLeftPanel.setAlignment(Pos.TOP_LEFT);
+        topLeftPanel.setPickOnBounds(false);
+
+        // 2. Góc trên bên phải (Điểm số)
+        scoreLabel = new Label("SCORE: 0");
+        scoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 22));
+        scoreLabel.setTextFill(Color.GOLD);
+        scoreLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 5, 0.8, 0, 2));
+
+        HBox topRightPanel = new HBox(scoreLabel);
+        topRightPanel.setAlignment(Pos.TOP_RIGHT);
+        topRightPanel.setPickOnBounds(false);
+
+        // 3. Phía trên ở giữa (Màn chơi)
+        waveLabel = new Label("WAVE 1");
+        waveLabel.setFont(AssetManager.getFont("font_kenvector_future", 24));
+        waveLabel.setTextFill(Color.CYAN);
+        waveLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 8, 0.8, 0, 2));
+
+        HBox topCenterPanel = new HBox(waveLabel);
+        topCenterPanel.setAlignment(Pos.TOP_CENTER);
+        topCenterPanel.setPickOnBounds(false);
+
+        // 4. Gom tất cả vào layout tổng
+        hudLayout.getChildren().addAll(topLeftPanel, topCenterPanel, topRightPanel);
+        hudLayout.setPadding(new Insets(10));
+        hudLayout.setPickOnBounds(false);
+
+        root.getChildren().addAll(hudLayout);
     }
 
-    private void createPauseOverlay(StackPane root) {
+    public void updateHUD(int score, int wave, Player player) {
+        if (scoreLabel != null) {
+            scoreLabel.setText("SCORE: " + score);
+        }
+        if (waveLabel != null) {
+            waveLabel.setText("WAVE " + wave);
+        }
+        if (player != null && healthBar != null && healthLabel != null) {
+            double healthPercent = (double) player.getHealth() / player.getMaxHealth();
+            healthBar.setProgress(Math.max(0, healthPercent));
+            healthLabel.setText("HP: " + player.getHealth() + " / " +
+                    player.getMaxHealth());
+        }
+    }
+
+    private void createPauseOverlay() {
         pauseOverlay = new StackPane();
         pauseOverlay.setBackground(
                 new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.65), CornerRadii.EMPTY, Insets.EMPTY)));

@@ -57,6 +57,7 @@ public abstract class GameObject {
         return sizeY;
     }
 
+    // (Đã dùng trong Bullet)
     public void setPos(double currentX, double currentY, double rotateAngle) {
         setPos(currentX, currentY);
         if (this.view != null) {

@@ -124,7 +124,7 @@ public class Player extends GameObject {
             bulletsToSpawn.add(b2);
             bulletsToSpawn.add(b3);
         } else {
-            Bullet b = new Bullet("bullet_player_1", startX, startY, 0, -100);
+            Bullet b = new Bullet("bullet_player_1", startX, startY, 0, -200);
             bulletsToSpawn.add(b);
         }
         addBullet(bulletsToSpawn);
