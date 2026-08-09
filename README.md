@@ -26,9 +26,3 @@ Dự án áp dụng mô hình phân tách rõ ràng (MVC-like) để tối ưu v
 - `src/main/resources/com/nhom27/skyforce/`: Chứa tài nguyên vật lý.
   - `textures/`: Hình ảnh (.png, .jpg).
   - `sounds/`: Âm thanh (.wav).
-
-## 🚀 Hướng Dẫn Chạy Game
-
-1. Mở dự án bằng IDE (VS Code, IntelliJ, Eclipse).
-2. Chạy file `Launcher.java` nằm trong thư mục `src/main/java/com/nhom27/skyforce/main/`.
-   _(Lưu ý: Chạy bằng file Launcher để tránh lỗi thiếu thư viện JavaFX)._
