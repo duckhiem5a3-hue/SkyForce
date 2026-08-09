@@ -8,6 +8,10 @@ Dự án phát triển tựa game bắn máy bay không gian (Sky Force) sử d�
 - **Thư viện đồ họa:** JavaFX (Phiên bản 13)
 - **Quản lý dự án:** Maven
 
+## Phân chia công việc đang làm:
+
+https://docs.google.com/spreadsheets/d/12zK3o1sXtFvutcf5oWN5eaRMgX2s167UalnCQwqeb_g
+
 ## 📂 Cấu Trúc Thư Mục
 
 Dự án áp dụng mô hình phân tách rõ ràng (MVC-like) để tối ưu việc quản lý:
