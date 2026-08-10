@@ -45,6 +45,9 @@ public class PlayScene {
     private Label scoreLabel;
     private Label healthLabel;
     private ProgressBar healthBar;
+    private Label levelLabel;
+    private Label xpLabel;
+    private ProgressBar xpBar;
     private Label waveLabel;
     private Label buffStatusLabel;
 
@@ -100,19 +103,39 @@ public class PlayScene {
 
         // THANH MÁU
         healthBar = new ProgressBar(1.0);
-        healthBar.setPrefWidth(180);
-        healthBar.setPrefHeight(20);
+        healthBar.setPrefWidth(150);
+        healthBar.setPrefHeight(16);
         healthBar.setStyle("-fx-accent: #2ecc71; -fx-control-inner-background: #34495e;");
 
         healthLabel = new Label("HP: 100 / 100");
-        healthLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
+        healthLabel.setFont(AssetManager.getFont("font_kenvector_future", 12));
         healthLabel.setTextFill(Color.WHITE);
 
-        VBox healthBox = new VBox(5, healthLabel, healthBar);
+        VBox healthBox = new VBox(3, healthLabel, healthBar);
         healthBox.setPickOnBounds(false);
 
-        // HÀNG THÔNG TIN (Gồm Pause + Máu)
-        HBox playerInfoRow = new HBox(7, btnPause, healthBox);
+        // LEVEL & THANH XP
+        levelLabel = new Label("LV 1");
+        levelLabel.setFont(AssetManager.getFont("font_kenvector_future", 13));
+        levelLabel.setTextFill(Color.GOLD);
+
+        xpBar = new ProgressBar(0.0);
+        xpBar.setPrefWidth(150);
+        xpBar.setPrefHeight(16);
+        xpBar.setStyle("-fx-accent: #00d2d3; -fx-control-inner-background: #34495e;");
+
+        xpLabel = new Label("XP: 0 / 100");
+        xpLabel.setFont(AssetManager.getFont("font_kenvector_future", 12));
+        xpLabel.setTextFill(Color.CYAN);
+
+        HBox xpHeader = new HBox(8, levelLabel, xpLabel);
+        xpHeader.setAlignment(Pos.CENTER_LEFT);
+
+        VBox xpBox = new VBox(3, xpHeader, xpBar);
+        xpBox.setPickOnBounds(false);
+
+        // HÀNG THÔNG TIN (Gồm Pause + Máu + XP)
+        HBox playerInfoRow = new HBox(12, btnPause, healthBox, xpBox);
         playerInfoRow.setPickOnBounds(false);
 
         // TRẠNG THÁI CƯỜNG HÓA
@@ -242,11 +265,25 @@ public class PlayScene {
         if (waveLabel != null) {
             waveLabel.setText("WAVE " + wave);
         }
-        if (player != null && healthBar != null && healthLabel != null) {
-            double healthPercent = (double) player.getHealth() / player.getMaxHealth();
-            healthBar.setProgress(Math.max(0, healthPercent));
-            healthLabel.setText("HP: " + player.getHealth() + " / " +
-                    player.getMaxHealth());
+        if (player != null) {
+            if (healthBar != null && healthLabel != null) {
+                double healthPercent = (double) player.getHealth() / player.getMaxHealth();
+                healthBar.setProgress(Math.max(0, healthPercent));
+                healthLabel.setText("HP: " + player.getHealth() + " / " + player.getMaxHealth());
+            }
+
+            if (levelLabel != null && xpBar != null && xpLabel != null) {
+                if (player.getLevel() >= player.getMaxLevel()) {
+                    levelLabel.setText("LVL MAX");
+                    xpBar.setProgress(1.0);
+                    xpLabel.setText("XP: MAX");
+                } else {
+                    levelLabel.setText("LV " + player.getLevel());
+                    double xpPercent = (double) player.getCurrentXp() / player.getXpToNextLevel();
+                    xpBar.setProgress(Math.max(0, Math.min(1.0, xpPercent)));
+                    xpLabel.setText("XP: " + player.getCurrentXp() + " / " + player.getXpToNextLevel());
+                }
+            }
         }
     }
 

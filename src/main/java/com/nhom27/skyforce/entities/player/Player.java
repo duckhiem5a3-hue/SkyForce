@@ -10,6 +10,10 @@ import com.nhom27.skyforce.utils.AssetManager;
 
 public class Player extends GameObject {
     protected int level;
+    protected int currentXp;
+    protected int xpToNextLevel;
+    protected int maxLevel = 5;
+
     protected int damage;
     protected int health;
     protected int maxHealth;
@@ -20,16 +24,42 @@ public class Player extends GameObject {
     private List<Bullet> bullets;
     protected long fireRate; // Thời gian chờ giữa các lần bắn (mili-giây)
 
+    private int calculateXpRequirement(int lvl) {
+        switch (lvl) {
+            case 1: return 100;
+            case 2: return 250;
+            case 3: return 450;
+            case 4: return 700;
+            default: return 1000;
+        }
+    }
+
     private void setDefault() {
         this.level = 1;
+        this.currentXp = 0;
+        this.xpToNextLevel = calculateXpRequirement(1);
         this.timeSinceLastBullet = 0;
         applyLevelStats();
     }
 
+    public void addXp(int amount) {
+        if (amount <= 0) return;
+        this.currentXp += amount;
+
+        while (this.level < this.maxLevel && this.currentXp >= this.xpToNextLevel) {
+            this.currentXp -= this.xpToNextLevel;
+            levelUp();
+        }
+
+        if (this.level >= this.maxLevel) {
+            this.currentXp = this.xpToNextLevel;
+        }
+    }
+
     public void levelUp() {
-        // Giả sử max level là 5
-        if (this.level < 5) {
+        if (this.level < this.maxLevel) {
             this.level++;
+            this.xpToNextLevel = calculateXpRequirement(this.level);
             applyLevelStats();
         }
     }
@@ -47,22 +77,29 @@ public class Player extends GameObject {
                 this.damage = 30;
                 this.fireRate = 180;
                 this.maxHealth = 120;
-                // TODO: Sinh ra 1 máy bay con bên trái
+                this.speedBulletX = 0;
+                this.speedBulletY = -450;
                 break;
             case 3:
                 this.damage = 45;
                 this.fireRate = 150;
-                // TODO: Sinh ra thêm 1 máy bay con bên phải
+                this.maxHealth = 140;
+                this.speedBulletX = 0;
+                this.speedBulletY = -500;
                 break;
             case 4:
                 this.damage = 60;
                 this.fireRate = 120;
-                // TODO: Nâng cấp máy bay con lên loại bắn đạn laze
+                this.maxHealth = 160;
+                this.speedBulletX = 0;
+                this.speedBulletY = -550;
                 break;
             case 5:
                 this.damage = 80;
                 this.fireRate = 100;
-                // TODO: Bật chế độ Tối thượng
+                this.maxHealth = 200;
+                this.speedBulletX = 0;
+                this.speedBulletY = -600;
                 break;
         }
         this.health = this.maxHealth;
@@ -82,6 +119,22 @@ public class Player extends GameObject {
 
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getCurrentXp() {
+        return currentXp;
+    }
+
+    public int getXpToNextLevel() {
+        return xpToNextLevel;
+    }
+
+    public int getMaxLevel() {
+        return maxLevel;
     }
 
     public void setHealth(int health) {

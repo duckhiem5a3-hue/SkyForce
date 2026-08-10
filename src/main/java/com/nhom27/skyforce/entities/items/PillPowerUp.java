@@ -14,6 +14,6 @@ public class PillPowerUp extends PowerUp {
     @Override
     public void applyEffect(Player player) {
         player.heal(20);
-        // Công thêm xp để xét thăng cấp
+        player.addXp(50); // Cộng thêm XP để thăng cấp
     }
 }
