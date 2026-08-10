@@ -11,9 +11,9 @@ public abstract class GameObject {
     // 1. Các thuộc tính Logic (Data)
     protected double x, y; // đa số các method làm việc với Node như setLayout, setFitWidth/Height đều nhận
                            // kiểu double
-    protected int timeLived;
     protected ImageView view; // 2. Thuộc tính Giao diện (View)
     protected Boolean isAlive;
+    protected int timeLived;
     protected Shape hitbox; // Thuộc tính đa giác (dùng để kiểm tra va chạm)
     protected double sizeX;
     protected double sizeY;

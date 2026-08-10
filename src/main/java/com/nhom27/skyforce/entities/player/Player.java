@@ -16,16 +16,12 @@ public class Player extends GameObject {
     protected double speedBulletX;
     protected double speedBulletY;
 
-    protected boolean gettingBuffed;
-    protected int timeInBuff;
     protected long timeSinceLastBullet;
     private List<Bullet> bullets;
     protected long fireRate; // Thời gian chờ giữa các lần bắn (mili-giây)
 
     private void setDefault() {
         this.level = 1;
-        this.gettingBuffed = false;
-        this.timeInBuff = 0;
         this.timeSinceLastBullet = 0;
         applyLevelStats();
     }
@@ -71,19 +67,13 @@ public class Player extends GameObject {
         }
         this.health = this.maxHealth;
     }
-    // public Player(Shape shape) {
-    // super("player_ship_1", Main.WIDTH / 2, Main.HEIGHT * (3 / 4), sizeX, sizeY);
-    // setDefault();
-    // this.hitbox = shape != null ? shape : new Rectangle(sizeX, sizeY);
-    // this.setPos(Main.WIDTH / 2, Main.HEIGHT * (3 / 4));
-    // }
 
     public Player(double startX, double startY) {
         super("player_ship_1", startX, startY);
-        this.bullets = new ArrayList<>();
-        setDefault();
         this.hitbox = AssetManager.getSpriteInfo("player_ship_1").getHitbox();
         this.setPos(startX, startY);
+        this.bullets = new ArrayList<>();
+        setDefault();
     }
 
     public int getHealth() {
@@ -108,25 +98,6 @@ public class Player extends GameObject {
 
     public void heal(int amount) {
         this.health = Math.min(maxHealth, this.health + amount);
-    }
-
-    public boolean isGettingBuffed() {
-        return gettingBuffed;
-    }
-
-    public void setGettingBuffed(boolean buffed) {
-        this.gettingBuffed = buffed;
-        if (buffed) {
-            this.timeInBuff = 600; // 10s at 60 FPS
-        }
-    }
-
-    public int getTimeInBuff() {
-        return timeInBuff;
-    }
-
-    public void setTimeInBuff(int timeInBuff) {
-        this.timeInBuff = timeInBuff;
     }
 
     public long getTimeSinceLastBullet() {
@@ -158,18 +129,9 @@ public class Player extends GameObject {
         double startX = x + sizeX / 2;
         double startY = y;
 
-        if (gettingBuffed) {
-            Bullet b1 = new Bullet("bullet_player_1", startX, startY, 0, -800, damage);
-            Bullet b2 = new Bullet("bullet_player_2", startX - 15, startY, -100, -300, damage);
-            Bullet b3 = new Bullet("bullet_player_2", startX + 15, startY, 100, -300, damage);
+        Bullet b = new Bullet("bullet_player_1", startX, startY, speedBulletX, speedBulletY, damage);
+        bulletsToSpawn.add(b);
 
-            bulletsToSpawn.add(b1);
-            bulletsToSpawn.add(b2);
-            bulletsToSpawn.add(b3);
-        } else {
-            Bullet b = new Bullet("bullet_player_1", startX, startY, speedBulletX, speedBulletY, damage);
-            bulletsToSpawn.add(b);
-        }
         addBullet(bulletsToSpawn);
         return bulletsToSpawn;
     }
@@ -184,13 +146,5 @@ public class Player extends GameObject {
 
     @Override
     public void update() {
-        timeSinceLastBullet++;
-        if (gettingBuffed) {
-            timeInBuff--;
-            if (timeInBuff <= 0) {
-                gettingBuffed = false;
-                timeInBuff = 0;
-            }
-        }
     }
 }

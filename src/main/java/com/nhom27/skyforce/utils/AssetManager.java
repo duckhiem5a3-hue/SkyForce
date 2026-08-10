@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 
 public class AssetManager {
@@ -193,6 +192,8 @@ public class AssetManager {
                         30, 74,
                         20, 74
                 });
+
+        loadImage("item_pill_blue", "/com/nhom27/skyforce/textures/powerups/item_pill_blue.png");
 
         System.out.println("Tải ảnh hoàn tất!");
 

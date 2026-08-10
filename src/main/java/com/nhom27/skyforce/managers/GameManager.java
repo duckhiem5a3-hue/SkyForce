@@ -9,6 +9,7 @@ import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.enemies.SineOrbitEnemy;
 import com.nhom27.skyforce.entities.enemies.StraightEnemy;
+import com.nhom27.skyforce.entities.items.PillPowerUp;
 import com.nhom27.skyforce.entities.items.PowerUp;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
@@ -165,6 +166,7 @@ public class GameManager {
             p.update();
             if (!p.isAlive()) {
                 gameLayoutPane.getChildren().remove(p.getView());
+                gameLayoutPane.getChildren().remove(p.getHitbox());
                 powerUpIter.remove();
             }
         }
@@ -263,19 +265,26 @@ public class GameManager {
 
                 if (isColliding(player, powerUp)) {
                     powerUp.setAlive(false);
-                    player.setGettingBuffed(true);
-                    player.heal(20);
-                    score += 50;
+                    powerUp.applyEffect(player);
                 }
             }
         }
     }
 
     private void spawnPowerUp(double x, double y) {
-        PowerUp powerUp = new PowerUp("powerup", x, y);
+        PowerUp powerUp = new PillPowerUp(x, y);
         powerUps.add(powerUp);
         if (powerUp.getView() != null) {
             gameLayoutPane.getChildren().add(powerUp.getView());
+            if (isDebug && powerUp.getHitbox() != null) {
+                powerUp.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ mờ 30%
+                powerUp.getHitbox().setStroke(Color.YELLOW); // Viền vàng
+                powerUp.getHitbox().setStrokeWidth(2);
+
+                if (!gameLayoutPane.getChildren().contains(powerUp.getHitbox())) {
+                    gameLayoutPane.getChildren().add(powerUp.getHitbox());
+                }
+            }
         }
     }
 

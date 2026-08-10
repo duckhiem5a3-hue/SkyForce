@@ -2,6 +2,7 @@ package com.nhom27.skyforce.entities.enemies;
 
 import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.utils.AssetManager;
 
 public class SineOrbitEnemy extends EnemyObject {
     public static int sizeX = Main.WIDTH / 12;
@@ -10,6 +11,8 @@ public class SineOrbitEnemy extends EnemyObject {
 
     public SineOrbitEnemy(double startY) {
         super("enemy_sine_orbit", 0, startY);
+        this.hitbox = AssetManager.getSpriteInfo("enemy_sine_orbit").getHitbox();
+        this.setPos(0, startY);
         this.baseY = startY;
         this.health = 70;
     }

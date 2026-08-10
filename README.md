@@ -26,3 +26,7 @@ Dự án áp dụng mô hình phân tách rõ ràng (MVC-like) để tối ưu v
 - `src/main/resources/com/nhom27/skyforce/`: Chứa tài nguyên vật lý.
   - `textures/`: Hình ảnh (.png, .jpg).
   - `sounds/`: Âm thanh (.wav).
+
+## Quy tắc đặt tên ảnh
+
+Công thức chuẩn: `[nhóm]_[tên_đối_tượng]_[đặc_điểm_hoặc_cấp_độ]_[trạng_thái].png`

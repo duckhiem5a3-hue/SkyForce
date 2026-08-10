@@ -14,12 +14,12 @@ public class StraightEnemy extends EnemyObject {
 
     public StraightEnemy(double startX, double startY) {
         super("enemy_straight", startX, startY);
+        this.hitbox = AssetManager.getSpriteInfo("enemy_straight").getHitbox();
+        this.setPos(startX, startY);
         this.speedY = 100.0;
         this.health = 50;
-        this.hitbox = AssetManager.getSpriteInfo("enemy_straight").getHitbox();
         Random random = new Random();
         this.randomStopY = random.nextDouble() * Main.HEIGHT / 2;
-        this.setPos(startX, startY);
     }
 
     public StraightEnemy(double startX, double startY, double speedY) {
