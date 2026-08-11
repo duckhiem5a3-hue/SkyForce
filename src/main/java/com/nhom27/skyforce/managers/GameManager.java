@@ -24,6 +24,8 @@ public class GameManager {
     private Pane gameLayoutPane;
     PlayScene playScene;
 
+    private VFXManager vfxManager;
+
     private Player player;
     private List<EnemyObject> enemies;
     private List<PowerUp> powerUps;
@@ -64,6 +66,8 @@ public class GameManager {
         isPaused = false;
         isGameOver = false;
 
+        this.vfxManager = new VFXManager(this.gameLayoutPane);
+
         // 1. Tạo đối tượng người chơi
         player = new Player(Main.WIDTH * 0.5, Main.HEIGHT * 0.75);
 
@@ -91,7 +95,6 @@ public class GameManager {
             @Override
             public void handle(long now) {
                 now = now / 1_000_000; // Đổi về mili giây
-                System.out.println(now + "ms");
                 if (!isPaused && !isGameOver) {
                     updateGame(now);
                 }
@@ -231,6 +234,8 @@ public class GameManager {
                     continue;
 
                 if (isColliding(bullet, enemy)) {
+                    vfxManager.spawnImpactEffect(bullet.getX() + bullet.getSizeX() / 2, bullet.getY());
+
                     bullet.setAlive(false);
                     enemy.takeDamage(bullet.getDamage());
 

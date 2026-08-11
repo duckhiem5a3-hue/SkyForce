@@ -195,6 +195,10 @@ public class AssetManager {
 
         loadImage("item_pill_blue", "/com/nhom27/skyforce/textures/powerups/item_pill_blue.png");
 
+        // Hiệu ứng
+        loadImage("vfx_impact_blue_01", "/com/nhom27/skyforce/textures/vfx/vfx_impact_blue_01.png");
+        loadImage("vfx_impact_blue_02", "/com/nhom27/skyforce/textures/vfx/vfx_impact_blue_02.png");
+
         System.out.println("Tải ảnh hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Âm Thanh: ");

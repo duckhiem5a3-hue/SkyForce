@@ -12,7 +12,7 @@ public abstract class GameObject {
     protected double x, y; // đa số các method làm việc với Node như setLayout, setFitWidth/Height đều nhận
                            // kiểu double
     protected ImageView view; // 2. Thuộc tính Giao diện (View)
-    protected Boolean isAlive;
+    protected boolean isAlive;
     protected int timeLived;
     protected Shape hitbox; // Thuộc tính đa giác (dùng để kiểm tra va chạm)
     protected double sizeX;
@@ -34,7 +34,7 @@ public abstract class GameObject {
     }
 
     public boolean isAlive() {
-        return Boolean.TRUE.equals(this.isAlive);
+        return this.isAlive == true;
     }
 
     public void setAlive(boolean alive) {
