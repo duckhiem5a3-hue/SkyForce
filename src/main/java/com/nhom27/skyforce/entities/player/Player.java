@@ -3,6 +3,7 @@ package com.nhom27.skyforce.entities.player;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
@@ -26,11 +27,16 @@ public class Player extends GameObject {
 
     private int calculateXpRequirement(int lvl) {
         switch (lvl) {
-            case 1: return 100;
-            case 2: return 250;
-            case 3: return 450;
-            case 4: return 700;
-            default: return 1000;
+            case 1:
+                return 100;
+            case 2:
+                return 250;
+            case 3:
+                return 450;
+            case 4:
+                return 700;
+            default:
+                return 1000;
         }
     }
 
@@ -43,7 +49,8 @@ public class Player extends GameObject {
     }
 
     public void addXp(int amount) {
-        if (amount <= 0) return;
+        if (amount <= 0)
+            return;
         this.currentXp += amount;
 
         while (this.level < this.maxLevel && this.currentXp >= this.xpToNextLevel) {

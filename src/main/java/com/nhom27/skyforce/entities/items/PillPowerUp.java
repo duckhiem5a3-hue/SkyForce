@@ -1,6 +1,7 @@
 package com.nhom27.skyforce.entities.items;
 
 import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.managers.VFXManager;
 
 import javafx.scene.shape.Rectangle;
 
@@ -12,8 +13,10 @@ public class PillPowerUp extends PowerUp {
     }
 
     @Override
-    public void applyEffect(Player player) {
+    public void applyEffect(Player player, VFXManager vfxManager) {
         player.heal(20);
         player.addXp(50);
+
+        vfxManager.applyPlayerHealGlow(player);
     }
 }

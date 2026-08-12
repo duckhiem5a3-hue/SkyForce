@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.enemies.SineOrbitEnemy;
@@ -41,7 +42,7 @@ public class GameManager {
 
     private long lastEnemyWaveTime;
 
-    private boolean isDebug = true;
+    private boolean isDebug = false;
 
     public GameManager(Pane gameLayoutPane, PlayScene playScene) {
         this.gameLayoutPane = gameLayoutPane;
@@ -109,6 +110,7 @@ public class GameManager {
 
             // Tự động bắn đạn của người chơi
             if (now - player.getTimeSinceLastBullet() >= player.getFireRate()) {
+                AudioManager.getInstance().playSound("sfx_laser");
                 for (Bullet bullet : player.fireBullet()) {
                     gameLayoutPane.getChildren().add(bullet.getView());
                     if (isDebug && bullet.getHitbox() != null) {
@@ -234,6 +236,7 @@ public class GameManager {
                     continue;
 
                 if (isColliding(bullet, enemy)) {
+                    AudioManager.getInstance().playSound("sfx_zap");
                     vfxManager.spawnImpactEffect(bullet.getX() + bullet.getSizeX() / 2, bullet.getY());
 
                     bullet.setAlive(false);
@@ -241,6 +244,12 @@ public class GameManager {
 
                     if (!enemy.isAlive()) {
                         score += 5;
+                        double scaleFactor = 4.0;
+                        vfxManager.spawnExplosionSpriteSheet(enemy.getX() + enemy.getSizeX() / 2,
+                                enemy.getY() + enemy.getSizeY() / 2,
+                                enemy.getSizeX() * scaleFactor,
+                                enemy.getSizeY() * scaleFactor);
+                        AudioManager.getInstance().playSound("sfx_explosion_enemy");
                         // tỉ lệ 10% rơi ra vật phẩm cường hóa
                         if (random.nextDouble() < 0.10) {
                             spawnPowerUp(enemy.getX(), enemy.getY());
@@ -270,7 +279,7 @@ public class GameManager {
 
                 if (isColliding(player, powerUp)) {
                     powerUp.setAlive(false);
-                    powerUp.applyEffect(player);
+                    powerUp.applyEffect(player, vfxManager);
                 }
             }
         }

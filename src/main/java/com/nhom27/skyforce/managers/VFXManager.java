@@ -1,10 +1,16 @@
 package com.nhom27.skyforce.managers;
 
+import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.utils.AssetManager;
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class VFXManager {
@@ -40,5 +46,87 @@ public class VFXManager {
                 }));
         timeline.setCycleCount(1); // Yêu cầu hiệu ứng chạy 1 lần
         timeline.play();
+    }
+
+    public void spawnExplosionSpriteSheet(double x, double y, double targetWidth, double targetHeight) {
+        Image sheet = AssetManager.getImage("vfx_explosion_8x8_sheet");
+        if (sheet == null)
+            return; // Tránh lỗi nếu chưa có ảnh
+
+        // 1. Khai báo thông số của Sprite Sheet
+        int cols = 8;
+        int rows = 8;
+        int totalFrames = cols * rows; // Tổng cộng 64 khung hình
+
+        // 2. Tính toán kích thước của 1 khung hình (1 ô vuông)
+        double frameWidth = sheet.getWidth() / cols;
+        double frameHeight = sheet.getHeight() / rows;
+
+        ImageView effectView = new ImageView(sheet);
+
+        // Cắt lấy ô đầu tiên (cột 0, hàng 0) để hiển thị lúc mới sinh ra
+        effectView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+
+        effectView.setFitWidth(targetWidth);
+        effectView.setFitHeight(targetHeight);
+
+        // Căn tâm vụ nổ vào tọa độ x, y
+        effectView.setLayoutX(x - targetWidth / 2);
+        effectView.setLayoutY(y - targetHeight / 2);
+        gamePane.getChildren().add(effectView);
+
+        // 3. Biến đếm khung hình hiện tại (dùng mảng 1 phần tử để lách luật lambda của
+        // Java)
+        int[] currentFrame = { 0 };
+
+        // 4. Tạo Timeline lật trang
+        // Tốc độ 16ms/frame tương đương khoảng 60 FPS. Bạn có thể tăng lên 20ms-30ms
+        // nếu muốn nổ chậm hơn.
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16), event -> {
+            currentFrame[0]++;
+
+            if (currentFrame[0] < totalFrames) {
+                // Công thức toán học đỉnh cao để tính vị trí cột và hàng từ 1 con số
+                int col = currentFrame[0] % cols;
+                int row = currentFrame[0] / cols;
+
+                // Tính tọa độ X, Y của khung cửa sổ trên tấm ảnh lớn
+                double frameX = col * frameWidth;
+                double frameY = row * frameHeight;
+
+                // Dịch chuyển khung cửa sổ
+                effectView.setViewport(new Rectangle2D(frameX, frameY, frameWidth, frameHeight));
+            }
+        }));
+
+        // Cho Timeline chạy đúng 64 lần (64 khung hình)
+        timeline.setCycleCount(totalFrames);
+
+        // Khi chạy xong toàn bộ, tự động xóa ảnh để dọn rác bộ nhớ
+        timeline.setOnFinished(e -> gamePane.getChildren().remove(effectView));
+
+        timeline.play();
+    }
+
+    public void applyPlayerHealGlow(Player player) {
+        // Kiểm tra an toàn xem player có hình ảnh không
+        if (player.getView() == null)
+            return;
+
+        // Tạo hiệu ứng lóa láng xanh lá
+        DropShadow glow = new DropShadow();
+        glow.setColor(Color.LIMEGREEN);
+        glow.setRadius(25);
+        glow.setSpread(0.6);
+
+        // Áp dụng hiệu ứng lên View của Player
+        player.getView().setEffect(glow);
+
+        // Đặt đồng hồ đếm ngược 1s để gỡ hiệu ứng ra
+        PauseTransition delay = new PauseTransition(Duration.millis(1000));
+        delay.setOnFinished(e -> {
+            player.getView().setEffect(null);
+        });
+        delay.play();
     }
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.text.Font;
 
@@ -12,6 +13,7 @@ public class AssetManager {
 
     public static final Map<String, SpriteInfo> spriteRegistry = new HashMap<>();
     public static final Map<String, Media> musics = new HashMap<>();
+    public static final Map<String, AudioClip> sounds = new HashMap<>();
     public static final Map<String, String> stylesheets = new HashMap<>();
     public static final Map<String, Font> fonts = new HashMap<>();
 
@@ -80,24 +82,25 @@ public class AssetManager {
         return musics.get(name);
     }
 
-    public static void loadCss(String name, String path) {
-        if (!stylesheets.containsKey(name)) {
-            URL cssUrl = AssetManager.class.getResource(path);
-            if (cssUrl != null) {
-                stylesheets.put(name, cssUrl.toExternalForm());
-                System.out.println("Tải thành công CSS: " + name);
+    public static void loadSound(String name, String path) {
+        if (!sounds.containsKey(name)) {
+            URL musicUrl = AssetManager.class.getResource(path);
+            if (musicUrl != null) {
+                AudioClip sound = new AudioClip(musicUrl.toString());
+                sounds.put(name, sound);
+                System.out.println("Tải thành công âm thanh: " + name);
             } else {
-                System.out.println("Lỗi tải CSS: " + name);
+                System.out.println("Lỗi tải nhạc: " + name);
             }
         }
     }
 
-    public static String getCss(String name) {
-        if (!stylesheets.containsKey(name)) {
-            System.out.println("CSS " + name + " chưa được lưu vào kho!");
+    public static AudioClip getSound(String name) {
+        if (!sounds.containsKey(name)) {
+            System.out.println("Âm thanh " + name + " chưa được lưu vào kho!");
             return null;
         }
-        return stylesheets.get(name);
+        return sounds.get(name);
     }
 
     public static void loadFont(String name, String path) {
@@ -198,12 +201,17 @@ public class AssetManager {
         // Hiệu ứng
         loadImage("vfx_impact_blue_01", "/com/nhom27/skyforce/textures/vfx/vfx_impact_blue_01.png");
         loadImage("vfx_impact_blue_02", "/com/nhom27/skyforce/textures/vfx/vfx_impact_blue_02.png");
+        loadImage("vfx_explosion_8x8_sheet", "/com/nhom27/skyforce/textures/vfx/vfx_explosion_8x8_sheet.png");
 
         System.out.println("Tải ảnh hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Âm Thanh: ");
-        loadMusic("background_home_music", "/com/nhom27/skyforce/sounds/background.mp3");
-        loadMusic("background_play_music", "/com/nhom27/skyforce/sounds/background_play.mp3");
+        loadMusic("background_home_music", "/com/nhom27/skyforce/audio/music/background.mp3");
+        loadMusic("background_play_music", "/com/nhom27/skyforce/audio/music/background_play.mp3");
+
+        loadSound("sfx_laser", "/com/nhom27/skyforce/audio/sfx/sfx_laser.mp3");
+        loadSound("sfx_explosion_enemy", "/com/nhom27/skyforce/audio/sfx/sfx_explosion_enemy.mp3");
+        loadSound("sfx_zap", "/com/nhom27/skyforce/audio/sfx/sfx_zap.mp3");
         System.out.println("Tải nhạc hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Font: ");

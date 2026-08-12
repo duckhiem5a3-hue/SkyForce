@@ -3,6 +3,7 @@ package com.nhom27.skyforce.entities.items;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.managers.VFXManager;
 
 public abstract class PowerUp extends GameObject {
     protected double speed;
@@ -12,7 +13,7 @@ public abstract class PowerUp extends GameObject {
         this.speed = speed;
     }
 
-    public abstract void applyEffect(Player player);
+    public abstract void applyEffect(Player player, VFXManager vfxManager);
 
     @Override
     public void update() {

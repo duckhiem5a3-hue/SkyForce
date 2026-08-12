@@ -4,7 +4,7 @@ Dự án phát triển tựa game bắn máy bay không gian (Sky Force) sử d�
 
 ## 🛠️ Công Nghệ Sử Dụng
 
-- **Ngôn ngữ:** Java (Phiên bản 11)
+- **Ngôn ngữ:** Java (Phiên bản 25 LTS)
 - **Thư viện đồ họa:** JavaFX (Phiên bản 13)
 - **Quản lý dự án:** Maven
 

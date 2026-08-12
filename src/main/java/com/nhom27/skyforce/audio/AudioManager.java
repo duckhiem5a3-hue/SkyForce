@@ -2,6 +2,7 @@ package com.nhom27.skyforce.audio;
 
 import com.nhom27.skyforce.utils.AssetManager;
 
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -22,10 +23,12 @@ public class AudioManager {
     }
 
     public void playMusic(String musicName) {
-        if (musicName == null || musicName.isEmpty()) return;
+        if (musicName == null || musicName.isEmpty())
+            return;
 
         // Nếu đang phát đúng bài nhạc này rồi thì không phát lại từ đầu
-        if (musicName.equals(currentMusicName) && mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+        if (musicName.equals(currentMusicName) && mediaPlayer != null
+                && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
             return;
         }
 
@@ -40,6 +43,22 @@ public class AudioManager {
             currentMusicName = musicName;
         } else {
             System.out.println("Không tìm thấy nhạc: " + musicName);
+        }
+    }
+
+    public void playSound(String soundName) {
+        // Nếu đang tắt tiếng thì không phát
+        if (isMuted || soundName == null || soundName.isEmpty())
+            return;
+
+        AudioClip clip = AssetManager.getSound(soundName);
+
+        if (clip != null) {
+            // Giảm âm lượng SFX xuống một chút để không lấn át nhạc nền
+            clip.setVolume(0.2);
+            clip.play();
+        } else {
+            System.out.println("Không tìm thấy âm thanh SFX: " + soundName);
         }
     }
 
