@@ -1,5 +1,6 @@
 package com.nhom27.skyforce.entities.items;
 
+import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.managers.VFXManager;
 
@@ -16,7 +17,9 @@ public class PillPowerUp extends PowerUp {
     public void applyEffect(Player player, VFXManager vfxManager) {
         player.heal(20);
         player.addXp(50);
+        AudioManager.getInstance().playSound("sfx_item_health_pickup");
 
         vfxManager.applyPlayerHealGlow(player);
+        vfxManager.spawnScreenHealEffect();
     }
 }

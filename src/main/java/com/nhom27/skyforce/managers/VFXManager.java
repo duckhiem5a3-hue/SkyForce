@@ -1,16 +1,24 @@
 package com.nhom27.skyforce.managers;
 
 import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.utils.AssetManager;
+
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 public class VFXManager {
@@ -113,6 +121,7 @@ public class VFXManager {
         if (player.getView() == null)
             return;
 
+        Effect originalEffect = player.getView().getEffect();
         // Tạo hiệu ứng lóa láng xanh lá
         DropShadow glow = new DropShadow();
         glow.setColor(Color.LIMEGREEN);
@@ -125,8 +134,39 @@ public class VFXManager {
         // Đặt đồng hồ đếm ngược 1s để gỡ hiệu ứng ra
         PauseTransition delay = new PauseTransition(Duration.millis(1000));
         delay.setOnFinished(e -> {
-            player.getView().setEffect(null);
+            player.getView().setEffect(originalEffect);
         });
         delay.play();
+    }
+
+    public void spawnScreenHealEffect() {
+        double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;
+        double height = (gamePane != null && gamePane.getHeight() > 0) ? gamePane.getHeight() : Main.HEIGHT;
+
+        // 1. Tạo hình chữ nhật kích thước bằng màn hình
+        Rectangle screenOverlay = new Rectangle(width, height);
+
+        // 2. Tạo hiệu ứng viền xanh lá (Vignette) bằng RadialGradient
+        // Trong suốt ở tâm, tỏa màu xanh lá mượt ra phía mép màn hình
+        RadialGradient vignetteGradient = new RadialGradient(
+                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.TRANSPARENT),
+                new Stop(0.4, Color.TRANSPARENT),
+                new Stop(1.0, Color.rgb(46, 204, 113, 0.75)) // Màu xanh lá neon hồi máu
+        );
+        screenOverlay.setFill(vignetteGradient);
+
+        // Đảm bảo không cản trở tương tác chuột
+        screenOverlay.setMouseTransparent(true);
+
+        // Thêm lớp phủ vào Pane màn hình
+        gamePane.getChildren().add(screenOverlay);
+
+        // 3. Hiệu ứng mờ dần FadeOut
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(800), screenOverlay);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> gamePane.getChildren().remove(screenOverlay));
+        fadeOut.play();
     }
 }

@@ -16,8 +16,6 @@ import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.scenes.PlayScene;
-import com.nhom27.skyforce.utils.AssetManager;
-
 import javafx.animation.AnimationTimer;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -253,7 +251,7 @@ public class GameManager {
                                 enemy.getSizeY() * scaleFactor);
                         AudioManager.getInstance().playSound("sfx_explosion_enemy");
                         // tỉ lệ 10% rơi ra vật phẩm cường hóa
-                        if (random.nextDouble() < 0.10) {
+                        if (random.nextDouble() < 1) {
                             spawnPowerUp(enemy.getX(), enemy.getY());
                         }
                     }

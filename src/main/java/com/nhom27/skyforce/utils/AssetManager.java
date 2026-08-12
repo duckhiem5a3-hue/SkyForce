@@ -214,6 +214,7 @@ public class AssetManager {
         loadSound("sfx_explosion_enemy", "/com/nhom27/skyforce/audio/sfx/sfx_explosion_enemy.mp3");
         loadSound("sfx_zap", "/com/nhom27/skyforce/audio/sfx/sfx_zap.mp3");
         loadSound("sfx_laser_impact", "/com/nhom27/skyforce/audio/sfx/sfx_laser_impact.mp3");
+        loadSound("sfx_item_health_pickup", "/com/nhom27/skyforce/audio/sfx/sfx_item_health_pickup.mp3");
         System.out.println("Tải nhạc hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Font: ");
