@@ -221,6 +221,7 @@ public class PlayScene {
         // 2. Nút Chơi lại (Restart)
         CustomButton btnRestart = new CustomButton("PLAY AGAIN", "button_blue", () -> {
             showPauseMenu(false);
+            AudioManager.getInstance().playMusic("background_play_music");
             if (gameManager != null) {
                 gameManager.restartGame();
             }
@@ -288,6 +289,7 @@ public class PlayScene {
     }
 
     public void showGameOverMenu(int score) {
+        AudioManager.getInstance().playMusicOnce("lose");
         gameOverOverlay = new StackPane();
         gameOverOverlay.setPrefSize(Main.WIDTH, Main.HEIGHT);
         gameOverOverlay.setBackground(
@@ -316,6 +318,7 @@ public class PlayScene {
 
         CustomButton btnRestart = new CustomButton("PLAY AGAIN", "button_blue", () -> {
             gamePane.getChildren().remove(gameOverOverlay);
+            AudioManager.getInstance().playMusic("background_play_music");
             gameManager.restartGame();
         });
 

@@ -23,6 +23,14 @@ public class AudioManager {
     }
 
     public void playMusic(String musicName) {
+        playMusic(musicName, true);
+    }
+
+    public void playMusicOnce(String musicName) {
+        playMusic(musicName, false);
+    }
+
+    public void playMusic(String musicName, boolean loop) {
         if (musicName == null || musicName.isEmpty())
             return;
 
@@ -37,7 +45,11 @@ public class AudioManager {
         Media media = AssetManager.getMusic(musicName);
         if (media != null) {
             mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            if (loop) {
+                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            } else {
+                mediaPlayer.setCycleCount(1);
+            }
             mediaPlayer.setMute(isMuted);
             mediaPlayer.play();
             currentMusicName = musicName;

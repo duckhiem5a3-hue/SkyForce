@@ -1,8 +1,10 @@
 package com.nhom27.skyforce.entities.base;
 
 import javafx.scene.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
 import com.nhom27.skyforce.utils.AssetManager;
@@ -92,6 +94,11 @@ public abstract class GameObject {
             sizeY = img.getHeight();
             this.view.setFitHeight(sizeY);
             this.view.setFitWidth(sizeX);
+            DropShadow outline = new DropShadow();
+            outline.setColor(Color.WHITE);
+            outline.setRadius(8); // Độ nhòe của viền
+            outline.setSpread(0.6); // Độ đậm đặc của viền (0.0 đến 1.0)
+            this.view.setEffect(outline);
         } else {
             this.view = new ImageView();
         }

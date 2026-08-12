@@ -16,6 +16,8 @@ import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.scenes.PlayScene;
+import com.nhom27.skyforce.utils.AssetManager;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -236,7 +238,7 @@ public class GameManager {
                     continue;
 
                 if (isColliding(bullet, enemy)) {
-                    AudioManager.getInstance().playSound("sfx_zap");
+                    AudioManager.getInstance().playSound("sfx_laser_impact");
                     vfxManager.spawnImpactEffect(bullet.getX() + bullet.getSizeX() / 2, bullet.getY());
 
                     bullet.setAlive(false);
