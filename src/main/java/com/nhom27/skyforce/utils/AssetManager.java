@@ -206,15 +206,15 @@ public class AssetManager {
         System.out.println("Tải ảnh hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Âm Thanh: ");
-        loadMusic("background_home_music", "/com/nhom27/skyforce/audio/music/background.mp3");
-        loadMusic("background_play_music", "/com/nhom27/skyforce/audio/music/background_play.mp3");
-        loadMusic("lose", "/com/nhom27/skyforce/audio/music/lose.mp3");
+        loadMusic("background_home_music", "/com/nhom27/skyforce/audio/music/background.wav");
+        loadMusic("background_play_music", "/com/nhom27/skyforce/audio/music/background_play.wav");
+        loadMusic("lose", "/com/nhom27/skyforce/audio/music/lose.wav");
 
-        loadSound("sfx_laser", "/com/nhom27/skyforce/audio/sfx/sfx_laser.mp3");
-        loadSound("sfx_explosion_enemy", "/com/nhom27/skyforce/audio/sfx/sfx_explosion_enemy.mp3");
-        loadSound("sfx_zap", "/com/nhom27/skyforce/audio/sfx/sfx_zap.mp3");
-        loadSound("sfx_laser_impact", "/com/nhom27/skyforce/audio/sfx/sfx_laser_impact.mp3");
-        loadSound("sfx_item_health_pickup", "/com/nhom27/skyforce/audio/sfx/sfx_item_health_pickup.mp3");
+        loadSound("sfx_laser", "/com/nhom27/skyforce/audio/sfx/sfx_laser.wav");
+        loadSound("sfx_explosion_enemy", "/com/nhom27/skyforce/audio/sfx/sfx_explosion_enemy.wav");
+        loadSound("sfx_zap", "/com/nhom27/skyforce/audio/sfx/sfx_zap.wav");
+        loadSound("sfx_laser_impact", "/com/nhom27/skyforce/audio/sfx/sfx_laser_impact.wav");
+        loadSound("sfx_item_health_pickup", "/com/nhom27/skyforce/audio/sfx/sfx_item_health_pickup.wav");
         System.out.println("Tải nhạc hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Font: ");
