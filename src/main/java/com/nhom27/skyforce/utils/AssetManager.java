@@ -197,6 +197,7 @@ public class AssetManager {
                 });
 
         loadImage("item_pill_blue", "/com/nhom27/skyforce/textures/powerups/item_pill_blue.png");
+        loadImage("item_powerup_lightning", "/com/nhom27/skyforce/textures/powerups/item_powerup_lightning.png");
 
         // Hiệu ứng
         loadImage("vfx_impact_blue_01", "/com/nhom27/skyforce/textures/vfx/vfx_impact_blue_01.png");
@@ -215,6 +216,7 @@ public class AssetManager {
         loadSound("sfx_zap", "/com/nhom27/skyforce/audio/sfx/sfx_zap.wav");
         loadSound("sfx_laser_impact", "/com/nhom27/skyforce/audio/sfx/sfx_laser_impact.wav");
         loadSound("sfx_item_health_pickup", "/com/nhom27/skyforce/audio/sfx/sfx_item_health_pickup.wav");
+        loadSound("sfx_item_powerup_lightning", "/com/nhom27/skyforce/audio/sfx/sfx_item_powerup_lightning.wav");
         System.out.println("Tải nhạc hoàn tất!");
 
         System.out.println("Đang tải các tài nguyên Font: ");

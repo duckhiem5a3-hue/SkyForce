@@ -18,7 +18,7 @@ public class Bullet extends GameObject {
         this.hitbox = new Rectangle(sizeX, sizeY);
         this.damage = damage;
 
-        double angle = 90 - Math.toDegrees(Math.atan2(-speedY, speedX));
+        double angle = Math.toDegrees(Math.atan2(speedY, speedX)) + 90; // Ảnh viên đạn hướng lên
         this.setPos(startX - sizeX / 2, startY - sizeY, angle);
     }
 

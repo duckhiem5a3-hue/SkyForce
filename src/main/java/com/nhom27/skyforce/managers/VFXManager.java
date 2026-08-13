@@ -23,6 +23,7 @@ import javafx.util.Duration;
 
 public class VFXManager {
     private Pane gamePane;
+    int currentFrame;
 
     public VFXManager(Pane gamePane) {
         this.gamePane = gamePane;
@@ -83,20 +84,17 @@ public class VFXManager {
         effectView.setLayoutY(y - targetHeight / 2);
         gamePane.getChildren().add(effectView);
 
-        // 3. Biến đếm khung hình hiện tại (dùng mảng 1 phần tử để lách luật lambda của
-        // Java)
-        int[] currentFrame = { 0 };
+        // 3. Biến đếm khung hình hiện tại
+        currentFrame = 0;
 
         // 4. Tạo Timeline lật trang
         // Tốc độ 16ms/frame tương đương khoảng 60 FPS. Bạn có thể tăng lên 20ms-30ms
         // nếu muốn nổ chậm hơn.
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16), event -> {
-            currentFrame[0]++;
-
-            if (currentFrame[0] < totalFrames) {
+            if (currentFrame < totalFrames) {
                 // Công thức toán học đỉnh cao để tính vị trí cột và hàng từ 1 con số
-                int col = currentFrame[0] % cols;
-                int row = currentFrame[0] / cols;
+                int col = currentFrame % cols;
+                int row = currentFrame / cols;
 
                 // Tính tọa độ X, Y của khung cửa sổ trên tấm ảnh lớn
                 double frameX = col * frameWidth;
@@ -105,6 +103,7 @@ public class VFXManager {
                 // Dịch chuyển khung cửa sổ
                 effectView.setViewport(new Rectangle2D(frameX, frameY, frameWidth, frameHeight));
             }
+            currentFrame++;
         }));
 
         // Cho Timeline chạy đúng 64 lần (64 khung hình)
@@ -163,6 +162,48 @@ public class VFXManager {
         gamePane.getChildren().add(screenOverlay);
 
         // 3. Hiệu ứng mờ dần FadeOut
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(800), screenOverlay);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> gamePane.getChildren().remove(screenOverlay));
+        fadeOut.play();
+    }
+
+    public void applyPlayerSeekerGlow(Player player) {
+        if (player.getView() == null)
+            return;
+
+        Effect originalEffect = player.getView().getEffect();
+        DropShadow glow = new DropShadow();
+        glow.setColor(Color.CYAN);
+        glow.setRadius(30);
+        glow.setSpread(0.7);
+
+        player.getView().setEffect(glow);
+
+        PauseTransition delay = new PauseTransition(Duration.millis(1200));
+        delay.setOnFinished(e -> {
+            player.getView().setEffect(originalEffect);
+        });
+        delay.play();
+    }
+
+    public void spawnScreenSeekerEffect() {
+        double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;
+        double height = (gamePane != null && gamePane.getHeight() > 0) ? gamePane.getHeight() : Main.HEIGHT;
+
+        Rectangle screenOverlay = new Rectangle(width, height);
+
+        RadialGradient vignetteGradient = new RadialGradient(
+                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.TRANSPARENT),
+                new Stop(0.4, Color.TRANSPARENT),
+                new Stop(1.0, Color.rgb(0, 225, 255, 0.75)));
+        screenOverlay.setFill(vignetteGradient);
+        screenOverlay.setMouseTransparent(true);
+
+        gamePane.getChildren().add(screenOverlay);
+
         FadeTransition fadeOut = new FadeTransition(Duration.millis(800), screenOverlay);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);

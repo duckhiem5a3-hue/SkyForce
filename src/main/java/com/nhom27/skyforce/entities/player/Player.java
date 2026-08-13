@@ -3,9 +3,10 @@ package com.nhom27.skyforce.entities.player;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nhom27.skyforce.audio.AudioManager;
+import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.weapons.Bullet;
+import com.nhom27.skyforce.entities.weapons.SeekerBullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.utils.AssetManager;
 
@@ -24,6 +25,7 @@ public class Player extends GameObject {
     protected long timeSinceLastBullet;
     private List<Bullet> bullets;
     protected long fireRate; // Thời gian chờ giữa các lần bắn (mili-giây)
+    protected long seekerBuffEndTime = 0;
 
     private int calculateXpRequirement(int lvl) {
         switch (lvl) {
@@ -184,13 +186,36 @@ public class Player extends GameObject {
         return bullets;
     }
 
+    public void activateSeekerBuff(long durationMs) {
+        this.seekerBuffEndTime = System.currentTimeMillis() + durationMs;
+    }
+
+    public boolean isSeekerActive() {
+        return System.currentTimeMillis() < seekerBuffEndTime;
+    }
+
+    public long getSeekerBuffTimeRemaining() {
+        return Math.max(0, seekerBuffEndTime - System.currentTimeMillis());
+    }
+
     public List<Bullet> fireBullet() {
+        return fireBullet(null);
+    }
+
+    public List<Bullet> fireBullet(List<EnemyObject> enemies) {
         List<Bullet> bulletsToSpawn = new ArrayList<>();
         double startX = x + sizeX / 2;
         double startY = y;
 
         Bullet b = new Bullet("bullet_player_1", startX, startY, speedBulletX, speedBulletY, damage);
         bulletsToSpawn.add(b);
+
+        if (isSeekerActive()) {
+            SeekerBullet leftSeeker = new SeekerBullet(startX - 15, startY, damage / 6, -1, enemies);
+            SeekerBullet rightSeeker = new SeekerBullet(startX + 15, startY, damage / 6, 1, enemies);
+            bulletsToSpawn.add(leftSeeker);
+            bulletsToSpawn.add(rightSeeker);
+        }
 
         addBullet(bulletsToSpawn);
         return bulletsToSpawn;

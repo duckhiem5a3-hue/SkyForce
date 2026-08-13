@@ -12,6 +12,7 @@ import com.nhom27.skyforce.entities.enemies.SineOrbitEnemy;
 import com.nhom27.skyforce.entities.enemies.StraightEnemy;
 import com.nhom27.skyforce.entities.items.PillPowerUp;
 import com.nhom27.skyforce.entities.items.PowerUp;
+import com.nhom27.skyforce.entities.items.SeekerPowerUp;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
@@ -111,7 +112,7 @@ public class GameManager {
             // Tự động bắn đạn của người chơi
             if (now - player.getTimeSinceLastBullet() >= player.getFireRate()) {
                 AudioManager.getInstance().playSound("sfx_laser");
-                for (Bullet bullet : player.fireBullet()) {
+                for (Bullet bullet : player.fireBullet(enemies)) {
                     gameLayoutPane.getChildren().add(bullet.getView());
                     if (isDebug && bullet.getHitbox() != null) {
                         bullet.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ mờ 30%
@@ -286,7 +287,7 @@ public class GameManager {
     }
 
     private void spawnPowerUp(double x, double y) {
-        PowerUp powerUp = new PillPowerUp(x, y);
+        PowerUp powerUp = random.nextBoolean() ? new PillPowerUp(x, y) : new SeekerPowerUp(x, y);
         powerUps.add(powerUp);
         if (powerUp.getView() != null) {
             gameLayoutPane.getChildren().add(powerUp.getView());
