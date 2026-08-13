@@ -281,6 +281,8 @@ public class GameManager {
                             enemy.getSizeY() * scaleFactor);
                     AudioManager.getInstance().playSound("sfx_explosion_enemy");
                     player.takeDamage(20);
+                    vfxManager.applyPlayerGlow(player, "damaged");
+                    vfxManager.spawnScreenEffect(false);
                 }
             }
 

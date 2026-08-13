@@ -115,30 +115,54 @@ public class VFXManager {
         timeline.play();
     }
 
-    public void applyPlayerHealGlow(Player player) {
-        // Kiểm tra an toàn xem player có hình ảnh không
-        if (player.getView() == null)
-            return;
+    public void applyPlayerGlow(Player player, String cases) {
+        if (player.getView() == null) return;
 
-        Effect originalEffect = player.getView().getEffect();
-        // Tạo hiệu ứng lóa láng xanh lá
+
+        if (player.getGlowTimer() != null) { //nếu đang ở trong 1 trong 3 trạng thái (đc buff/ hồi máu/nhận dame)
+            player.getGlowTimer().stop();    //cắt trạng thái (delay) đó, vì đã nhận được trạng thái mới (đồng nghĩa với bỏ hành động khi kết thúc đếm ngược) 
+        }
+
         DropShadow glow = new DropShadow();
-        glow.setColor(Color.LIMEGREEN);
+        double durations = 800; // default
+
+        if (cases.equals("heal")) {
+            glow.setColor(Color.LIMEGREEN);
+        } else if (cases.equals("damaged")) {
+            glow.setColor(Color.RED);
+        } else if (cases.equals("buffed")) {
+            glow.setColor(Color.GOLD);
+
+            /*Lấy thời gian trực tiếp từ Player. 
+            -> Nếu được gọi độc lập khi đang không trong trạng thái buff vàng để kích buff vàng mới:
+               -> Hàm activateSeekerBuff sẽ luôn đc gọi trước nó (trong class SeekerPowerUp, hàm activateSeekerBuff)
+                  và reset thời gian của getSeekerBuffTimeRemaining() về 10000
+
+            -> Nếu được gọi dưới tư cách 1 hàm đệ quy (bởi 1 hàm gọi hiệu ứng màu xanh/đỏ, khi mà 1 hàm gọi buff vàng trước đó vẫn chưa hết thời gian (dòng 157)
+               -> Lấy thời gian hiện có của hàm gọi buff vàng trước đó 
+            */
+            durations = player.getSeekerBuffTimeRemaining(); 
+        }
         glow.setRadius(25);
         glow.setSpread(0.6);
-
-        // Áp dụng hiệu ứng lên View của Player
         player.getView().setEffect(glow);
 
-        // Đặt đồng hồ đếm ngược 1s để gỡ hiệu ứng ra
-        PauseTransition delay = new PauseTransition(Duration.millis(1000));
+        PauseTransition delay = new PauseTransition(Duration.millis(durations));
         delay.setOnFinished(e -> {
-            player.getView().setEffect(originalEffect);
+            if (!cases.equals("buffed") && player.isSeekerActive()) {
+                applyPlayerGlow(player, "buffed"); 
+            } else {
+                player.getView().setEffect(null); //tiền đề cho trạng thái dòng 122
+            }
         });
+
+        // 2. LƯU TIMER MỚI VÀO PLAYER
+        player.setGlowTimer(delay);
         delay.play();
+
     }
 
-    public void spawnScreenHealEffect() {
+    public void spawnScreenEffect(boolean addHealth) {
         double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;
         double height = (gamePane != null && gamePane.getHeight() > 0) ? gamePane.getHeight() : Main.HEIGHT;
 
@@ -147,13 +171,25 @@ public class VFXManager {
 
         // 2. Tạo hiệu ứng viền xanh lá (Vignette) bằng RadialGradient
         // Trong suốt ở tâm, tỏa màu xanh lá mượt ra phía mép màn hình
+        //viền đỏ nếu nhận sát thương 
+
         RadialGradient vignetteGradient = new RadialGradient(
                 0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
                 new Stop(0.0, Color.TRANSPARENT),
                 new Stop(0.4, Color.TRANSPARENT),
                 new Stop(1.0, Color.rgb(46, 204, 113, 0.75)) // Màu xanh lá neon hồi máu
         );
-        screenOverlay.setFill(vignetteGradient);
+        RadialGradient vignetteGradient2 = new RadialGradient(
+                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.TRANSPARENT),
+                new Stop(0.4, Color.TRANSPARENT),
+                new Stop(1.0, Color.rgb(255, 60, 0, 0.75)) // Màu xanh lá neon hồi máu
+        );
+        if(addHealth) {
+            screenOverlay.setFill(vignetteGradient);
+        } else {
+            screenOverlay.setFill(vignetteGradient2);
+        }
 
         // Đảm bảo không cản trở tương tác chuột
         screenOverlay.setMouseTransparent(true);
@@ -169,24 +205,7 @@ public class VFXManager {
         fadeOut.play();
     }
 
-    public void applyPlayerSeekerGlow(Player player) {
-        if (player.getView() == null)
-            return;
 
-        Effect originalEffect = player.getView().getEffect();
-        DropShadow glow = new DropShadow();
-        glow.setColor(Color.CYAN);
-        glow.setRadius(30);
-        glow.setSpread(0.7);
-
-        player.getView().setEffect(glow);
-
-        PauseTransition delay = new PauseTransition(Duration.millis(1200));
-        delay.setOnFinished(e -> {
-            player.getView().setEffect(originalEffect);
-        });
-        delay.play();
-    }
 
     public void spawnScreenSeekerEffect() {
         double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;

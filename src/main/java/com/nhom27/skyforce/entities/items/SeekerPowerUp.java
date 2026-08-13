@@ -15,11 +15,12 @@ public class SeekerPowerUp extends PowerUp {
 
     @Override
     public void applyEffect(Player player, VFXManager vfxManager) {
-        player.activateSeekerBuff(10000);
+        //hàm này cũng reset luôn thời điểm hết buff mới của hàm getSeekerBuffTimeRemaining()
+        player.activateSeekerBuff(10000);     
         AudioManager.getInstance().playSound("sfx_item_powerup_lightning");
 
         if (vfxManager != null) {
-            vfxManager.applyPlayerSeekerGlow(player);
+            vfxManager.applyPlayerGlow(player, "buffed");
             vfxManager.spawnScreenSeekerEffect();
         }
     }

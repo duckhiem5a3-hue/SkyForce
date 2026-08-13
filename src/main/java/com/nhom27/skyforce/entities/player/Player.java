@@ -12,6 +12,7 @@ import com.nhom27.skyforce.utils.AssetManager;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.animation.PauseTransition;
 
 public class Player extends GameObject {
     protected int level;
@@ -31,6 +32,8 @@ public class Player extends GameObject {
     protected long seekerBuffEndTime = 0;
     protected long shieldBuffEndTime = 0;
     private ImageView shieldView;
+
+    protected PauseTransition currentGlowTimer;
 
     private int calculateXpRequirement(int lvl) {
         switch (lvl) {
@@ -124,7 +127,7 @@ public class Player extends GameObject {
         this.hitbox = AssetManager.getSpriteInfo("player_ship_1").getHitbox();
         this.setPos(startX, startY);
         this.bullets = new ArrayList<>();
-        
+
         Image shieldImg = AssetManager.getImage("char_shield");
         if (shieldImg != null) {
             this.shieldView = new ImageView(shieldImg);
@@ -203,14 +206,18 @@ public class Player extends GameObject {
     }
 
     public void activateSeekerBuff(long durationMs) {
+        // thời điểm kết thúc buff = thời điểm bắt đầu buff (hiện tại) cộng thời gian
+        // buff
         this.seekerBuffEndTime = System.currentTimeMillis() + durationMs;
     }
 
     public boolean isSeekerActive() {
+        // kiểm tra xem thời điểm hiện tại đã vượt quá thời điểm hết buff chưa
         return System.currentTimeMillis() < seekerBuffEndTime;
     }
 
     public long getSeekerBuffTimeRemaining() {
+        // tính thời gian còn lại (thời điểm hết buff trừ thời điểm hiện tại)
         return Math.max(0, seekerBuffEndTime - System.currentTimeMillis());
     }
 
@@ -249,6 +256,14 @@ public class Player extends GameObject {
     public void setPos(double currentX, double currentY) {
         super.setPos(currentX, currentY);
         updateShieldPosition();
+    }
+
+    public PauseTransition getGlowTimer() {
+        return this.currentGlowTimer;
+    }
+
+    public void setGlowTimer(PauseTransition timer) {
+        this.currentGlowTimer = timer;
     }
 
     public List<Bullet> fireBullet() {
@@ -290,7 +305,7 @@ public class Player extends GameObject {
                     shieldView.setVisible(true);
                 }
                 shieldView.setRotate(0);
-                
+
                 long remainingMs = getShieldBuffTimeRemaining();
                 if (remainingMs <= 3000) {
                     boolean blinkState = (System.currentTimeMillis() / 200) % 2 == 0;
@@ -298,7 +313,7 @@ public class Player extends GameObject {
                 } else {
                     shieldView.setOpacity(1.0);
                 }
-                
+
                 updateShieldPosition();
             }
         } else {
