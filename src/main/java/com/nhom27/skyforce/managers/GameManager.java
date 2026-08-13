@@ -13,6 +13,7 @@ import com.nhom27.skyforce.entities.enemies.StraightEnemy;
 import com.nhom27.skyforce.entities.items.PillPowerUp;
 import com.nhom27.skyforce.entities.items.PowerUp;
 import com.nhom27.skyforce.entities.items.SeekerPowerUp;
+import com.nhom27.skyforce.entities.items.ShieldPowerUp;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
@@ -75,6 +76,10 @@ public class GameManager {
 
         if (player.getView() != null) {
             gameLayoutPane.getChildren().add(player.getView());
+        }
+
+        if (player.getShieldView() != null) {
+            gameLayoutPane.getChildren().add(player.getShieldView());
         }
 
         // Bật debug hiển thị Hitbox của Player nếu isDebug = true
@@ -269,6 +274,12 @@ public class GameManager {
 
                 if (isColliding(enemy, player)) {
                     enemy.setAlive(false);
+                    double scaleFactor = 3.0;
+                    vfxManager.spawnExplosionSpriteSheet(enemy.getX() + enemy.getSizeX() / 2,
+                            enemy.getY() + enemy.getSizeY() / 2,
+                            enemy.getSizeX() * scaleFactor,
+                            enemy.getSizeY() * scaleFactor);
+                    AudioManager.getInstance().playSound("sfx_explosion_enemy");
                     player.takeDamage(20);
                 }
             }
@@ -287,10 +298,19 @@ public class GameManager {
     }
 
     private void spawnPowerUp(double x, double y) {
-        PowerUp powerUp = random.nextBoolean() ? new PillPowerUp(x, y) : new SeekerPowerUp(x, y);
+        int ramdomInt = random.nextInt(3);
+        PowerUp powerUp;
+        if (ramdomInt == 0) {
+            powerUp = new PillPowerUp(x, y);
+        } else if (ramdomInt == 1) {
+            powerUp = new SeekerPowerUp(x, y);
+        } else {
+            powerUp = new ShieldPowerUp(x, y);
+        }
         powerUps.add(powerUp);
         if (powerUp.getView() != null) {
             gameLayoutPane.getChildren().add(powerUp.getView());
+
             if (isDebug && powerUp.getHitbox() != null) {
                 powerUp.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ mờ 30%
                 powerUp.getHitbox().setStroke(Color.YELLOW); // Viền vàng

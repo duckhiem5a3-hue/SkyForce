@@ -10,6 +10,9 @@ import com.nhom27.skyforce.entities.weapons.SeekerBullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.utils.AssetManager;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 public class Player extends GameObject {
     protected int level;
     protected int currentXp;
@@ -26,6 +29,8 @@ public class Player extends GameObject {
     private List<Bullet> bullets;
     protected long fireRate; // Thời gian chờ giữa các lần bắn (mili-giây)
     protected long seekerBuffEndTime = 0;
+    protected long shieldBuffEndTime = 0;
+    private ImageView shieldView;
 
     private int calculateXpRequirement(int lvl) {
         switch (lvl) {
@@ -119,7 +124,14 @@ public class Player extends GameObject {
         this.hitbox = AssetManager.getSpriteInfo("player_ship_1").getHitbox();
         this.setPos(startX, startY);
         this.bullets = new ArrayList<>();
+        
+        Image shieldImg = AssetManager.getImage("char_shield");
+        if (shieldImg != null) {
+            this.shieldView = new ImageView(shieldImg);
+            this.shieldView.setVisible(false);
+        }
         setDefault();
+        updateShieldPosition();
     }
 
     public int getHealth() {
@@ -151,6 +163,10 @@ public class Player extends GameObject {
     }
 
     public void takeDamage(int damage) {
+        if (isShieldActive()) {
+            com.nhom27.skyforce.audio.AudioManager.getInstance().playSound("sfx_zap");
+            return;
+        }
         this.health -= damage;
         if (this.health <= 0) {
             this.health = 0;
@@ -198,6 +214,43 @@ public class Player extends GameObject {
         return Math.max(0, seekerBuffEndTime - System.currentTimeMillis());
     }
 
+    public void activateShieldBuff(long durationMs) {
+        this.shieldBuffEndTime = System.currentTimeMillis() + durationMs;
+        if (shieldView != null) {
+            shieldView.setVisible(true);
+            updateShieldPosition();
+        }
+    }
+
+    public boolean isShieldActive() {
+        return System.currentTimeMillis() < shieldBuffEndTime;
+    }
+
+    public long getShieldBuffTimeRemaining() {
+        return Math.max(0, shieldBuffEndTime - System.currentTimeMillis());
+    }
+
+    public ImageView getShieldView() {
+        return shieldView;
+    }
+
+    private void updateShieldPosition() {
+        if (shieldView != null && shieldView.getImage() != null) {
+            double shieldWidth = shieldView.getImage().getWidth();
+            double shieldHeight = shieldView.getImage().getHeight();
+            double shieldX = x + (sizeX - shieldWidth) / 2.0;
+            double shieldY = y + (sizeY - shieldHeight) / 2.0;
+            shieldView.setLayoutX(shieldX);
+            shieldView.setLayoutY(shieldY);
+        }
+    }
+
+    @Override
+    public void setPos(double currentX, double currentY) {
+        super.setPos(currentX, currentY);
+        updateShieldPosition();
+    }
+
     public List<Bullet> fireBullet() {
         return fireBullet(null);
     }
@@ -211,8 +264,8 @@ public class Player extends GameObject {
         bulletsToSpawn.add(b);
 
         if (isSeekerActive()) {
-            SeekerBullet leftSeeker = new SeekerBullet(startX - 15, startY, damage / 6, -1, enemies);
-            SeekerBullet rightSeeker = new SeekerBullet(startX + 15, startY, damage / 6, 1, enemies);
+            SeekerBullet leftSeeker = new SeekerBullet(startX - 15, startY, damage / 2, -1, enemies);
+            SeekerBullet rightSeeker = new SeekerBullet(startX + 15, startY, damage / 2, 1, enemies);
             bulletsToSpawn.add(leftSeeker);
             bulletsToSpawn.add(rightSeeker);
         }
@@ -231,5 +284,30 @@ public class Player extends GameObject {
 
     @Override
     public void update() {
+        if (isShieldActive()) {
+            if (shieldView != null) {
+                if (!shieldView.isVisible()) {
+                    shieldView.setVisible(true);
+                }
+                shieldView.setRotate(0);
+                
+                long remainingMs = getShieldBuffTimeRemaining();
+                if (remainingMs <= 3000) {
+                    boolean blinkState = (System.currentTimeMillis() / 200) % 2 == 0;
+                    shieldView.setOpacity(blinkState ? 1.0 : 0.2);
+                } else {
+                    shieldView.setOpacity(1.0);
+                }
+                
+                updateShieldPosition();
+            }
+        } else {
+            if (shieldView != null) {
+                if (shieldView.isVisible()) {
+                    shieldView.setVisible(false);
+                }
+                shieldView.setOpacity(1.0);
+            }
+        }
     }
 }

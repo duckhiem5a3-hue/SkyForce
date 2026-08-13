@@ -9,7 +9,7 @@ public class SeekerBullet extends Bullet {
     private List<EnemyObject> enemies;
     private EnemyObject targetEnemy;
     private double totalSpeed;
-    private double turnRate = 0.05;
+    private double turnRate = 0.1;
 
     public SeekerBullet(double startX, double startY, int damage, int side, List<EnemyObject> enemies) {
         super("bullet_player_2", startX, startY, side * 50.0, -100.0, damage);
