@@ -10,6 +10,8 @@ import com.nhom27.skyforce.entities.weapons.SeekerBullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.utils.AssetManager;
 
+import javafx.animation.PauseTransition;
+
 public class Player extends GameObject {
     protected int level;
     protected int currentXp;
@@ -26,7 +28,7 @@ public class Player extends GameObject {
     private List<Bullet> bullets;
     protected long fireRate; // Thời gian chờ giữa các lần bắn (mili-giây)
     protected long seekerBuffEndTime = 0;
-
+    protected PauseTransition currentGlowTimer;
     private int calculateXpRequirement(int lvl) {
         switch (lvl) {
             case 1:
@@ -187,17 +189,26 @@ public class Player extends GameObject {
     }
 
     public void activateSeekerBuff(long durationMs) {
-        this.seekerBuffEndTime = System.currentTimeMillis() + durationMs;
+        //thời điểm kết thúc buff = thời điểm bắt đầu buff (hiện tại) cộng thời gian buff 
+        this.seekerBuffEndTime = System.currentTimeMillis() + durationMs;    
     }
 
     public boolean isSeekerActive() {
-        return System.currentTimeMillis() < seekerBuffEndTime;
+        //kiểm tra xem thời điểm hiện tại đã vượt quá thời điểm hết buff chưa 
+        return System.currentTimeMillis() < seekerBuffEndTime; 
     }
 
     public long getSeekerBuffTimeRemaining() {
+        //tính thời gian còn lại (thời điểm hết buff trừ thời điểm hiện tại) 
         return Math.max(0, seekerBuffEndTime - System.currentTimeMillis());
     }
 
+    public PauseTransition getGlowTimer() {
+        return this.currentGlowTimer;
+    }
+    public void setGlowTimer(PauseTransition timer) {
+        this.currentGlowTimer = timer;
+    }
     public List<Bullet> fireBullet() {
         return fireBullet(null);
     }

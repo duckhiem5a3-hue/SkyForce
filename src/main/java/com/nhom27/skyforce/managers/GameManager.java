@@ -270,6 +270,8 @@ public class GameManager {
                 if (isColliding(enemy, player)) {
                     enemy.setAlive(false);
                     player.takeDamage(20);
+                    vfxManager.applyPlayerGlow(player, "damaged");
+                    vfxManager.spawnScreenEffect(false);
                 }
             }
 
