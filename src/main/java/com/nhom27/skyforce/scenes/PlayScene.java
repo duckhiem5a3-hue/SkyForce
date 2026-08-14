@@ -4,6 +4,7 @@ import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.managers.GameManager;
+import com.nhom27.skyforce.managers.PlayerDataManager;
 import com.nhom27.skyforce.ui.buttons.CustomButton;
 import com.nhom27.skyforce.utils.AssetManager;
 
@@ -43,6 +44,7 @@ public class PlayScene {
     private GameManager gameManager;
 
     private Label scoreLabel;
+    private Label goldLabel;
     private Label healthLabel;
     private ProgressBar healthBar;
     private Label levelLabel;
@@ -158,13 +160,18 @@ public class PlayScene {
         topLeftPanel.setAlignment(Pos.TOP_LEFT);
         topLeftPanel.setPickOnBounds(false);
 
-        // 2. Góc trên bên phải (Điểm số)
+        // 2. Góc trên bên phải (Điểm số & Vàng)
         scoreLabel = new Label("SCORE: 0");
-        scoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 22));
+        scoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 20));
         scoreLabel.setTextFill(Color.GOLD);
         scoreLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 5, 0.8, 0, 2));
 
-        HBox topRightPanel = new HBox(scoreLabel);
+        goldLabel = new Label("GOLD: 0");
+        goldLabel.setFont(AssetManager.getFont("font_kenvector_future", 18));
+        goldLabel.setTextFill(Color.YELLOW);
+        goldLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 5, 0.8, 0, 2));
+
+        VBox topRightPanel = new VBox(4, scoreLabel, goldLabel);
         topRightPanel.setAlignment(Pos.TOP_RIGHT);
         topRightPanel.setPickOnBounds(false);
 
@@ -265,6 +272,13 @@ public class PlayScene {
         }
     }
 
+    public void updateHUD(int score, int wave, int gold, Player player) {
+        if (goldLabel != null) {
+            goldLabel.setText("GOLD: " + gold);
+        }
+        updateHUD(score, wave, player);
+    }
+
     public void updateHUD(int score, int wave, Player player) {
         if (scoreLabel != null) {
             scoreLabel.setText("SCORE: " + score);
@@ -337,15 +351,19 @@ public class PlayScene {
     }
 
     public void showGameOverMenu(int score) {
+        showGameOverMenu(score, 0);
+    }
+
+    public void showGameOverMenu(int score, int goldGained) {
         AudioManager.getInstance().playMusicOnce("lose");
         gameOverOverlay = new StackPane();
         gameOverOverlay.setPrefSize(Main.WIDTH, Main.HEIGHT);
         gameOverOverlay.setBackground(
                 new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.75), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        VBox card = new VBox(20);
+        VBox card = new VBox(15);
         card.setAlignment(Pos.CENTER);
-        card.setMaxSize(400, 350);
+        card.setMaxSize(400, 400);
 
         LinearGradient cardGradient = new LinearGradient(
                 0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
@@ -364,6 +382,15 @@ public class PlayScene {
         finalScoreLabel.setTextFill(Color.WHITE);
         finalScoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 18));
 
+        Label goldGainedLabel = new Label("GOLD EARNED: +" + goldGained);
+        goldGainedLabel.setTextFill(Color.GOLD);
+        goldGainedLabel.setFont(AssetManager.getFont("font_kenvector_future", 16));
+
+        int totalGold = PlayerDataManager.getInstance().getTotalGold();
+        Label totalGoldLabel = new Label("TOTAL GOLD: " + totalGold);
+        totalGoldLabel.setTextFill(Color.YELLOW);
+        totalGoldLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
+
         CustomButton btnRestart = new CustomButton("PLAY AGAIN", "button_blue", () -> {
             gamePane.getChildren().remove(gameOverOverlay);
             AudioManager.getInstance().playMusic("background_play_music");
@@ -374,7 +401,7 @@ public class PlayScene {
             SceneManager.getInstance().switchScene("MenuScene");
         });
 
-        card.getChildren().addAll(titleLabel, finalScoreLabel, btnRestart, btnMainMenu);
+        card.getChildren().addAll(titleLabel, finalScoreLabel, goldGainedLabel, totalGoldLabel, btnRestart, btnMainMenu);
 
         gameOverOverlay.getChildren().add(card);
         gamePane.getChildren().add(gameOverOverlay);

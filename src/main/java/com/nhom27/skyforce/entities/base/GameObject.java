@@ -104,6 +104,7 @@ public abstract class GameObject {
             this.view = new ImageView();
         }
         this.isAlive = true;
+        setPos(startX, startY);
     }
 
     public abstract void update();

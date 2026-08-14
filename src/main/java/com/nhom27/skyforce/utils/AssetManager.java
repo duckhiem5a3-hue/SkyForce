@@ -142,7 +142,8 @@ public class AssetManager {
         loadImage("button_pause_blue", "/com/nhom27/skyforce/textures/menu/buttonPauseBlue.png");
 
         // Thực thể
-        loadSpriteInfo("player_ship_1", "/com/nhom27/skyforce/textures/entities/player/player_ship_1_blue.png",
+        loadSpriteInfo("player_ship_lv1_blue_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv1/player_ship_lv1_blue_idle.png",
                 new double[] {
                         46, 0,
                         52, 0,
@@ -156,13 +157,222 @@ public class AssetManager {
                         0, 60,
                         46, 0
                 });
-        loadImage("Spaceship1Blue", "/com/nhom27/skyforce/textures/Spaceship_01_BLUE.png");
+        loadSpriteInfo("player_ship_lv1_green_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv1/player_ship_lv1_green_idle.png",
+                new double[] {
+                        46, 0,
+                        52, 0,
+                        98, 60,
+                        98, 65,
+                        75, 65,
+                        62, 75,
+                        36, 75,
+                        23, 65,
+                        0, 65,
+                        0, 60,
+                        46, 0
+                });
+        loadSpriteInfo("player_ship_lv1_orange_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv1/player_ship_lv1_orange_idle.png",
+                new double[] {
+                        46, 0,
+                        52, 0,
+                        98, 60,
+                        98, 65,
+                        75, 65,
+                        62, 75,
+                        36, 75,
+                        23, 65,
+                        0, 65,
+                        0, 60,
+                        46, 0
+                });
+        loadSpriteInfo("player_ship_lv1_red_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv1/player_ship_lv1_red_idle.png",
+                new double[] {
+                        46, 0,
+                        52, 0,
+                        98, 60,
+                        98, 65,
+                        75, 65,
+                        62, 75,
+                        36, 75,
+                        23, 65,
+                        0, 65,
+                        0, 60,
+                        46, 0
+                });
+
+        loadSpriteInfo("player_ship_lv2_blue_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv2/player_ship_lv2_blue_idle.png",
+                new double[] {
+                        41, 0,
+                        57, 0,
+                        61, 26,
+                        85, 40,
+                        98, 32,
+                        95, 62,
+                        90, 59,
+                        62, 65,
+                        57, 74,
+                        41, 74,
+                        36, 65,
+                        8, 59,
+                        3, 62,
+                        0, 32,
+                        13, 40,
+                        37, 26
+                });
+        loadSpriteInfo("player_ship_lv2_green_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv2/player_ship_lv2_green_idle.png",
+                new double[] {
+                        41, 0,
+                        57, 0,
+                        61, 26,
+                        85, 40,
+                        98, 32,
+                        95, 62,
+                        90, 59,
+                        62, 65,
+                        57, 74,
+                        41, 74,
+                        36, 65,
+                        8, 59,
+                        3, 62,
+                        0, 32,
+                        13, 40,
+                        37, 26
+                });
+        loadSpriteInfo("player_ship_lv2_orange_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv2/player_ship_lv2_orange_idle.png",
+                new double[] {
+                        41, 0,
+                        57, 0,
+                        61, 26,
+                        85, 40,
+                        98, 32,
+                        95, 62,
+                        90, 59,
+                        62, 65,
+                        57, 74,
+                        41, 74,
+                        36, 65,
+                        8, 59,
+                        3, 62,
+                        0, 32,
+                        13, 40,
+                        37, 26
+                });
+        loadSpriteInfo("player_ship_lv2_red_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv2/player_ship_lv2_red_idle.png",
+                new double[] {
+                        41, 0,
+                        57, 0,
+                        61, 26,
+                        85, 40,
+                        98, 32,
+                        95, 62,
+                        90, 59,
+                        62, 65,
+                        57, 74,
+                        41, 74,
+                        36, 65,
+                        8, 59,
+                        3, 62,
+                        0, 32,
+                        13, 40,
+                        37, 26
+                });
+
+        loadSpriteInfo("player_ship_lv3_blue_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv3/player_ship_lv3_blue_idle.png",
+                new double[] {
+                        52, 0, // Mũi máy bay (Trái)
+                        60, 0, // Mũi máy bay (Phải)
+                        70, 20, // Khớp cánh trên (Phải)
+                        111, 41, // Mũi cánh ngoài (Phải) - Max Width
+                        94, 74, // Đuôi cánh ngoài (Phải)
+                        74, 66, // Khớp đuôi (Phải) - Phần lùi lõm vào
+                        68, 74, // Động cơ (Phải)
+                        44, 74, // Động cơ (Trái)
+                        38, 66, // Khớp đuôi (Trái) - Phần lùi lõm vào
+                        18, 74, // Đuôi cánh ngoài (Trái)
+                        1, 41, // Mũi cánh ngoài (Trái) - Min Width
+                        42, 20 // Khớp cánh trên (Trái)
+                });
+        loadSpriteInfo("player_ship_lv3_green_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv3/player_ship_lv3_green_idle.png",
+                new double[] {
+                        52, 0, // Mũi máy bay (Trái)
+                        60, 0, // Mũi máy bay (Phải)
+                        70, 20, // Khớp cánh trên (Phải)
+                        111, 41, // Mũi cánh ngoài (Phải) - Max Width
+                        94, 74, // Đuôi cánh ngoài (Phải)
+                        74, 66, // Khớp đuôi (Phải) - Phần lùi lõm vào
+                        68, 74, // Động cơ (Phải)
+                        44, 74, // Động cơ (Trái)
+                        38, 66, // Khớp đuôi (Trái) - Phần lùi lõm vào
+                        18, 74, // Đuôi cánh ngoài (Trái)
+                        1, 41, // Mũi cánh ngoài (Trái) - Min Width
+                        42, 20 // Khớp cánh trên (Trái)
+                });
+        loadSpriteInfo("player_ship_lv3_orange_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv3/player_ship_lv3_orange_idle.png",
+                new double[] {
+                        52, 0, // Mũi máy bay (Trái)
+                        60, 0, // Mũi máy bay (Phải)
+                        70, 20, // Khớp cánh trên (Phải)
+                        111, 41, // Mũi cánh ngoài (Phải) - Max Width
+                        94, 74, // Đuôi cánh ngoài (Phải)
+                        74, 66, // Khớp đuôi (Phải) - Phần lùi lõm vào
+                        68, 74, // Động cơ (Phải)
+                        44, 74, // Động cơ (Trái)
+                        38, 66, // Khớp đuôi (Trái) - Phần lùi lõm vào
+                        18, 74, // Đuôi cánh ngoài (Trái)
+                        1, 41, // Mũi cánh ngoài (Trái) - Min Width
+                        42, 20 // Khớp cánh trên (Trái)
+                });
+        loadSpriteInfo("player_ship_lv3_red_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv3/player_ship_lv3_red_idle.png",
+                new double[] {
+                        52, 0, // Mũi máy bay (Trái)
+                        60, 0, // Mũi máy bay (Phải)
+                        70, 20, // Khớp cánh trên (Phải)
+                        111, 41, // Mũi cánh ngoài (Phải) - Max Width
+                        94, 74, // Đuôi cánh ngoài (Phải)
+                        74, 66, // Khớp đuôi (Phải) - Phần lùi lõm vào
+                        68, 74, // Động cơ (Phải)
+                        44, 74, // Động cơ (Trái)
+                        38, 66, // Khớp đuôi (Trái) - Phần lùi lõm vào
+                        18, 74, // Đuôi cánh ngoài (Trái)
+                        1, 41, // Mũi cánh ngoài (Trái) - Min Width
+                        42, 20 // Khớp cánh trên (Trái)
+                });
+        loadSpriteInfo("player_ship_lv3_blue_idle",
+                "/com/nhom27/skyforce/textures/entities/player/lv3/player_ship_lv3_blue_idle.png",
+                new double[] {
+                        52, 0, // Mũi máy bay (Trái)
+                        60, 0, // Mũi máy bay (Phải)
+                        70, 20, // Khớp cánh trên (Phải)
+                        111, 41, // Mũi cánh ngoài (Phải) - Max Width
+                        94, 74, // Đuôi cánh ngoài (Phải)
+                        74, 66, // Khớp đuôi (Phải) - Phần lùi lõm vào
+                        68, 74, // Động cơ (Phải)
+                        44, 74, // Động cơ (Trái)
+                        38, 66, // Khớp đuôi (Trái) - Phần lùi lõm vào
+                        18, 74, // Đuôi cánh ngoài (Trái)
+                        1, 41, // Mũi cánh ngoài (Trái) - Min Width
+                        42, 20 // Khớp cánh trên (Trái)
+                });
+
         loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
         loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");
         loadImage("enemy_ship_3", "/com/nhom27/skyforce/textures/Spaceship_03_RED.png");
         loadImage("powerup", "/com/nhom27/skyforce/textures/Flame_01.png");
         loadImage("bullet_player_1", "/com/nhom27/skyforce/textures/entities/weapons/laserBlue01.png");
         loadImage("bullet_player_2", "/com/nhom27/skyforce/textures/entities/weapons/laserBlue02.png");
+        loadImage("bullet_player_3",
+                "/com/nhom27/skyforce/textures/kenney_space-shooter-remastered/PNG/Lasers/laserBlue08.png");
         loadSpriteInfo("enemy_straight", "/com/nhom27/skyforce/textures/entities/enemies/enemy_straight_black.png",
                 new double[] {
                         16, 0,
@@ -197,6 +407,8 @@ public class AssetManager {
                         30, 74,
                         20, 74
                 });
+
+        loadImage("item_coin_gold", "/com/nhom27/skyforce/textures/powerups/item_coin_gold.png");
         loadSpriteInfo("enemy_shooter","/com/nhom27/skyforce/textures/entities/enemies/enemy_shooter.png" , 
             new double[] {
                 27, 0,
