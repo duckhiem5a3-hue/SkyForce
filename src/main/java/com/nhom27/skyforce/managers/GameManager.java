@@ -10,6 +10,7 @@ import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.enemies.SineOrbitEnemy;
 import com.nhom27.skyforce.entities.enemies.StraightEnemy;
+import com.nhom27.skyforce.entities.items.CoinPowerUp;
 import com.nhom27.skyforce.entities.items.PillPowerUp;
 import com.nhom27.skyforce.entities.items.PowerUp;
 import com.nhom27.skyforce.entities.items.SeekerPowerUp;
@@ -39,12 +40,13 @@ public class GameManager {
     private int score;
     private int wave;
     private int nextWaveScore;
+    private int goldCollected;
     private boolean isPaused;
     private boolean isGameOver;
 
     private long lastEnemyWaveTime;
 
-    private boolean isDebug = false;
+    private boolean isDebug = true;
 
     public GameManager(Pane gameLayoutPane, PlayScene playScene) {
         this.gameLayoutPane = gameLayoutPane;
@@ -64,6 +66,7 @@ public class GameManager {
 
         lastEnemyWaveTime = 0;
         score = 0;
+        goldCollected = 0;
         wave = 1;
         nextWaveScore = 500;
         isPaused = false;
@@ -72,7 +75,7 @@ public class GameManager {
         this.vfxManager = new VFXManager(this.gameLayoutPane);
 
         // 1. Tạo đối tượng người chơi
-        player = new Player(Main.WIDTH * 0.5, Main.HEIGHT * 0.75);
+        player = Player.createPlayerForLevel(1, Main.WIDTH * 0.5, Main.HEIGHT * 0.75);
 
         if (player.getView() != null) {
             gameLayoutPane.getChildren().add(player.getView());
@@ -109,10 +112,50 @@ public class GameManager {
         };
     }
 
+    public void replacePlayerInstance(Player newPlayer) {
+        if (newPlayer == null || newPlayer == player)
+            return;
+        if (player != null) {
+            if (player.getView() != null) {
+                gameLayoutPane.getChildren().remove(player.getView());
+            }
+            if (player.getHitbox() != null) {
+                gameLayoutPane.getChildren().remove(player.getHitbox());
+            }
+            if (player.getShieldView() != null) {
+                gameLayoutPane.getChildren().remove(player.getShieldView());
+            }
+        }
+        player = newPlayer;
+        if (player.getView() != null) {
+            gameLayoutPane.getChildren().add(player.getView());
+        }
+        if (player.getShieldView() != null) {
+            gameLayoutPane.getChildren().add(player.getShieldView());
+        }
+        if (isDebug && player.getHitbox() != null) {
+            player.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
+            player.getHitbox().setStroke(Color.YELLOW);
+            player.getHitbox().setStrokeWidth(2);
+            if (!gameLayoutPane.getChildren().contains(player.getHitbox())) {
+                gameLayoutPane.getChildren().add(player.getHitbox());
+            }
+        }
+        // gameLayoutPane.setOnMouseMoved(e -> player.movePlayer(e.getX(), e.getY()));
+        // gameLayoutPane.setOnMouseDragged(e -> player.movePlayer(e.getX(), e.getY()));
+    }
+
     private void updateGame(long now) {
         // Cập nhật logic người chơi
         if (player != null && player.isAlive()) {
             player.update();
+
+            // Kiểm tra xem player có cần chuyển đổi subclass khi lên level không
+            Player currentLevelPlayer = Player.createPlayerForLevel(player.getLevel(), player.getX(), player.getY());
+            if (!currentLevelPlayer.getClass().equals(player.getClass())) {
+                currentLevelPlayer.copyStateFrom(player);
+                replacePlayerInstance(currentLevelPlayer);
+            }
 
             // Tự động bắn đạn của người chơi
             if (now - player.getTimeSinceLastBullet() >= player.getFireRate()) {
@@ -186,7 +229,7 @@ public class GameManager {
         handleCollisions();
 
         // Update HUD
-        playScene.updateHUD(score, wave, player);
+        playScene.updateHUD(score, wave, goldCollected, player);
 
         // Check Game Over
         if (player != null && (!player.isAlive() || player.getHealth() <= 0)) {
@@ -294,17 +337,22 @@ public class GameManager {
                 if (isColliding(player, powerUp)) {
                     powerUp.setAlive(false);
                     powerUp.applyEffect(player, vfxManager);
+                    if (powerUp instanceof CoinPowerUp coin) {
+                        addGoldCollected(coin.getValue());
+                    }
                 }
             }
         }
     }
 
     private void spawnPowerUp(double x, double y) {
-        int ramdomInt = random.nextInt(3);
+        int ramdomInt = random.nextInt(100);
         PowerUp powerUp;
-        if (ramdomInt == 0) {
+        if (ramdomInt < 50) {
+            powerUp = new CoinPowerUp(x, y);
+        } else if (ramdomInt < 70) {
             powerUp = new PillPowerUp(x, y);
-        } else if (ramdomInt == 1) {
+        } else if (ramdomInt < 85) {
             powerUp = new SeekerPowerUp(x, y);
         } else {
             powerUp = new ShieldPowerUp(x, y);
@@ -346,7 +394,17 @@ public class GameManager {
     private void handleGameOver() {
         isGameOver = true;
         stopGame();
-        playScene.showGameOverMenu(score);
+        PlayerDataManager.getInstance().addGold(goldCollected);
+        PlayerDataManager.getInstance().checkAndUpdateHighScore(score);
+        playScene.showGameOverMenu(score, goldCollected);
+    }
+
+    public void addGoldCollected(int amount) {
+        this.goldCollected += amount;
+    }
+
+    public int getGoldCollected() {
+        return goldCollected;
     }
 
     // Lifecycle API Methods
