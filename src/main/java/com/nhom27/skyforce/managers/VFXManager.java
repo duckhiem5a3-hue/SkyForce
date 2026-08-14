@@ -121,7 +121,7 @@ public class VFXManager {
 
         if (player.getGlowTimer() != null) { //nếu đang ở trong 1 trong 3 trạng thái (đc buff/ hồi máu/nhận dame)
             player.getGlowTimer().stop();    //cắt trạng thái (delay) đó, vì đã nhận được trạng thái mới (đồng nghĩa với bỏ hành động khi kết thúc đếm ngược) 
-        }
+        }                                    
 
         DropShadow glow = new DropShadow();
         double durations = 800; // default
@@ -130,6 +130,9 @@ public class VFXManager {
             glow.setColor(Color.LIMEGREEN);
         } else if (cases.equals("damaged")) {
             glow.setColor(Color.RED);
+        } else if (cases.equals("shield")) {
+            glow.setColor(Color.DEEPSKYBLUE);    
+            durations = 1200;
         } else if (cases.equals("buffed")) {
             glow.setColor(Color.GOLD);
 
@@ -143,8 +146,12 @@ public class VFXManager {
             */
             durations = player.getSeekerBuffTimeRemaining(); 
         }
+
         glow.setRadius(25);
+        if(cases == "shield") {glow.setRadius(35);}
         glow.setSpread(0.6);
+        if(cases == "shield") {glow.setSpread(0.8);}
+
         player.getView().setEffect(glow);
 
         PauseTransition delay = new PauseTransition(Duration.millis(durations));
@@ -156,7 +163,7 @@ public class VFXManager {
             }
         });
 
-        // 2. LƯU TIMER MỚI VÀO PLAYER
+        //lưu timer mới, trường hợp có hiệu ứng khác chen ngang thì hủy 
         player.setGlowTimer(delay);
         delay.play();
 
@@ -230,24 +237,7 @@ public class VFXManager {
         fadeOut.play();
     }
 
-    public void applyPlayerShieldGlow(Player player) {
-        if (player.getView() == null)
-            return;
-
-        Effect originalEffect = player.getView().getEffect();
-        DropShadow glow = new DropShadow();
-        glow.setColor(Color.DEEPSKYBLUE);
-        glow.setRadius(35);
-        glow.setSpread(0.8);
-
-        player.getView().setEffect(glow);
-
-        PauseTransition delay = new PauseTransition(Duration.millis(1200));
-        delay.setOnFinished(e -> {
-            player.getView().setEffect(originalEffect);
-        });
-        delay.play();
-    }
+    
 
     public void spawnScreenShieldEffect() {
         double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;

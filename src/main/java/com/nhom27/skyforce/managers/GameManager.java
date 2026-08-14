@@ -49,7 +49,7 @@ public class GameManager {
     private long lastEnemyWaveTime;
     private long lastShooterDeathTime;
 
-    private boolean isDebug = true;
+    private boolean isDebug = false;
 
     public GameManager(Pane gameLayoutPane, PlayScene playScene) {
         this.gameLayoutPane = gameLayoutPane;
@@ -96,6 +96,7 @@ public class GameManager {
                 gameLayoutPane.getChildren().add(player.getHitbox());
             }
         }
+
 
         // setup chuột
         // gameLayoutPane.setOnMouseMoved(e -> movePlayer(e.getX(), e.getY()));
@@ -174,10 +175,10 @@ public class GameManager {
             }
         }
         //kiểm tra và cập nhật cái chết của kẻ địch shooterEnemy
-        if (shooterEnemy != null && !shooterEnemy.isAlive()) {
-            //shooterEnemy cũng là 1 thành phần tham chiếu tới list enemies nên cũng được cập nhật trạng thái isAlive
+        if (shooterEnemy != null && !shooterEnemy.isAlive()) {    
+            gameLayoutPane.getChildren().remove(shooterEnemy.getCloseBox());
             lastShooterDeathTime = System.currentTimeMillis(); 
-            shooterEnemy = null; // Reset tham chiếu về null sau khi bị xóa khỏi list (coi như không tồn tại)
+            shooterEnemy = null;                                 // Reset tham chiếu về null sau khi bị xóa khỏi list (coi như không tồn tại)
         }
 
         // Cập nhật PowerUps
@@ -212,7 +213,7 @@ public class GameManager {
             //shooter spawning is prioritized
             if (shooterEnemy == null  &&  System.currentTimeMillis() - lastShooterDeathTime >= 15000) { 
                 double spawnX = Main.WIDTH / 2 - ShooterEnemy.sizeX / 2;
-                shooterEnemy = new ShooterEnemy(spawnX, 100); 
+                shooterEnemy = new ShooterEnemy(spawnX, ShooterEnemy.startHeight); 
                 newEnemy =  shooterEnemy;
             } 
             else if (spawnType == 0) {
@@ -236,6 +237,12 @@ public class GameManager {
                     newEnemy.getHitbox().setStrokeWidth(2);
                     gameLayoutPane.getChildren().add(newEnemy.getHitbox());
                 }
+                if(newEnemy instanceof ShooterEnemy shooterEnemy) {
+                    shooterEnemy.getCloseBox().setFill(Color.rgb(255, 0, 0, 0.3));
+                    shooterEnemy.getCloseBox().setStroke(Color.YELLOW);
+                    shooterEnemy.getCloseBox().setStroke(Color.YELLOW);
+                    gameLayoutPane.getChildren().add(shooterEnemy.getCloseBox());
+                }
             }
             lastEnemyWaveTime = now;
         }
@@ -249,6 +256,27 @@ public class GameManager {
 
     // Xử lý va chạm
     private void handleCollisions() {
+        // 0. Shooter Enemy và Player Bullet (kiểm tra đến gần để đổi hướng né) 
+        if(shooterEnemy != null && shooterEnemy.isAlive() && shooterEnemy.getCanDodge()) {
+            double shortestVerticalDistance = 600;
+            boolean bulletInRange =false;
+            for (Bullet bullet : player.getBullets()) {
+                if(shooterEnemy.getCloseBox().getBoundsInParent().intersects(bullet.getHitbox().getBoundsInParent())) {
+                    bulletInRange = true;
+                    double V_distance = bullet.getY() - shooterEnemy.getY();
+                    if(V_distance < shortestVerticalDistance  && V_distance >0) {
+                        shortestVerticalDistance = V_distance;
+                        if(bullet.getX() < shooterEnemy.getX()) { //đạn nằm bên trái. Rẽ phải
+                            shooterEnemy.setDirection(true);
+                        } else {
+                            shooterEnemy.setDirection(false);
+                        }
+                        shooterEnemy.lockDodge();
+                        shooterEnemy.setCoolDown();
+                    }
+                }
+            }
+        }
         // 1. Player Bullets và Enemies
         for (Bullet bullet : player.getBullets()) {
             if (!bullet.isAlive())
@@ -314,6 +342,7 @@ public class GameManager {
                 }
             }
         }
+        
     }
 
     private void spawnPowerUp(double x, double y) {
