@@ -297,12 +297,14 @@ public class GameManager {
         }
     }
 
+
     // Xử lý va chạm
     private void handleCollisions() {
         // 0. Shooter Enemy và Player Bullet (kiểm tra đến gần để đổi hướng né) 
         if(shooterEnemy != null && shooterEnemy.isAlive() && shooterEnemy.getCanDodge()) {
             double shortestVerticalDistance = 600;
-            boolean bulletInRange =false;
+            boolean bulletInRange = false;
+            boolean closestBulletOnRight = true;
             for (Bullet bullet : player.getBullets()) {
                 if(shooterEnemy.getCloseBox().getBoundsInParent().intersects(bullet.getHitbox().getBoundsInParent())) {
                     bulletInRange = true;
@@ -310,13 +312,24 @@ public class GameManager {
                     if(V_distance < shortestVerticalDistance  && V_distance >0) {
                         shortestVerticalDistance = V_distance;
                         if(bullet.getX() < shooterEnemy.getX()) { //đạn nằm bên trái. Rẽ phải
-                            shooterEnemy.setDirection(true);
+                            closestBulletOnRight = false;
                         } else {
-                            shooterEnemy.setDirection(false);
+                            closestBulletOnRight = true;
                         }
-                        shooterEnemy.lockDodge();
-                        shooterEnemy.setCoolDown();
                     }
+                }
+            }
+            if(bulletInRange) {      //có phát hiện đạn thì mới nghĩ tới chuyện đổi hướng
+                //nếu đã đi ra xa sẵn thì k cần đổi hướng
+                if(closestBulletOnRight && !shooterEnemy.getDirection() ||  !closestBulletOnRight && shooterEnemy.getDirection()) {} 
+                else  {
+                    if(closestBulletOnRight) {
+                        shooterEnemy.setDirection(false);
+                    } else {
+                        shooterEnemy.setDirection(true);
+                    }
+                    shooterEnemy.lockDodge();
+                    shooterEnemy.setCoolDown();
                 }
             }
         }

@@ -35,6 +35,9 @@ public class ShooterEnemy extends EnemyObject {
     public void setDirection(boolean direction) {
         this.direction = direction;
     }
+    public boolean getDirection() {
+        return direction;
+    }
     public double getDodgeCooldown() {
         return this.dodgeCooldown;
     }
