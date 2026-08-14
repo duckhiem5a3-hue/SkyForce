@@ -50,6 +50,7 @@ public class PlayScene {
     private ProgressBar xpBar;
     private Label waveLabel;
     private Label buffStatusLabel;
+    private HBox buffContainer;
 
     public PlayScene() {
         AudioManager.getInstance().playMusic("background_play_music");
@@ -143,12 +144,17 @@ public class PlayScene {
         buffStatusLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
         buffStatusLabel.setTextFill(Color.YELLOW);
 
+        buffContainer = new HBox(8);
+        buffContainer.setAlignment(Pos.CENTER_LEFT);
+        buffContainer.setPadding(new Insets(4, 0, 0, 0));
+        buffContainer.setPickOnBounds(false);
+
         // ==========================================
         // LẮP RÁP CÁC PHÂN VÙNG CHÍNH LÊN MÀN HÌNH
         // ==========================================
 
         // 1. Góc trên bên trái
-        VBox topLeftPanel = new VBox(playerInfoRow, buffStatusLabel);
+        VBox topLeftPanel = new VBox(playerInfoRow, buffContainer);
         topLeftPanel.setAlignment(Pos.TOP_LEFT);
         topLeftPanel.setPickOnBounds(false);
 
@@ -283,6 +289,48 @@ public class PlayScene {
                     double xpPercent = (double) player.getCurrentXp() / player.getXpToNextLevel();
                     xpBar.setProgress(Math.max(0, Math.min(1.0, xpPercent)));
                     xpLabel.setText("XP: " + player.getCurrentXp() + " / " + player.getXpToNextLevel());
+                }
+            }
+
+            if (buffContainer != null) {
+                buffContainer.getChildren().clear();
+                long nowMs = System.currentTimeMillis();
+                boolean blinkState = (nowMs / 250) % 2 == 0;
+
+                if (player.isShieldActive()) {
+                    Image iconImg = AssetManager.getImage("ui_icon_shield_active");
+                    if (iconImg != null) {
+                        ImageView iconView = new ImageView(iconImg);
+                        iconView.setFitWidth(32);
+                        iconView.setFitHeight(32);
+                        iconView.setPreserveRatio(true);
+
+                        long shieldMs = player.getShieldBuffTimeRemaining();
+                        if (shieldMs <= 3000) {
+                            iconView.setOpacity(blinkState ? 1.0 : 0.15);
+                        } else {
+                            iconView.setOpacity(1.0);
+                        }
+                        buffContainer.getChildren().add(iconView);
+                    }
+                }
+
+                if (player.isSeekerActive()) {
+                    Image iconImg = AssetManager.getImage("ui_icon_lightning_active");
+                    if (iconImg != null) {
+                        ImageView iconView = new ImageView(iconImg);
+                        iconView.setFitWidth(32);
+                        iconView.setFitHeight(32);
+                        iconView.setPreserveRatio(true);
+
+                        long seekerMs = player.getSeekerBuffTimeRemaining();
+                        if (seekerMs <= 3000) {
+                            iconView.setOpacity(blinkState ? 1.0 : 0.15);
+                        } else {
+                            iconView.setOpacity(1.0);
+                        }
+                        buffContainer.getChildren().add(iconView);
+                    }
                 }
             }
         }

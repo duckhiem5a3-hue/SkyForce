@@ -86,6 +86,8 @@ public class AssetManager {
         if (!sounds.containsKey(name)) {
             URL musicUrl = AssetManager.class.getResource(path);
             if (musicUrl != null) {
+                System.out.println("Đang chuẩn bị load âm thanh: " + path); // path là tên cái biến chứa đường dẫn file
+                // Code cũ: AudioClip clip = new AudioClip(path);
                 AudioClip sound = new AudioClip(musicUrl.toString());
                 sounds.put(name, sound);
                 System.out.println("Tải thành công âm thanh: " + name);
@@ -211,6 +213,11 @@ public class AssetManager {
         );
         loadImage("item_pill_blue", "/com/nhom27/skyforce/textures/powerups/item_pill_blue.png");
         loadImage("item_powerup_lightning", "/com/nhom27/skyforce/textures/powerups/item_powerup_lightning.png");
+        loadImage("item_shield", "/com/nhom27/skyforce/textures/powerups/item_shield.png");
+        loadImage("char_shield", "/com/nhom27/skyforce/textures/entities/player/char_shield.png");
+
+        loadImage("ui_icon_shield_active", "/com/nhom27/skyforce/textures/ui/ui_icon_shield_active.png");
+        loadImage("ui_icon_lightning_active", "/com/nhom27/skyforce/textures/ui/ui_icon_lightning_active.png");
 
         // Hiệu ứng
         loadImage("vfx_impact_blue_01", "/com/nhom27/skyforce/textures/vfx/vfx_impact_blue_01.png");

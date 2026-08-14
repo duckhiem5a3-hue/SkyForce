@@ -229,4 +229,46 @@ public class VFXManager {
         fadeOut.setOnFinished(e -> gamePane.getChildren().remove(screenOverlay));
         fadeOut.play();
     }
+
+    public void applyPlayerShieldGlow(Player player) {
+        if (player.getView() == null)
+            return;
+
+        Effect originalEffect = player.getView().getEffect();
+        DropShadow glow = new DropShadow();
+        glow.setColor(Color.DEEPSKYBLUE);
+        glow.setRadius(35);
+        glow.setSpread(0.8);
+
+        player.getView().setEffect(glow);
+
+        PauseTransition delay = new PauseTransition(Duration.millis(1200));
+        delay.setOnFinished(e -> {
+            player.getView().setEffect(originalEffect);
+        });
+        delay.play();
+    }
+
+    public void spawnScreenShieldEffect() {
+        double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;
+        double height = (gamePane != null && gamePane.getHeight() > 0) ? gamePane.getHeight() : Main.HEIGHT;
+
+        Rectangle screenOverlay = new Rectangle(width, height);
+
+        RadialGradient vignetteGradient = new RadialGradient(
+                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.TRANSPARENT),
+                new Stop(0.4, Color.TRANSPARENT),
+                new Stop(1.0, Color.rgb(0, 191, 255, 0.8)));
+        screenOverlay.setFill(vignetteGradient);
+        screenOverlay.setMouseTransparent(true);
+
+        gamePane.getChildren().add(screenOverlay);
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(800), screenOverlay);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> gamePane.getChildren().remove(screenOverlay));
+        fadeOut.play();
+    }
 }
