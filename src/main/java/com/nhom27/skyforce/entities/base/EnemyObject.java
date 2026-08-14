@@ -1,10 +1,15 @@
 package com.nhom27.skyforce.entities.base;
 
-public abstract class EnemyObject extends GameObject {
-    protected int health;
+import com.nhom27.skyforce.main.Main;
 
+public abstract class EnemyObject extends GameObject {
+    public static int sizeX = Main.WIDTH * 7 / 100;
+    public static int sizeY = Main.WIDTH * 7 / 100;
+    protected int health;
+    protected boolean debug;
     public EnemyObject(String nameImage, double startX, double startY) {
         super(nameImage, startX, startY);
+        debug = true;
     }
 
     public int getHealth() {

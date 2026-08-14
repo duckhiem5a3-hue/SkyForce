@@ -409,6 +409,20 @@ public class AssetManager {
                 });
 
         loadImage("item_coin_gold", "/com/nhom27/skyforce/textures/powerups/item_coin_gold.png");
+        loadSpriteInfo("enemy_shooter","/com/nhom27/skyforce/textures/entities/enemies/enemy_shooter.png" , 
+            new double[] {
+                27, 0,
+                1, 28,
+                6, 82,
+                27, 84,
+                30, 145,
+                61, 143,
+                60, 86,
+                85, 79,
+                92, 35,
+                69, 1
+            }
+        );
         loadImage("item_pill_blue", "/com/nhom27/skyforce/textures/powerups/item_pill_blue.png");
         loadImage("item_powerup_lightning", "/com/nhom27/skyforce/textures/powerups/item_powerup_lightning.png");
         loadImage("item_shield", "/com/nhom27/skyforce/textures/powerups/item_shield.png");
