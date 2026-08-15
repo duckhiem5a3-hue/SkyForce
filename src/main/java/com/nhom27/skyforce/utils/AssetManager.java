@@ -373,6 +373,10 @@ public class AssetManager {
         loadImage("bullet_player_2", "/com/nhom27/skyforce/textures/entities/weapons/laserBlue02.png");
         loadImage("bullet_player_3",
                 "/com/nhom27/skyforce/textures/kenney_space-shooter-remastered/PNG/Lasers/laserBlue08.png");
+        loadImage("bullet_enemy_1", "/com/nhom27/skyforce/textures/entities/weapons/laserRed12.png");
+        loadImage("bullet_enemy_2","/com/nhom27/skyforce/textures/entities/weapons/laserRed16.png");
+        loadImage("bullet_enemy_3","/com/nhom27/skyforce/textures/entities/weapons/laserRed16.png");
+        
         loadSpriteInfo("enemy_straight", "/com/nhom27/skyforce/textures/entities/enemies/enemy_straight_black.png",
                 new double[] {
                         16, 0,
