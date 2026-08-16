@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Polygon;
 
 public abstract class Player extends GameObject {
+    protected String skinId = "blue";
     protected int level;
     protected int currentXp;
     protected int xpToNextLevel;
@@ -34,6 +35,7 @@ public abstract class Player extends GameObject {
     protected long fireRate; // ms
     protected long seekerBuffEndTime = 0;
     protected long shieldBuffEndTime = 0;
+    protected int shotCount = 0;
     private ImageView shieldView;
 
     protected PauseTransition currentGlowTimer;
@@ -59,15 +61,39 @@ public abstract class Player extends GameObject {
     }
 
     public static Player createPlayerForLevel(int level, double x, double y) {
+        String skin = com.nhom27.skyforce.managers.PlayerDataManager.getInstance().getEquippedSkin();
+        return createPlayerForLevel(level, x, y, skin);
+    }
+
+    public static Player createPlayerForLevel(int level, double x, double y, String skinId) {
         switch (level) {
             case 1:
-                return new PlayerLevel1(x, y);
+                return new PlayerLevel1(x, y, skinId);
             case 2:
-                return new PlayerLevel2(x, y);
+                return new PlayerLevel2(x, y, skinId);
             case 3:
             default:
-                return new PlayerLevel3(x, y);
+                return new PlayerLevel3(x, y, skinId);
         }
+    }
+
+    public String getSkinId() {
+        return skinId;
+    }
+
+    public void setSkinId(String skinId) {
+        if (skinId != null && !skinId.isEmpty()) {
+            this.skinId = skinId;
+            this.currentBulletTexture = getBulletTexture();
+        }
+    }
+
+    public String getBulletTexture() {
+        return "bullet_player_" + (skinId != null && !skinId.isEmpty() ? skinId : "blue");
+    }
+
+    public String getSeekerBulletTexture() {
+        return "bullet_player_seeker_lv" + Math.min(Math.max(level, 1), 3);
     }
 
     public int calculateXpRequirement(int lvl) {
@@ -83,6 +109,8 @@ public abstract class Player extends GameObject {
 
     public void copyStateFrom(Player oldPlayer) {
         if (oldPlayer == null) return;
+        this.skinId = oldPlayer.skinId;
+        this.currentBulletTexture = oldPlayer.getBulletTexture();
         this.level = oldPlayer.level;
         this.currentXp = oldPlayer.currentXp;
         this.xpToNextLevel = oldPlayer.xpToNextLevel;
@@ -91,6 +119,7 @@ public abstract class Player extends GameObject {
         this.timeSinceLastBullet = oldPlayer.timeSinceLastBullet;
         this.seekerBuffEndTime = oldPlayer.seekerBuffEndTime;
         this.shieldBuffEndTime = oldPlayer.shieldBuffEndTime;
+        this.shotCount = oldPlayer.shotCount;
         this.bullets = oldPlayer.bullets;
         this.currentGlowTimer = oldPlayer.currentGlowTimer;
         this.setPos(oldPlayer.getX(), oldPlayer.getY());
@@ -116,7 +145,7 @@ public abstract class Player extends GameObject {
         }
 
         if (this.level > oldLevel) {
-            Player upgradedPlayer = createPlayerForLevel(this.level, x, y);
+            Player upgradedPlayer = createPlayerForLevel(this.level, x, y, skinId);
             upgradedPlayer.copyStateFrom(this);
             return upgradedPlayer;
         }
@@ -199,10 +228,16 @@ public abstract class Player extends GameObject {
 
     public void activateSeekerBuff(long durationMs) {
         this.seekerBuffEndTime = System.currentTimeMillis() + durationMs;
+        this.shotCount = 0;
     }
 
     public boolean isSeekerActive() {
         return System.currentTimeMillis() < seekerBuffEndTime;
+    }
+
+    public boolean shouldFireSeeker() {
+        if (!isSeekerActive()) return false;
+        return (shotCount > 0 && shotCount % 4 == 0);
     }
 
     public long getSeekerBuffTimeRemaining() {

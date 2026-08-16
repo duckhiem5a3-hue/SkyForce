@@ -23,27 +23,40 @@ import javafx.util.Duration;
 
 public class VFXManager {
     private Pane gamePane;
-    int currentFrame;
 
     public VFXManager(Pane gamePane) {
         this.gamePane = gamePane;
     }
 
-    // Hiệu ứng tia lửa khi đạn trúng quái
-    public void spawnImpactEffect(double x, double y) {
-        ImageView effectView = new ImageView(AssetManager.getImage("vfx_impact_blue_01"));
+    // Hiệu ứng tia lửa khi đạn trúng quái (tự động đổi theo skin của người chơi)
+    public void spawnImpactEffect(double x, double y, String skinId) {
+        String skin = (skinId != null && !skinId.isEmpty()) ? skinId.toLowerCase() : "blue";
+        Image img1 = AssetManager.getImage("vfx_hit_player_" + skin + "_1");
+        Image img2 = AssetManager.getImage("vfx_hit_player_" + skin + "_2");
+
+        if (img1 == null) {
+            img1 = AssetManager.getImage("vfx_hit_player_blue_1");
+            img2 = AssetManager.getImage("vfx_hit_player_blue_2");
+        }
+
+        if (img1 == null) return;
+
+        ImageView effectView = new ImageView(img1);
 
         // Tự động căn tâm ảnh vào đúng tọa độ x, y
-        double width = effectView.getImage().getWidth();
-        double height = effectView.getImage().getHeight();
+        double width = img1.getWidth();
+        double height = img1.getHeight();
         effectView.setLayoutX(x - width / 2);
         effectView.setLayoutY(y - height / 2);
 
         gamePane.getChildren().add(effectView);
 
+        Image finalImg2 = img2;
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.millis(50), e -> {
-                    effectView.setImage(AssetManager.getImage("vfx_impact_blue_02"));
+                    if (finalImg2 != null) {
+                        effectView.setImage(finalImg2);
+                    }
                 }),
                 new KeyFrame(Duration.millis(80), e -> {
                     effectView.setScaleX(1.5); // Phóng to gấp rưỡi
@@ -57,62 +70,57 @@ public class VFXManager {
         timeline.play();
     }
 
+    public void spawnImpactEffect(double x, double y) {
+        spawnImpactEffect(x, y, "blue");
+    }
+
+    // Lớp quản lý 1 vụ nổ riêng biệt (chuẩn Hướng đối tượng OOP cơ bản)
+    private static class ExplosionAnimation {
+        private int currentFrame = 0;
+
+        public ExplosionAnimation(Pane gamePane, Image sheet, double x, double y, double targetWidth, double targetHeight) {
+            int cols = 8;
+            int rows = 8;
+            int totalFrames = cols * rows;
+
+            double frameWidth = sheet.getWidth() / cols;
+            double frameHeight = sheet.getHeight() / rows;
+
+            ImageView effectView = new ImageView(sheet);
+            effectView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+            effectView.setFitWidth(targetWidth);
+            effectView.setFitHeight(targetHeight);
+            effectView.setLayoutX(x - targetWidth / 2);
+            effectView.setLayoutY(y - targetHeight / 2);
+
+            gamePane.getChildren().add(effectView);
+
+            Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16), event -> {
+                if (currentFrame < totalFrames) {
+                    int col = currentFrame % cols;
+                    int row = currentFrame / cols;
+
+                    double frameX = col * frameWidth;
+                    double frameY = row * frameHeight;
+
+                    effectView.setViewport(new Rectangle2D(frameX, frameY, frameWidth, frameHeight));
+                }
+                currentFrame++;
+            }));
+
+            timeline.setCycleCount(totalFrames);
+            timeline.setOnFinished(e -> gamePane.getChildren().remove(effectView));
+            timeline.play();
+        }
+    }
+
     public void spawnExplosionSpriteSheet(double x, double y, double targetWidth, double targetHeight) {
         Image sheet = AssetManager.getImage("vfx_explosion_8x8_sheet");
         if (sheet == null)
             return; // Tránh lỗi nếu chưa có ảnh
 
-        // 1. Khai báo thông số của Sprite Sheet
-        int cols = 8;
-        int rows = 8;
-        int totalFrames = cols * rows; // Tổng cộng 64 khung hình
-
-        // 2. Tính toán kích thước của 1 khung hình (1 ô vuông)
-        double frameWidth = sheet.getWidth() / cols;
-        double frameHeight = sheet.getHeight() / rows;
-
-        ImageView effectView = new ImageView(sheet);
-
-        // Cắt lấy ô đầu tiên (cột 0, hàng 0) để hiển thị lúc mới sinh ra
-        effectView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
-
-        effectView.setFitWidth(targetWidth);
-        effectView.setFitHeight(targetHeight);
-
-        // Căn tâm vụ nổ vào tọa độ x, y
-        effectView.setLayoutX(x - targetWidth / 2);
-        effectView.setLayoutY(y - targetHeight / 2);
-        gamePane.getChildren().add(effectView);
-
-        // 3. Biến đếm khung hình hiện tại
-        currentFrame = 0;
-
-        // 4. Tạo Timeline lật trang
-        // Tốc độ 16ms/frame tương đương khoảng 60 FPS. Bạn có thể tăng lên 20ms-30ms
-        // nếu muốn nổ chậm hơn.
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16), event -> {
-            if (currentFrame < totalFrames) {
-                // Công thức toán học đỉnh cao để tính vị trí cột và hàng từ 1 con số
-                int col = currentFrame % cols;
-                int row = currentFrame / cols;
-
-                // Tính tọa độ X, Y của khung cửa sổ trên tấm ảnh lớn
-                double frameX = col * frameWidth;
-                double frameY = row * frameHeight;
-
-                // Dịch chuyển khung cửa sổ
-                effectView.setViewport(new Rectangle2D(frameX, frameY, frameWidth, frameHeight));
-            }
-            currentFrame++;
-        }));
-
-        // Cho Timeline chạy đúng 64 lần (64 khung hình)
-        timeline.setCycleCount(totalFrames);
-
-        // Khi chạy xong toàn bộ, tự động xóa ảnh để dọn rác bộ nhớ
-        timeline.setOnFinished(e -> gamePane.getChildren().remove(effectView));
-
-        timeline.play();
+        // Mỗi lần nổ sẽ tạo ra 1 đối tượng vụ nổ riêng biệt
+        new ExplosionAnimation(gamePane, sheet, x, y, targetWidth, targetHeight);
     }
 
     public void applyPlayerGlow(Player player, String cases) {

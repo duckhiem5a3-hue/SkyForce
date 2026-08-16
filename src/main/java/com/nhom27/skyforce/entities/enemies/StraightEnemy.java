@@ -4,10 +4,7 @@ import java.util.Random;
 
 import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.main.Main;
-import com.nhom27.skyforce.managers.GameManager;
 import com.nhom27.skyforce.utils.AssetManager;
-
-import javafx.scene.paint.Color;
 
 public class StraightEnemy extends EnemyObject {
     public static int sizeX = Main.WIDTH * 7 / 100;
@@ -30,7 +27,8 @@ public class StraightEnemy extends EnemyObject {
         this(startX, startY);
         this.speedY = speedY;
     }
-    @Override 
+
+    @Override
     protected void checkDeath() {
         if (this.health <= 0) {
             this.isAlive = false;

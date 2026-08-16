@@ -3,7 +3,9 @@ package com.nhom27.skyforce.managers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 public class PlayerDataManager {
     private static PlayerDataManager instance;
@@ -14,6 +16,8 @@ public class PlayerDataManager {
 
     private static final String KEY_TOTAL_GOLD = "total_gold";
     private static final String KEY_HIGH_SCORE = "high_score";
+    private static final String KEY_EQUIPPED_SKIN = "equipped_skin";
+    private static final String KEY_UNLOCKED_SKINS = "unlocked_skins";
 
     private PlayerDataManager() {
         props = new Properties();
@@ -77,7 +81,6 @@ public class PlayerDataManager {
         return Integer.parseInt(props.getProperty(KEY_HIGH_SCORE, "0"));
     }
 
-    // Hàm này rất hay: Bạn cứ ném điểm khi qua màn vào đây, nó tự kiểm tra
     public void checkAndUpdateHighScore(int currentScore) {
         int highestScore = getHighScore();
         if (currentScore > highestScore) {
@@ -85,5 +88,61 @@ public class PlayerDataManager {
             saveData();
             System.out.println("Kỷ lục mới thiết lập: " + currentScore);
         }
+    }
+
+    // ==========================================
+    // CÁC HÀM QUẢN LÝ SKIN
+    // ==========================================
+    public String getEquippedSkin() {
+        return props.getProperty(KEY_EQUIPPED_SKIN, "blue");
+    }
+
+    public void setEquippedSkin(String skinId) {
+        if (skinId == null || skinId.isEmpty())
+            return;
+        props.setProperty(KEY_EQUIPPED_SKIN, skinId);
+        saveData();
+    }
+
+    public Set<String> getUnlockedSkins() {
+        String raw = props.getProperty(KEY_UNLOCKED_SKINS, "blue");
+        String[] split = raw.split(",");
+        Set<String> set = new HashSet<>();
+        for (String s : split) {
+            String trimmed = s.trim(); // xóa khoảng trống " "
+            if (!trimmed.isEmpty()) {
+                set.add(trimmed);
+            }
+        }
+        set.add("blue"); // blue luôn được mở khóa mặc định
+        return set;
+    }
+
+    public boolean isSkinUnlocked(String skinId) {
+        if ("blue".equalsIgnoreCase(skinId))
+            return true;
+        return getUnlockedSkins().contains(skinId);
+    }
+
+    public boolean buySkin(String skinId, int price) {
+        if (isSkinUnlocked(skinId)) {
+            setEquippedSkin(skinId);
+            return true;
+        }
+        int currentGold = getTotalGold();
+        if (currentGold >= price) {
+            int newGold = currentGold - price;
+            props.setProperty(KEY_TOTAL_GOLD, String.valueOf(newGold));
+
+            Set<String> unlocked = getUnlockedSkins();
+            unlocked.add(skinId);
+            props.setProperty(KEY_UNLOCKED_SKINS, String.join(",", unlocked));
+            props.setProperty(KEY_EQUIPPED_SKIN, skinId);
+            saveData();
+            System.out.println("Đã mua thành công skin: " + skinId + " với giá " + price + " gold");
+            return true;
+        }
+        System.out.println("Không đủ gold để mua skin: " + skinId);
+        return false;
     }
 }

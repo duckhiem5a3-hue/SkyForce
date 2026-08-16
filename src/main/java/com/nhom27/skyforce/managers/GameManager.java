@@ -21,13 +21,10 @@ import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.scenes.PlayScene;
 
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
-import javafx.animation.PauseTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
-import javafx.util.Duration;
 
 public class GameManager {
     private Pane gameLayoutPane;
@@ -38,7 +35,8 @@ public class GameManager {
     private Player player;
     private List<EnemyObject> enemies;
     private List<PowerUp> powerUps;
-    private ShooterEnemy shooterEnemy;  //chỉ có nhiều nhất 1 shooter tại mọi thời điểm xác định, vậy nên gán nó với GameManager để kiểm tra riêng sự tồn tại của nó 
+    private ShooterEnemy shooterEnemy; // chỉ có nhiều nhất 1 shooter tại mọi thời điểm xác định, vậy nên gán nó với
+                                       // GameManager để kiểm tra riêng sự tồn tại của nó
     private AnimationTimer gameLoop;
     private Random random;
 
@@ -51,7 +49,7 @@ public class GameManager {
     private long lastEnemyWaveTime;
     private long lastShooterDeathTime;
 
-    private boolean isDebug = true;
+    private boolean isDebug = false;
 
     public GameManager(Pane gameLayoutPane, PlayScene playScene) {
         this.gameLayoutPane = gameLayoutPane;
@@ -162,11 +160,11 @@ public class GameManager {
             }
 
             // Tự động bắn đạn của người chơi
-            if (now - player.getTimeSinceLastBullet() >= player.getFireRate()) {  
+            if (now - player.getTimeSinceLastBullet() >= player.getFireRate()) {
                 AudioManager.getInstance().playSound("sfx_laser");
-                for (Bullet bullet : player.fireBullet(enemies)) {  //tạo đạn mới
-                    gameLayoutPane.getChildren().add(bullet.getView());  //render đạn mới 
-                    if (isDebug && bullet.getHitbox() != null) {             //render debug viền cho đạn mới 
+                for (Bullet bullet : player.fireBullet(enemies)) { // tạo đạn mới
+                    gameLayoutPane.getChildren().add(bullet.getView()); // render đạn mới
+                    if (isDebug && bullet.getHitbox() != null) { // render debug viền cho đạn mới
                         bullet.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ
                         bullet.getHitbox().setStroke(Color.YELLOW); // Viền vàng
                         bullet.getHitbox().setStrokeWidth(2);
@@ -216,10 +214,11 @@ public class GameManager {
                 enemyIter.remove();
             }
         }
-        //kiểm tra và cập nhật cái chết của kẻ địch shooterEnemy
+        // kiểm tra và cập nhật cái chết của kẻ địch shooterEnemy
         if (shooterEnemy != null && !shooterEnemy.isAlive()) {
-            //shooterEnemy cũng là 1 thành phần tham chiếu tới list enemies nên cũng được cập nhật trạng thái isAlive
-            lastShooterDeathTime = System.currentTimeMillis(); 
+            // shooterEnemy cũng là 1 thành phần tham chiếu tới list enemies nên cũng được
+            // cập nhật trạng thái isAlive
+            lastShooterDeathTime = System.currentTimeMillis();
             shooterEnemy = null; // Reset tham chiếu về null sau khi bị xóa khỏi list (coi như không tồn tại)
         }
 
@@ -248,17 +247,16 @@ public class GameManager {
     }
 
     private void spawnEnemyWave(long now) {
-        if (now - lastEnemyWaveTime >= 1000) {//attempt to spawn one enemy every second. "now" got real time update
+        if (now - lastEnemyWaveTime >= 1000) {// attempt to spawn one enemy every second. "now" got real time update
             int spawnType = random.nextInt(2);
             EnemyObject newEnemy = null;
 
-            //shooter spawning is prioritized
-            if (shooterEnemy == null  &&  System.currentTimeMillis() - lastShooterDeathTime >= 15000) { 
+            // shooter spawning is prioritized
+            if (shooterEnemy == null && System.currentTimeMillis() - lastShooterDeathTime >= 15000) {
                 double spawnX = Main.WIDTH / 2 - ShooterEnemy.sizeX / 2;
-                shooterEnemy = new ShooterEnemy(spawnX, 100); 
-                newEnemy =  shooterEnemy;
-            } 
-            else if (spawnType == 0) {
+                shooterEnemy = new ShooterEnemy(spawnX, 100);
+                newEnemy = shooterEnemy;
+            } else if (spawnType == 0) {
                 double spawnX = random.nextDouble() * (Main.WIDTH - StraightEnemy.sizeX);
                 newEnemy = new StraightEnemy(spawnX, -StraightEnemy.sizeY, 100 + wave * 2);
             } else if (spawnType == 1) {
@@ -303,7 +301,8 @@ public class GameManager {
 
                 if (isColliding(bullet, enemy)) {
                     AudioManager.getInstance().playSound("sfx_laser_impact");
-                    vfxManager.spawnImpactEffect(bullet.getX() + bullet.getSizeX() / 2, bullet.getY());
+                    String skin = (player != null) ? player.getSkinId() : "blue";
+                    vfxManager.spawnImpactEffect(bullet.getX() + bullet.getSizeX() / 2, bullet.getY(), skin);
 
                     bullet.setAlive(false);
                     enemy.takeDamage(bullet.getDamage());

@@ -94,6 +94,9 @@ public class MenuScene {
             PlayScene playScene = new PlayScene();
             SceneManager.getInstance().switchScene(playScene.getScene());
         });
+        CustomButton btnShop = new CustomButton("Shop", "button_blue", () -> {
+            SceneManager.getInstance().switchScene("ShopScene");
+        });
         String soundStatus = AudioManager.getInstance().isMuted() ? "Music: Off" : "Music: On";
         btnSound = new CustomButton(soundStatus, "button_blue", () -> {
             AudioManager.getInstance().toggleMute();
@@ -110,7 +113,7 @@ public class MenuScene {
             VBox.setMargin(logoImageView, new javafx.geometry.Insets(0, 0, 50, 0));
         }
         // Đặt nút bấm lên giá đỡ
-        menuBox.getChildren().addAll(btnPlay, btnSound, btnExit);
+        menuBox.getChildren().addAll(btnPlay, btnShop, btnSound, btnExit);
 
         // Gắn khung ảnh, các nút lên "tường"
         if (bgImageView != null) {

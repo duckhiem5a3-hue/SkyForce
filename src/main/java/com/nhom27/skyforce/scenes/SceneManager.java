@@ -40,6 +40,13 @@ public class SceneManager {
             if (MenuScene.getInstance() != null) {
                 MenuScene.getInstance().onShown();
             }
+        } else if ("ShopScene".equals(name)) {
+            com.nhom27.skyforce.audio.AudioManager.getInstance().playMusic("background_home_music");
+            if (ShopScene.getInstance() == null) {
+                ShopScene shopScene = new ShopScene();
+                addScene("ShopScene", shopScene.getScene());
+            }
+            ShopScene.getInstance().onShown();
         } else if ("PlayScene".equals(name)) {
             com.nhom27.skyforce.audio.AudioManager.getInstance().playMusic("background_play_music");
         }

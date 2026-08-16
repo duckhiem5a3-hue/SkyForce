@@ -13,6 +13,9 @@ public class Bullet extends GameObject {
     // Tối ưu
     public Bullet(String nameImage, double startX, double startY, double speedX, double speedY, int damage) {
         super(nameImage, startX, startY);
+        if (this.view != null) {
+            this.view.setEffect(null);
+        }
         this.speedX = speedX;
         this.speedY = speedY;
         this.hitbox = new Rectangle(sizeX, sizeY);

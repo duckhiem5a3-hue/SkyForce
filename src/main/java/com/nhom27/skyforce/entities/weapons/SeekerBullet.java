@@ -12,9 +12,18 @@ public class SeekerBullet extends Bullet {
     private double turnRate = 0.1;
 
     public SeekerBullet(double startX, double startY, int damage, int side, List<EnemyObject> enemies) {
-        super("bullet_player_2", startX, startY, side * 50.0, -100.0, damage);
-        this.enemies = enemies;
+        this("bullet_player_seeker_lv1", startX, startY, damage, side, enemies);
+    }
+
+    public SeekerBullet(String nameImage, double startX, double startY, int damage, int side,
+            List<EnemyObject> enemies) {
+        super(nameImage, startX, startY, side * 50.0, -100.0, damage);
+        sizeX = sizeX / 11;
+        sizeY = sizeY / 11;
+        this.view.setFitHeight(sizeY);
+        this.view.setFitWidth(sizeX);
         this.hitbox = new Rectangle(sizeX, sizeY);
+        this.enemies = enemies;
         this.totalSpeed = Math.hypot(speedX, speedY) + 200;
 
         double initialSpeed = Math.hypot(speedX, speedY);
