@@ -6,10 +6,19 @@ public abstract class EnemyObject extends GameObject {
     public static int sizeX = Main.WIDTH * 7 / 100;
     public static int sizeY = Main.WIDTH * 7 / 100;
     protected int health;
+    protected int collisionDamage = 20;
     protected boolean debug;
     public EnemyObject(String nameImage, double startX, double startY) {
         super(nameImage, startX, startY);
         debug = true;
+    }
+
+    public int getCollisionDamage() {
+        return collisionDamage;
+    }
+
+    public void setCollisionDamage(int collisionDamage) {
+        this.collisionDamage = collisionDamage;
     }
 
     public int getHealth() {

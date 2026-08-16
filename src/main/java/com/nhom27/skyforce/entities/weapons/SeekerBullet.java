@@ -18,8 +18,8 @@ public class SeekerBullet extends Bullet {
     public SeekerBullet(String nameImage, double startX, double startY, int damage, int side,
             List<EnemyObject> enemies) {
         super(nameImage, startX, startY, side * 50.0, -100.0, damage);
-        sizeX = sizeX / 11;
-        sizeY = sizeY / 11;
+        sizeX = sizeX / 2;
+        sizeY = sizeY / 2;
         this.view.setFitHeight(sizeY);
         this.view.setFitWidth(sizeX);
         this.hitbox = new Rectangle(sizeX, sizeY);

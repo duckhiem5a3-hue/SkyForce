@@ -54,6 +54,10 @@ public class PlayScene {
     private Label buffStatusLabel;
     private HBox buffContainer;
 
+    private VBox bossHealthBox;
+    private Label bossNameLabel;
+    private ProgressBar bossHealthBar;
+
     public PlayScene() {
         AudioManager.getInstance().playMusic("background_play_music");
         root = new StackPane();
@@ -66,6 +70,16 @@ public class PlayScene {
         createPauseOverlay();
 
         scene = new Scene(root, com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
+        scene.setOnKeyPressed(e -> {
+            if (gameManager != null) {
+                gameManager.handleKeyPressed(e.getCode());
+            }
+        });
+        scene.setOnKeyReleased(e -> {
+            if (gameManager != null) {
+                gameManager.handleKeyReleased(e.getCode());
+            }
+        });
     }
 
     private void setupBackground() {
@@ -175,18 +189,33 @@ public class PlayScene {
         topRightPanel.setAlignment(Pos.TOP_RIGHT);
         topRightPanel.setPickOnBounds(false);
 
-        // 3. Phía trên ở giữa (Màn chơi)
+        // 3. Phía trên ở giữa (Màn chơi & Thanh máu Boss)
         waveLabel = new Label("WAVE 1");
         waveLabel.setFont(AssetManager.getFont("font_kenvector_future", 24));
         waveLabel.setTextFill(Color.CYAN);
         waveLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 8, 0.8, 0, 2));
 
-        HBox topCenterPanel = new HBox(waveLabel);
-        topCenterPanel.setAlignment(Pos.TOP_CENTER);
-        topCenterPanel.setPickOnBounds(false);
+        bossNameLabel = new Label("BOSS");
+        bossNameLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
+        bossNameLabel.setTextFill(Color.RED);
+        bossNameLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 5, 0.8, 0, 1));
+
+        bossHealthBar = new ProgressBar(1.0);
+        bossHealthBar.setPrefWidth(300);
+        bossHealthBar.setPrefHeight(16);
+        bossHealthBar.setStyle("-fx-accent: red;");
+
+        bossHealthBox = new VBox(4, bossNameLabel, bossHealthBar);
+        bossHealthBox.setAlignment(Pos.CENTER);
+        bossHealthBox.setVisible(false);
+        bossHealthBox.setPickOnBounds(false);
+
+        VBox topCenterVBox = new VBox(6, waveLabel, bossHealthBox);
+        topCenterVBox.setAlignment(Pos.TOP_CENTER);
+        topCenterVBox.setPickOnBounds(false);
 
         // 4. Gom tất cả vào layout tổng
-        hudLayout.getChildren().addAll(topLeftPanel, topCenterPanel, topRightPanel);
+        hudLayout.getChildren().addAll(topLeftPanel, topCenterVBox, topRightPanel);
         hudLayout.setPadding(new Insets(10));
         hudLayout.setPickOnBounds(false);
 
@@ -350,6 +379,21 @@ public class PlayScene {
         }
     }
 
+    public void updateBossHUD(com.nhom27.skyforce.entities.base.BossObject boss) {
+        if (bossHealthBox == null) return;
+        if (boss != null && boss.isAlive()) {
+            bossHealthBox.setVisible(true);
+            if (bossNameLabel != null) {
+                bossNameLabel.setText(boss.getBossName());
+            }
+            if (bossHealthBar != null) {
+                bossHealthBar.setProgress(boss.getHealthPercentage());
+            }
+        } else {
+            bossHealthBox.setVisible(false);
+        }
+    }
+
     public void showGameOverMenu(int score) {
         showGameOverMenu(score, 0);
     }
@@ -405,6 +449,115 @@ public class PlayScene {
 
         gameOverOverlay.getChildren().add(card);
         gamePane.getChildren().add(gameOverOverlay);
+    }
+
+    public void showWinMenu(int score, int goldGained) {
+        StackPane winOverlay = new StackPane();
+        winOverlay.setPrefSize(Main.WIDTH, Main.HEIGHT);
+        winOverlay.setBackground(
+                new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.75), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        VBox card = new VBox(15);
+        card.setAlignment(Pos.CENTER);
+        card.setMaxSize(400, 400);
+
+        LinearGradient cardGradient = new LinearGradient(
+                0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+                new Stop(0, Color.web("#1e3799")),
+                new Stop(1, Color.web("#0c2461")));
+        CornerRadii radii = new CornerRadii(16);
+        card.setBackground(new Background(new BackgroundFill(cardGradient, radii, Insets.EMPTY)));
+        card.setBorder(new Border(
+                new BorderStroke(Color.web("#f6b93b"), BorderStrokeStyle.SOLID, radii, new BorderWidths(2))));
+
+        int currentLvl = (gameManager != null) ? gameManager.getCurrentStageLevel() : 1;
+        Label titleLabel = new Label("LEVEL " + currentLvl + " CLEARED!");
+        titleLabel.setTextFill(Color.GOLD);
+        titleLabel.setFont(AssetManager.getFont("font_kenvector_future", 26));
+
+        Label finalScoreLabel = new Label("FINAL SCORE: " + score);
+        finalScoreLabel.setTextFill(Color.WHITE);
+        finalScoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 18));
+
+        Label goldGainedLabel = new Label("GOLD EARNED: +" + goldGained);
+        goldGainedLabel.setTextFill(Color.YELLOW);
+        goldGainedLabel.setFont(AssetManager.getFont("font_kenvector_future", 16));
+
+        int totalGold = PlayerDataManager.getInstance().getTotalGold();
+        Label totalGoldLabel = new Label("TOTAL GOLD: " + totalGold);
+        totalGoldLabel.setTextFill(Color.CYAN);
+        totalGoldLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
+
+        CustomButton btnNextLevel;
+        if (currentLvl < 9) {
+            int nextLvl = currentLvl + 1;
+            btnNextLevel = new CustomButton("NEXT LEVEL (LVL " + nextLvl + ")", "button_green", () -> {
+                gamePane.getChildren().remove(winOverlay);
+                AudioManager.getInstance().playMusic("background_play_music");
+                if (gameManager != null) {
+                    gameManager.setCurrentStageLevel(nextLvl);
+                    gameManager.restartGame();
+                }
+            });
+        } else {
+            btnNextLevel = new CustomButton("PLAY AGAIN", "button_yellow", () -> {
+                gamePane.getChildren().remove(winOverlay);
+                AudioManager.getInstance().playMusic("background_play_music");
+                if (gameManager != null) {
+                    gameManager.setCurrentStageLevel(1);
+                    gameManager.restartGame();
+                }
+            });
+        }
+
+        CustomButton btnMainMenu = new CustomButton("HOME MENU", "button_blue", () -> {
+            if (gameManager != null) {
+                gameManager.stopGame();
+            }
+            SceneManager.getInstance().switchScene("MenuScene");
+        });
+
+        card.getChildren().addAll(titleLabel, finalScoreLabel, goldGainedLabel, totalGoldLabel, btnNextLevel, btnMainMenu);
+
+        winOverlay.getChildren().add(card);
+        gamePane.getChildren().add(winOverlay);
+    }
+
+    private Label warningLabel;
+
+    public void showWarningBanner(boolean show) {
+        if (warningLabel == null) {
+            warningLabel = new Label("WARNING: MINI-BOSS!");
+            warningLabel.setFont(AssetManager.getFont("font_kenvector_future", 26));
+            warningLabel.setTextFill(Color.RED);
+            warningLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.YELLOW, 12, 0.8, 0, 0));
+            warningLabel.setMouseTransparent(true);
+            StackPane.setAlignment(warningLabel, Pos.CENTER);
+            root.getChildren().add(warningLabel);
+        }
+        warningLabel.setVisible(show);
+        if (show) {
+            warningLabel.toFront();
+        }
+    }
+
+    private Label bottomWarningLabel;
+
+    public void showBottomWarning(boolean show, double posX) {
+        if (bottomWarningLabel == null) {
+            bottomWarningLabel = new Label("! AMBUSH !");
+            bottomWarningLabel.setFont(AssetManager.getFont("font_kenvector_future", 20));
+            bottomWarningLabel.setTextFill(Color.RED);
+            bottomWarningLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.YELLOW, 10, 0.8, 0, 0));
+            bottomWarningLabel.setMouseTransparent(true);
+            root.getChildren().add(bottomWarningLabel);
+        }
+        bottomWarningLabel.setVisible(show);
+        if (show) {
+            bottomWarningLabel.setLayoutX(posX - 40);
+            bottomWarningLabel.setLayoutY(Main.HEIGHT - 70);
+            bottomWarningLabel.toFront();
+        }
     }
 
     public Scene getScene() {

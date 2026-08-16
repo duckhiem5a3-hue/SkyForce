@@ -17,12 +17,12 @@ public class PlayerLevel2 extends Player {
         super("player_ship_lv2_" + (skinId != null && !skinId.isEmpty() ? skinId : "blue") + "_idle", startX, startY);
         this.skinId = skinId != null && !skinId.isEmpty() ? skinId : "blue";
         this.level = 2;
-        this.damage = 35;
-        this.fireRate = 170;
-        this.maxHealth = 150;
+        this.damage = 10;
+        this.fireRate = 167; // 6 shots/sec (bắn 2 nòng) => 120 DPS
+        this.maxHealth = 100;
         this.health = this.maxHealth;
         this.speedBulletX = 0;
-        this.speedBulletY = -500;
+        this.speedBulletY = -650;
         this.currentBulletTexture = getBulletTexture();
         this.xpToNextLevel = calculateXpRequirement(2);
     }
@@ -34,7 +34,7 @@ public class PlayerLevel2 extends Player {
         double centerX = x + sizeX / 2;
         double startY = y;
 
-        // Level 2: Bắn 2 viên đạn song song
+        // Level 2: Bắn 2 viên đạn song song (2 * 10 dmg * 6 shots/s = 120 DPS)
         String bulletTex = getBulletTexture();
         double offset = sizeX * 0.25;
         Bullet b1 = new Bullet(bulletTex, centerX - offset, startY, 0, speedBulletY, damage);
@@ -44,8 +44,8 @@ public class PlayerLevel2 extends Player {
 
         if (shouldFireSeeker()) {
             String seekerTex = getSeekerBulletTexture();
-            SeekerBullet leftSeeker = new SeekerBullet(seekerTex, centerX - 25, startY, damage / 2, -1, enemies);
-            SeekerBullet rightSeeker = new SeekerBullet(seekerTex, centerX + 25, startY, damage / 2, 1, enemies);
+            SeekerBullet leftSeeker = new SeekerBullet(seekerTex, centerX - 25, startY, 30, -1, enemies);
+            SeekerBullet rightSeeker = new SeekerBullet(seekerTex, centerX + 25, startY, 30, 1, enemies);
             bulletsToSpawn.add(leftSeeker);
             bulletsToSpawn.add(rightSeeker);
         }

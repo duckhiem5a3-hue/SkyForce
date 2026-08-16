@@ -188,6 +188,10 @@ public abstract class Player extends GameObject {
 
     public void takeDamage(int damage) {
         if (isShieldActive()) {
+            shieldBuffEndTime = 0; // Khiên vỡ ngay sau 1 lần đỡ sát thương (100% sát thương absorbed)
+            if (shieldView != null) {
+                shieldView.setVisible(false);
+            }
             com.nhom27.skyforce.audio.AudioManager.getInstance().playSound("sfx_zap");
             return;
         }
@@ -293,6 +297,14 @@ public abstract class Player extends GameObject {
         double clampedX = Math.min(Math.max((sizeX / 2), mouseX), Main.WIDTH - sizeX / 2);
         double clampedY = Math.min(Math.max((sizeY / 2), mouseY), Main.HEIGHT - sizeY / 2);
         setPos(clampedX - (sizeX / 2), clampedY - (sizeY / 2));
+    }
+
+    public void moveBy(double dx, double dy) {
+        double newX = x + dx;
+        double newY = y + dy;
+        double clampedX = Math.min(Math.max(0, newX), Main.WIDTH - sizeX);
+        double clampedY = Math.min(Math.max(0, newY), Main.HEIGHT - sizeY);
+        setPos(clampedX, clampedY);
     }
 
     @Override

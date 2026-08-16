@@ -378,6 +378,8 @@ public class AssetManager {
                 loadImage("bullet_enemy_3","/com/nhom27/skyforce/textures/entities/weapons/laserRed16.png");
 
                 loadImage("powerup", "/com/nhom27/skyforce/textures/Flame_01.png");
+                loadImage("bullet_enemy_laser",
+                                "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_laser.png");
                 loadImage("bullet_player_blue",
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_player_blue.png");
                 loadImage("bullet_player_green",
@@ -392,6 +394,22 @@ public class AssetManager {
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_player_seeker_lv2.png");
                 loadImage("bullet_player_seeker_lv3",
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_player_seeker_lv3.png");
+                loadImage("bullet_enemy_laser",
+                                "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_laser.png");
+                loadImage("bullet_enemy_round_purple",
+                                "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_round_purple.png");
+                loadImage("bullet_enemy_diamond_yellow",
+                                "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_diamond_yellow.png");
+                loadImage("enemy_normal_blue",
+                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_normal_blue.png");
+                loadImage("enemy_normal_red",
+                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_normal_red.png");
+                loadImage("enemy_sniper_green",
+                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_sniper_green.png");
+                loadImage("meteor_big",
+                                "/com/nhom27/skyforce/textures/entities/obstacles/meteor_big.png");
+                loadImage("obstacle_mine_red",
+                                "/com/nhom27/skyforce/textures/entities/obstacles/obstacle_mine_red.png");
                 loadSpriteInfo("enemy_straight",
                                 "/com/nhom27/skyforce/textures/entities/enemies/enemy_straight_black.png",
                                 new double[] {
