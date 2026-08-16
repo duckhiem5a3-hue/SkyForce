@@ -91,8 +91,10 @@ public class MenuScene {
         menuBox.setAlignment(Pos.CENTER);
 
         CustomButton btnPlay = new CustomButton("Play Game", "button_blue", () -> {
-            PlayScene playScene = new PlayScene();
-            SceneManager.getInstance().switchScene(playScene.getScene());
+            //PlayScene playScene = new PlayScene();
+            //SceneManager.getInstance().switchScene(playScene.getScene());
+            LevelScene levelScene = new LevelScene();
+            SceneManager.getInstance().switchScene(levelScene.getScene());
         });
         CustomButton btnShop = new CustomButton("Shop", "button_blue", () -> {
             SceneManager.getInstance().switchScene("ShopScene");

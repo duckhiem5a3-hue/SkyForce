@@ -230,6 +230,7 @@ public class GameManager {
         }
         // kiểm tra và cập nhật cái chết của kẻ địch shooterEnemy
         if (shooterEnemy != null && !shooterEnemy.isAlive()) {
+            gameLayoutPane.getChildren().remove(shooterEnemy.getCloseBox());
             // shooterEnemy cũng là 1 thành phần tham chiếu tới list enemies nên cũng được
             // cập nhật trạng thái isAlive
             lastShooterDeathTime = System.currentTimeMillis();

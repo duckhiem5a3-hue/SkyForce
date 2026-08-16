@@ -135,6 +135,9 @@ public class AssetManager {
                 // Ảnh nền
                 loadImage("background_home", "/com/nhom27/skyforce/textures/menu/background.png");
                 loadImage("background_play", "/com/nhom27/skyforce/textures/play/play_background.png");
+                loadImage("background_level_1", "/com/nhom27/skyforce/textures/menu/background.png");   //tạm thời dùng background menu
+                loadImage("background_level_2", "/com/nhom27/skyforce/textures/menu/background.png");   
+                loadImage("background_level_3", "/com/nhom27/skyforce/textures/menu/background.png");   
                 // Ảnh nút
                 loadImage("button_blue", "/com/nhom27/skyforce/textures/menu/buttonBlue.png");
                 loadImage("button_green", "/com/nhom27/skyforce/textures/menu/buttonGreen.png");
@@ -370,6 +373,10 @@ public class AssetManager {
                 loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
                 loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");
                 loadImage("enemy_ship_3", "/com/nhom27/skyforce/textures/Spaceship_03_RED.png");
+                loadImage("bullet_enemy_1","/com/nhom27/skyforce/textures/entities/weapons/laserRed12.png");
+                loadImage("bullet_enemy_2","/com/nhom27/skyforce/textures/entities/weapons/laserRed14.png");
+                loadImage("bullet_enemy_3","/com/nhom27/skyforce/textures/entities/weapons/laserRed16.png");
+
                 loadImage("powerup", "/com/nhom27/skyforce/textures/Flame_01.png");
                 loadImage("bullet_player_blue",
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_player_blue.png");
