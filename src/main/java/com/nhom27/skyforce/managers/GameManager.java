@@ -18,6 +18,7 @@ import com.nhom27.skyforce.entities.items.SeekerPowerUp;
 import com.nhom27.skyforce.entities.items.ShieldPowerUp;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
+import com.nhom27.skyforce.entities.weapons.EnemyBullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.scenes.PlayScene;
 
@@ -176,14 +177,17 @@ public class GameManager {
                 }
                 player.setTimeSinceLastBullet(now);
             }
-
-            // // Cập nhật thông báo cường hóa
-            // if (player.isGettingBuffed()) {
-            // buffStatusLabel.setText("TRIPLE SHOT (" + (player.getTimeInBuff() / 60 + 1) +
-            // "s)");
-            // } else {
-            // buffStatusLabel.setText("");
-            // }
+        }
+        // Cập nhật ShooterEnemy (bao gồm bắn đạn)
+        if (shooterEnemy != null && shooterEnemy.isAlive()) {
+            shooterEnemy.update();
+            if (shooterEnemy.timeToFire()) {
+                double startX = shooterEnemy.getX() + shooterEnemy.getSizeX() / 2 - 10;
+                double startY = shooterEnemy.getY() + shooterEnemy.getSizeY();
+                EnemyBullet eBullet = new EnemyBullet(startX, startY);
+                gameLayoutPane.getChildren().add(eBullet.getView());
+                ShooterEnemy.addBullet(eBullet);
+            }
         }
 
         // Cập nhật đạn của người chơi
@@ -197,7 +201,17 @@ public class GameManager {
                 bulletIter.remove();
             }
         }
-
+        // Cập nhật đạn của ShooterEnemy
+        Iterator<EnemyBullet> eBulletIter = ShooterEnemy.getBulletList().iterator();
+        while (eBulletIter.hasNext()) {
+            EnemyBullet e = eBulletIter.next();
+            e.update();
+            if (!e.isAlive()) {
+                gameLayoutPane.getChildren().remove(e.getView());
+                gameLayoutPane.getChildren().remove(e.getHitbox());
+                eBulletIter.remove();
+            }
+        }
         // Triệu hồi kẻ địch
         spawnEnemyWave(now);
 
@@ -277,6 +291,12 @@ public class GameManager {
                     newEnemy.getHitbox().setStrokeWidth(2);
                     gameLayoutPane.getChildren().add(newEnemy.getHitbox());
                 }
+                if (newEnemy instanceof ShooterEnemy shooterEnemy) {
+                    shooterEnemy.getCloseBox().setFill(Color.rgb(255, 0, 0, 0.3));
+                    shooterEnemy.getCloseBox().setStroke(Color.YELLOW);
+                    shooterEnemy.getCloseBox().setStroke(Color.YELLOW);
+                    gameLayoutPane.getChildren().add(shooterEnemy.getCloseBox());
+                }
             }
             lastEnemyWaveTime = now;
         }
@@ -290,7 +310,41 @@ public class GameManager {
 
     // Xử lý va chạm
     private void handleCollisions() {
-        // 1. Player Bullets và Enemies
+        // 1. Shooter Enemy và Player Bullet (kiểm tra đến gần để đổi hướng né)
+        if (shooterEnemy != null && shooterEnemy.isAlive() && shooterEnemy.getCanDodge()) {
+            double shortestVerticalDistance = 600;
+            boolean bulletInRange = false;
+            boolean closestBulletOnRight = true;
+            for (Bullet bullet : player.getBullets()) {
+                if (shooterEnemy.getCloseBox().getBoundsInParent().intersects(bullet.getHitbox().getBoundsInParent())) {
+                    bulletInRange = true;
+                    double V_distance = bullet.getY() - shooterEnemy.getY();
+                    if (V_distance < shortestVerticalDistance && V_distance > 0) {
+                        shortestVerticalDistance = V_distance;
+                        if (bullet.getX() < shooterEnemy.getX()) { // đạn nằm bên trái. Rẽ phải
+                            closestBulletOnRight = false;
+                        } else {
+                            closestBulletOnRight = true;
+                        }
+                    }
+                }
+            }
+            if (bulletInRange) { // có phát hiện đạn thì mới nghĩ tới chuyện đổi hướng
+                // nếu đã đi ra xa sẵn thì k cần đổi hướng
+                if (closestBulletOnRight && !shooterEnemy.getDirection()
+                        || !closestBulletOnRight && shooterEnemy.getDirection()) {
+                } else {
+                    if (closestBulletOnRight) {
+                        shooterEnemy.setDirection(false);
+                    } else {
+                        shooterEnemy.setDirection(true);
+                    }
+                    shooterEnemy.lockDodge();
+                    shooterEnemy.setDodgeCoolDown();
+                }
+            }
+        }
+        // 2. Player Bullets và Enemies
         for (Bullet bullet : player.getBullets()) {
             if (!bullet.isAlive())
                 continue;
@@ -344,6 +398,18 @@ public class GameManager {
                     vfxManager.spawnScreenEffect(false);
                 }
             }
+            // 3. Enemy Bullet và Player
+            for (EnemyBullet eBullet : ShooterEnemy.getBulletList()) {
+                if (!eBullet.isAlive()) {
+                    continue;
+                }
+                if (isColliding(eBullet, player)) {
+                    eBullet.setAlive(false);
+                    player.takeDamage(eBullet.getDamage());
+                    vfxManager.applyPlayerGlow(player, "damaged");
+                    // vfxManager.spawnScreenEffect(false);
+                }
+            }
 
             // 3. PowerUps vs Player
             for (PowerUp powerUp : powerUps) {
@@ -359,6 +425,7 @@ public class GameManager {
                 }
             }
         }
+
     }
 
     private void spawnPowerUp(double x, double y) {
@@ -378,8 +445,8 @@ public class GameManager {
             gameLayoutPane.getChildren().add(powerUp.getView());
 
             if (isDebug && powerUp.getHitbox() != null) {
-                powerUp.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ mờ 30%
-                powerUp.getHitbox().setStroke(Color.YELLOW); // Viền vàng
+                powerUp.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
+                powerUp.getHitbox().setStroke(Color.YELLOW);
                 powerUp.getHitbox().setStrokeWidth(2);
 
                 if (!gameLayoutPane.getChildren().contains(powerUp.getHitbox())) {
