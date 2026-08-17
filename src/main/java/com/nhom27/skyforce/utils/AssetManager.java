@@ -139,6 +139,10 @@ public class AssetManager {
                                                                                                       // background menu
                 loadImage("background_level_2", "/com/nhom27/skyforce/textures/menu/background.png");
                 loadImage("background_level_3", "/com/nhom27/skyforce/textures/menu/background.png");
+                loadImage("background_level_4", "/com/nhom27/skyforce/textures/menu/background.png");
+                loadImage("background_level_5", "/com/nhom27/skyforce/textures/menu/background.png");
+                loadImage("background_level_6", "/com/nhom27/skyforce/textures/menu/background.png");
+
                 // Ảnh nút
                 loadImage("button_blue", "/com/nhom27/skyforce/textures/menu/buttonBlue.png");
                 loadImage("button_green", "/com/nhom27/skyforce/textures/menu/buttonGreen.png");
