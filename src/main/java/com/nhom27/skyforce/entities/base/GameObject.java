@@ -90,8 +90,8 @@ public abstract class GameObject {
         Image img = AssetManager.getImage(nameImage);
         if (img != null) {
             this.view = new ImageView(img);
-            sizeX = img.getWidth();
-            sizeY = img.getHeight();
+            this.sizeX = img.getWidth();
+            this.sizeY = img.getHeight();
             this.view.setFitHeight(sizeY);
             this.view.setFitWidth(sizeX);
 
@@ -104,7 +104,7 @@ public abstract class GameObject {
             this.view = new ImageView();
         }
         this.isAlive = true;
-        setPos(startX, startY);
+        // setPos(startX, startY);
     }
 
     public abstract void update();

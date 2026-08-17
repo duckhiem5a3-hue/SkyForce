@@ -377,10 +377,18 @@ public class GameManager {
                 double speed = 300.0 / 60.0;
                 double dx = 0;
                 double dy = 0;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.W) || activeKeys.contains(javafx.scene.input.KeyCode.UP)) dy -= speed;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.S) || activeKeys.contains(javafx.scene.input.KeyCode.DOWN)) dy += speed;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.A) || activeKeys.contains(javafx.scene.input.KeyCode.LEFT)) dx -= speed;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.D) || activeKeys.contains(javafx.scene.input.KeyCode.RIGHT)) dx += speed;
+                if (activeKeys.contains(javafx.scene.input.KeyCode.W)
+                        || activeKeys.contains(javafx.scene.input.KeyCode.UP))
+                    dy -= speed;
+                if (activeKeys.contains(javafx.scene.input.KeyCode.S)
+                        || activeKeys.contains(javafx.scene.input.KeyCode.DOWN))
+                    dy += speed;
+                if (activeKeys.contains(javafx.scene.input.KeyCode.A)
+                        || activeKeys.contains(javafx.scene.input.KeyCode.LEFT))
+                    dx -= speed;
+                if (activeKeys.contains(javafx.scene.input.KeyCode.D)
+                        || activeKeys.contains(javafx.scene.input.KeyCode.RIGHT))
+                    dx += speed;
 
                 if (dx != 0 || dy != 0) {
                     player.moveBy(dx, dy);
@@ -472,7 +480,8 @@ public class GameManager {
                             targetedVy = (dy / dist) * 250.0;
                         }
                     }
-                    EnemyBullet sBullet = new EnemyBullet(startX, startY, targetedVx, targetedVy, 15, "bullet_enemy_round_purple");
+                    EnemyBullet sBullet = new EnemyBullet(startX, startY, targetedVx, targetedVy, 15,
+                            "bullet_enemy_round_purple");
                     gameLayoutPane.getChildren().add(sBullet.getView());
                     ShooterEnemy.addBullet(sBullet);
                 }
@@ -539,9 +548,11 @@ public class GameManager {
                     // Viên 1 (Giữa)
                     EnemyBullet b1 = new EnemyBullet(startX, startY, 0, totalSpeed, 15, "bullet_enemy_round_purple");
                     // Viên 2 (Trái)
-                    EnemyBullet b2 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radLeft), totalSpeed * Math.cos(radLeft), 15, "bullet_enemy_round_purple");
+                    EnemyBullet b2 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radLeft),
+                            totalSpeed * Math.cos(radLeft), 15, "bullet_enemy_round_purple");
                     // Viên 3 (Phải)
-                    EnemyBullet b3 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radRight), totalSpeed * Math.cos(radRight), 15, "bullet_enemy_round_purple");
+                    EnemyBullet b3 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radRight),
+                            totalSpeed * Math.cos(radRight), 15, "bullet_enemy_round_purple");
 
                     EnemyBullet[] bullets = { b1, b2, b3 };
                     for (EnemyBullet b : bullets) {
@@ -644,14 +655,17 @@ public class GameManager {
         // 🎬 Giai đoạn 1: Chào sân (Giây 0 - 15)
         if (elapsedSec >= 3.0 && !spawned3s) {
             double spawnX = Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0;
-            NormalEnemy e1 = new NormalEnemy(spawnX, -NormalEnemy.sizeY, 60.0, false, false, false, "enemy_normal_blue");
+            NormalEnemy e1 = new NormalEnemy(spawnX, -NormalEnemy.sizeY, 60.0, false, false, false,
+                    "enemy_normal_blue");
             spawnEnemy(e1);
             spawned3s = true;
         }
 
         if (elapsedSec >= 7.0 && !spawned7s) {
-            NormalEnemy eLeft = new NormalEnemy(30.0, -NormalEnemy.sizeY, 80.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy eRight = new NormalEnemy(Main.WIDTH - NormalEnemy.sizeX - 30.0, -NormalEnemy.sizeY, 80.0, false, false, false, "enemy_normal_blue");
+            NormalEnemy eLeft = new NormalEnemy(30.0, -NormalEnemy.sizeY, 80.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy eRight = new NormalEnemy(Main.WIDTH - NormalEnemy.sizeX - 30.0, -NormalEnemy.sizeY, 80.0, false,
+                    false, false, "enemy_normal_blue");
             spawnEnemy(eLeft);
             spawnEnemy(eRight);
             spawned7s = true;
@@ -659,9 +673,12 @@ public class GameManager {
 
         if (elapsedSec >= 12.0 && !spawned12s) {
             double centerX = Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0;
-            NormalEnemy eV1 = new NormalEnemy(centerX, -NormalEnemy.sizeY, 85.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy eV2 = new NormalEnemy(centerX - 80, -NormalEnemy.sizeY - 50, 85.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy eV3 = new NormalEnemy(centerX + 80, -NormalEnemy.sizeY - 50, 85.0, false, false, false, "enemy_normal_blue");
+            NormalEnemy eV1 = new NormalEnemy(centerX, -NormalEnemy.sizeY, 85.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy eV2 = new NormalEnemy(centerX - 80, -NormalEnemy.sizeY - 50, 85.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy eV3 = new NormalEnemy(centerX + 80, -NormalEnemy.sizeY - 50, 85.0, false, false, false,
+                    "enemy_normal_blue");
             spawnEnemy(eV1);
             spawnEnemy(eV2);
             spawnEnemy(eV3);
@@ -671,7 +688,8 @@ public class GameManager {
         // 🎁 Giai đoạn 2: Trải nghiệm Sức mạnh (Giây 18 - 35)
         if (elapsedSec >= 18.0 && !spawned18s) {
             double spawnX = Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0;
-            NormalEnemy eRed = new NormalEnemy(spawnX, -NormalEnemy.sizeY, 90.0, false, false, true, "enemy_normal_red");
+            NormalEnemy eRed = new NormalEnemy(spawnX, -NormalEnemy.sizeY, 90.0, false, false, true,
+                    "enemy_normal_red");
             spawnEnemy(eRed);
             spawned18s = true;
         }
@@ -681,7 +699,8 @@ public class GameManager {
                 int count = 2 + random.nextInt(2);
                 for (int i = 0; i < count; i++) {
                     double spawnX = random.nextDouble() * (Main.WIDTH - NormalEnemy.sizeX);
-                    NormalEnemy e = new NormalEnemy(spawnX, -NormalEnemy.sizeY - (i * 45), 110.0, false, false, false, "enemy_normal_blue");
+                    NormalEnemy e = new NormalEnemy(spawnX, -NormalEnemy.sizeY - (i * 45), 110.0, false, false, false,
+                            "enemy_normal_blue");
                     spawnEnemy(e);
                 }
                 lastFlyRainTime = now;
@@ -707,8 +726,10 @@ public class GameManager {
     private void spawnLevel2Wave(long now, double elapsedSec) {
         // 🎬 Giai đoạn 1: Khởi động & Ôn bài (Giây 0 - 15)
         if (elapsedSec >= 3.0 && !lvl2_spawned3s) {
-            NormalEnemy eLeft = new NormalEnemy(40.0, -NormalEnemy.sizeY, 150.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy eRight = new NormalEnemy(Main.WIDTH - NormalEnemy.sizeX - 40.0, -NormalEnemy.sizeY, 150.0, false, false, false, "enemy_normal_blue");
+            NormalEnemy eLeft = new NormalEnemy(40.0, -NormalEnemy.sizeY, 150.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy eRight = new NormalEnemy(Main.WIDTH - NormalEnemy.sizeX - 40.0, -NormalEnemy.sizeY, 150.0,
+                    false, false, false, "enemy_normal_blue");
             spawnEnemy(eLeft);
             spawnEnemy(eRight);
             lvl2_spawned3s = true;
@@ -716,9 +737,12 @@ public class GameManager {
 
         if (elapsedSec >= 8.0 && !lvl2_spawned8s) {
             double centerX = Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0;
-            NormalEnemy eRow1 = new NormalEnemy(centerX - 100, -NormalEnemy.sizeY, 150.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy eRow2 = new NormalEnemy(centerX, -NormalEnemy.sizeY, 150.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy eRow3 = new NormalEnemy(centerX + 100, -NormalEnemy.sizeY, 150.0, false, false, false, "enemy_normal_blue");
+            NormalEnemy eRow1 = new NormalEnemy(centerX - 100, -NormalEnemy.sizeY, 150.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy eRow2 = new NormalEnemy(centerX, -NormalEnemy.sizeY, 150.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy eRow3 = new NormalEnemy(centerX + 100, -NormalEnemy.sizeY, 150.0, false, false, false,
+                    "enemy_normal_blue");
             spawnEnemy(eRow1);
             spawnEnemy(eRow2);
             spawnEnemy(eRow3);
@@ -735,7 +759,8 @@ public class GameManager {
 
         if (elapsedSec >= 22.0 && !lvl2_spawned22s) {
             SniperEnemy sLeft = new SniperEnemy(60.0, -SniperEnemy.sizeY, 150.0, 1500, "LEFT");
-            SniperEnemy sRight = new SniperEnemy(Main.WIDTH - SniperEnemy.sizeX - 60.0, -SniperEnemy.sizeY, 150.0, 1500, "RIGHT");
+            SniperEnemy sRight = new SniperEnemy(Main.WIDTH - SniperEnemy.sizeX - 60.0, -SniperEnemy.sizeY, 150.0, 1500,
+                    "RIGHT");
             sLeft.setBulletTexture("bullet_enemy_diamond_yellow");
             sRight.setBulletTexture("bullet_enemy_diamond_yellow");
             spawnEnemy(sLeft);
@@ -745,20 +770,28 @@ public class GameManager {
 
         // ⚔️ Giai đoạn 3: Chiến trường hỗn loạn (Giây 35 - 55)
         if (elapsedSec >= 30.0 && !lvl2_spawned30s) {
-            NormalEnemy eShieldRed = new NormalEnemy(Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0, -NormalEnemy.sizeY, 120.0, false, false, true, "enemy_normal_red");
+            NormalEnemy eShieldRed = new NormalEnemy(Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0, -NormalEnemy.sizeY,
+                    120.0, false, false, true, "enemy_normal_red");
             spawnEnemy(eShieldRed);
             lvl2_spawned30s = true;
         }
 
         if (elapsedSec >= 35.0 && !lvl2_spawned35s) {
             double centerX = Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0;
-            NormalEnemy n1 = new NormalEnemy(centerX - 120, -NormalEnemy.sizeY, 100.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy n2 = new NormalEnemy(centerX - 40, -NormalEnemy.sizeY, 100.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy n3 = new NormalEnemy(centerX + 40, -NormalEnemy.sizeY, 100.0, false, false, false, "enemy_normal_blue");
-            NormalEnemy n4 = new NormalEnemy(centerX + 120, -NormalEnemy.sizeY, 100.0, false, false, false, "enemy_normal_blue");
+            NormalEnemy n1 = new NormalEnemy(centerX - 120, -NormalEnemy.sizeY, 100.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy n2 = new NormalEnemy(centerX - 40, -NormalEnemy.sizeY, 100.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy n3 = new NormalEnemy(centerX + 40, -NormalEnemy.sizeY, 100.0, false, false, false,
+                    "enemy_normal_blue");
+            NormalEnemy n4 = new NormalEnemy(centerX + 120, -NormalEnemy.sizeY, 100.0, false, false, false,
+                    "enemy_normal_blue");
             SniperEnemy sBack = new SniperEnemy(centerX, -SniperEnemy.sizeY - 80, 80.0, 1500, "AUTO");
             sBack.setBulletTexture("bullet_enemy_diamond_yellow");
-            spawnEnemy(n1); spawnEnemy(n2); spawnEnemy(n3); spawnEnemy(n4);
+            spawnEnemy(n1);
+            spawnEnemy(n2);
+            spawnEnemy(n3);
+            spawnEnemy(n4);
             spawnEnemy(sBack);
             lvl2_spawned35s = true;
         }
@@ -767,7 +800,8 @@ public class GameManager {
             if (now - lvl2_lastFlyRainTime >= 1500) {
                 for (int i = 0; i < 3; i++) {
                     double spawnX = random.nextDouble() * (Main.WIDTH - NormalEnemy.sizeX);
-                    NormalEnemy e = new NormalEnemy(spawnX, -NormalEnemy.sizeY - (i * 40), 160.0, false, false, false, "enemy_normal_blue");
+                    NormalEnemy e = new NormalEnemy(spawnX, -NormalEnemy.sizeY - (i * 40), 160.0, false, false, false,
+                            "enemy_normal_blue");
                     spawnEnemy(e);
                 }
                 lvl2_lastFlyRainTime = now;
@@ -812,7 +846,8 @@ public class GameManager {
 
     private void spawnLevel3Wave(long now, double elapsedSec) {
         // 🎬 Giai đoạn 1: Điệu nhảy của bầy ruồi (Giây 0 - 20)
-        // 5s: 1 hàng dọc 5 con SwarmEnemy bám đuôi nhau (cách 0.2s) bay lượn sóng từ bên Trái
+        // 5s: 1 hàng dọc 5 con SwarmEnemy bám đuôi nhau (cách 0.2s) bay lượn sóng từ
+        // bên Trái
         if (elapsedSec >= 5.0 && !lvl3_spawned5s) {
             if (lvl3_queue5s_count < 5) {
                 if (now - lvl3_last5s_time >= 200) {
@@ -842,7 +877,8 @@ public class GameManager {
 
         // 18s: 1 con quái Đỏ mang ItemUpgrade bay thẳng chầm chậm ở giữa
         if (elapsedSec >= 18.0 && !lvl3_spawned18s) {
-            NormalEnemy eUpgradeRed = new NormalEnemy(Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0, -NormalEnemy.sizeY, 80.0, false, false, true, "enemy_normal_red");
+            NormalEnemy eUpgradeRed = new NormalEnemy(Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0, -NormalEnemy.sizeY,
+                    80.0, false, false, true, "enemy_normal_red");
             spawnEnemy(eUpgradeRed);
             lvl3_spawned18s = true;
         }
@@ -852,8 +888,10 @@ public class GameManager {
         if (elapsedSec >= 25.0 && !lvl3_spawned25s) {
             if (lvl3_queue25s_count < 7) {
                 if (now - lvl3_last25s_time >= 160) {
-                    SwarmEnemy leftDiag = new SwarmEnemy(30.0, -SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.DIAGONAL, 230.0, 160.0);
-                    SwarmEnemy rightDiag = new SwarmEnemy(Main.WIDTH - 30.0, -SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.DIAGONAL, 230.0, -160.0);
+                    SwarmEnemy leftDiag = new SwarmEnemy(30.0, -SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.DIAGONAL,
+                            230.0, 160.0);
+                    SwarmEnemy rightDiag = new SwarmEnemy(Main.WIDTH - 30.0, -SwarmEnemy.sizeY,
+                            SwarmEnemy.TrajectoryType.DIAGONAL, 230.0, -160.0);
                     spawnEnemy(leftDiag);
                     spawnEnemy(rightDiag);
                     lvl3_queue25s_count++;
@@ -868,14 +906,16 @@ public class GameManager {
         if (elapsedSec >= 32.0 && elapsedSec <= 42.0) {
             if (now - lvl3_lastRainTime >= 400) {
                 double spawnX = random.nextDouble() * (Main.WIDTH - SwarmEnemy.sizeX);
-                SwarmEnemy swarm = new SwarmEnemy(spawnX, -SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.STRAIGHT, 260.0, 0);
+                SwarmEnemy swarm = new SwarmEnemy(spawnX, -SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.STRAIGHT, 260.0,
+                        0);
                 spawnEnemy(swarm);
                 lvl3_lastRainTime = now;
             }
         }
 
         // ⚠️ Giai đoạn 3: Chiến thuật nhiễu loạn (Giây 50 - 65)
-        // 50s: 1 bầy SwarmEnemy lượn sóng ngang qua che tầm nhìn + 52s: 2 SniperEnemy nấp sau lưng ngắm bắn
+        // 50s: 1 bầy SwarmEnemy lượn sóng ngang qua che tầm nhìn + 52s: 2 SniperEnemy
+        // nấp sau lưng ngắm bắn
         if (elapsedSec >= 50.0 && !lvl3_spawned50s) {
             for (int i = 0; i < 8; i++) {
                 SwarmEnemy swarm = new SwarmEnemy(80.0 + (i * 35), -SwarmEnemy.sizeY - (i * 25), 80.0, 0.02, 0);
@@ -883,7 +923,8 @@ public class GameManager {
             }
 
             SniperEnemy sLeft = new SniperEnemy(100.0, -SniperEnemy.sizeY - 100, 120.0, 1500, "AUTO");
-            SniperEnemy sRight = new SniperEnemy(Main.WIDTH - 100.0 - SniperEnemy.sizeX, -SniperEnemy.sizeY - 100, 120.0, 1500, "AUTO");
+            SniperEnemy sRight = new SniperEnemy(Main.WIDTH - 100.0 - SniperEnemy.sizeX, -SniperEnemy.sizeY - 100,
+                    120.0, 1500, "AUTO");
             sLeft.setBulletTexture("bullet_enemy_diamond_yellow");
             sRight.setBulletTexture("bullet_enemy_diamond_yellow");
             spawnEnemy(sLeft);
@@ -928,12 +969,14 @@ public class GameManager {
     private void createVFormation(double apexX, double apexY, int countPerV) {
         int half = countPerV / 2;
         for (int i = 0; i <= half; i++) {
-            SwarmEnemy eCenterLeft = new SwarmEnemy(apexX - (i * 35), apexY - (i * 35), SwarmEnemy.TrajectoryType.STRAIGHT, 230.0, 0);
+            SwarmEnemy eCenterLeft = new SwarmEnemy(apexX - (i * 35), apexY - (i * 35),
+                    SwarmEnemy.TrajectoryType.STRAIGHT, 230.0, 0);
             lvl3_finalWave.add(eCenterLeft);
             spawnEnemy(eCenterLeft);
 
             if (i > 0) {
-                SwarmEnemy eCenterRight = new SwarmEnemy(apexX + (i * 35), apexY - (i * 35), SwarmEnemy.TrajectoryType.STRAIGHT, 230.0, 0);
+                SwarmEnemy eCenterRight = new SwarmEnemy(apexX + (i * 35), apexY - (i * 35),
+                        SwarmEnemy.TrajectoryType.STRAIGHT, 230.0, 0);
                 lvl3_finalWave.add(eCenterRight);
                 spawnEnemy(eCenterRight);
             }
@@ -962,7 +1005,8 @@ public class GameManager {
         // 18s: Quái đỏ bay qua rớt Item Nâng Cấp (PillPowerUp)
         if (elapsedSec >= 18.0 && !lvl4_spawned18s) {
             double centerX = Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0;
-            NormalEnemy eUpgradeRed = new NormalEnemy(centerX, -NormalEnemy.sizeY, 85.0, false, false, true, "enemy_normal_red");
+            NormalEnemy eUpgradeRed = new NormalEnemy(centerX, -NormalEnemy.sizeY, 85.0, false, false, true,
+                    "enemy_normal_red");
             spawnEnemy(eUpgradeRed);
             lvl4_spawned18s = true;
         }
@@ -979,22 +1023,28 @@ public class GameManager {
             lvl4_spawned25s = true;
         }
 
-        // 35s: 2 TankerEnemy đi song song + 2 SniperEnemy nấp sau + 4 SwarmEnemy gây nhiễu
+        // 35s: 2 TankerEnemy đi song song + 2 SniperEnemy nấp sau + 4 SwarmEnemy gây
+        // nhiễu
         if (elapsedSec >= 35.0 && !lvl4_spawned35s) {
             double centerX = Main.WIDTH / 2.0;
             TankerEnemy t1 = new TankerEnemy(centerX - 110 - TankerEnemy.sizeX / 2.0, -TankerEnemy.sizeY, 60.0, true);
             TankerEnemy t2 = new TankerEnemy(centerX + 110 - TankerEnemy.sizeX / 2.0, -TankerEnemy.sizeY, 60.0, true);
 
-            SniperEnemy s1 = new SniperEnemy(centerX - 110 - SniperEnemy.sizeX / 2.0, -SniperEnemy.sizeY - 80, 130.0, 1500, "LEFT");
-            SniperEnemy s2 = new SniperEnemy(centerX + 110 - SniperEnemy.sizeX / 2.0, -SniperEnemy.sizeY - 80, 130.0, 1500, "RIGHT");
+            SniperEnemy s1 = new SniperEnemy(centerX - 110 - SniperEnemy.sizeX / 2.0, -SniperEnemy.sizeY - 80, 130.0,
+                    1500, "LEFT");
+            SniperEnemy s2 = new SniperEnemy(centerX + 110 - SniperEnemy.sizeX / 2.0, -SniperEnemy.sizeY - 80, 130.0,
+                    1500, "RIGHT");
             s1.setBulletTexture("bullet_enemy_diamond_yellow");
             s2.setBulletTexture("bullet_enemy_diamond_yellow");
 
-            spawnEnemy(t1); spawnEnemy(t2);
-            spawnEnemy(s1); spawnEnemy(s2);
+            spawnEnemy(t1);
+            spawnEnemy(t2);
+            spawnEnemy(s1);
+            spawnEnemy(s2);
 
             for (int i = 0; i < 4; i++) {
-                SwarmEnemy swarm = new SwarmEnemy(60.0 + (i * 90), -SwarmEnemy.sizeY - (i * 30), SwarmEnemy.TrajectoryType.SINE_WAVE, 220.0, 0);
+                SwarmEnemy swarm = new SwarmEnemy(60.0 + (i * 90), -SwarmEnemy.sizeY - (i * 30),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 220.0, 0);
                 spawnEnemy(swarm);
             }
             lvl4_spawned35s = true;
@@ -1013,7 +1063,9 @@ public class GameManager {
             lvl4_wallTankers.add(w2);
             lvl4_wallTankers.add(w3);
 
-            spawnEnemy(w1); spawnEnemy(w2); spawnEnemy(w3);
+            spawnEnemy(w1);
+            spawnEnemy(w2);
+            spawnEnemy(w3);
             lvl4_spawned55s = true;
         }
 
@@ -1024,8 +1076,10 @@ public class GameManager {
             double slot2 = gap * 2 + TankerEnemy.sizeX * 1.5;
 
             for (int i = 0; i < 3; i++) {
-                SwarmEnemy sw1 = new SwarmEnemy(slot1, -SwarmEnemy.sizeY - (i * 40), SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, 0);
-                SwarmEnemy sw2 = new SwarmEnemy(slot2, -SwarmEnemy.sizeY - (i * 40), SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, 0);
+                SwarmEnemy sw1 = new SwarmEnemy(slot1, -SwarmEnemy.sizeY - (i * 40),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, 0);
+                SwarmEnemy sw2 = new SwarmEnemy(slot2, -SwarmEnemy.sizeY - (i * 40),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, 0);
                 spawnEnemy(sw1);
                 spawnEnemy(sw2);
             }
@@ -1053,8 +1107,10 @@ public class GameManager {
         // 🎬 Giai đoạn 1: Giao hàng tiếp tế (Giây 0 - 15)
         if (elapsedSec >= 3.0 && !lvl5_spawnedSwarm) {
             for (int i = 0; i < 4; i++) {
-                SwarmEnemy s1 = new SwarmEnemy(80.0 + (i * 40), -SwarmEnemy.sizeY - (i * 30), SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, 0);
-                SwarmEnemy s2 = new SwarmEnemy(Main.WIDTH - 80.0 - (i * 40), -SwarmEnemy.sizeY - (i * 30), SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, Math.PI);
+                SwarmEnemy s1 = new SwarmEnemy(80.0 + (i * 40), -SwarmEnemy.sizeY - (i * 30),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, 0);
+                SwarmEnemy s2 = new SwarmEnemy(Main.WIDTH - 80.0 - (i * 40), -SwarmEnemy.sizeY - (i * 30),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 240.0, Math.PI);
                 spawnEnemy(s1);
                 spawnEnemy(s2);
             }
@@ -1064,8 +1120,10 @@ public class GameManager {
         // 12s: 2 quái Đỏ rớt 1 ShieldPowerUp và 1 PillPowerUp 100%
         if (elapsedSec >= 10.0 && !lvl5_spawnedRedEnemies) {
             double centerX = Main.WIDTH / 2.0;
-            NormalEnemy rShield = new NormalEnemy(centerX - 90, -NormalEnemy.sizeY, 90.0, false, false, true, "enemy_normal_red");
-            NormalEnemy rPill = new NormalEnemy(centerX + 90, -NormalEnemy.sizeY, 90.0, false, false, true, "enemy_normal_red");
+            NormalEnemy rShield = new NormalEnemy(centerX - 90, -NormalEnemy.sizeY, 90.0, false, false, true,
+                    "enemy_normal_red");
+            NormalEnemy rPill = new NormalEnemy(centerX + 90, -NormalEnemy.sizeY, 90.0, false, false, true,
+                    "enemy_normal_red");
             spawnEnemy(rShield);
             spawnEnemy(rPill);
             lvl5_spawnedRedEnemies = true;
@@ -1101,18 +1159,22 @@ public class GameManager {
                         double rad = Math.toRadians(angleDeg);
                         double vx = totalSpeed * Math.sin(rad);
                         double vy = totalSpeed * Math.cos(rad);
-                        EnemyBullet b = new EnemyBullet(bossCenterX, bossCenterY, vx, vy, 15, "bullet_enemy_round_purple");
+                        EnemyBullet b = new EnemyBullet(bossCenterX, bossCenterY, vx, vy, 15,
+                                "bullet_enemy_round_purple");
                         gameLayoutPane.getChildren().add(b.getView());
                         ShooterEnemy.addBullet(b);
                     }
                 } else {
-                    // Phase 2: Tử Quang (2 Tia Laser 50 Dmg + 2 Đạn Tỉa Kim Cương 25 Dmg nhắm player)
+                    // Phase 2: Tử Quang (2 Tia Laser 50 Dmg + 2 Đạn Tỉa Kim Cương 25 Dmg nhắm
+                    // player)
                     vfxManager.spawnScreenEffect(true);
                     AudioManager.getInstance().playSound("sfx_zap");
 
                     // 2 Tia Laser chéo
-                    EnemyBullet laser1 = new EnemyBullet(bossCenterX - 40, bossCenterY, -50.0, 380.0, 50, "bullet_enemy_laser");
-                    EnemyBullet laser2 = new EnemyBullet(bossCenterX + 40, bossCenterY, 50.0, 380.0, 50, "bullet_enemy_laser");
+                    EnemyBullet laser1 = new EnemyBullet(bossCenterX - 40, bossCenterY, -50.0, 380.0, 50,
+                            "bullet_enemy_laser");
+                    EnemyBullet laser2 = new EnemyBullet(bossCenterX + 40, bossCenterY, 50.0, 380.0, 50,
+                            "bullet_enemy_laser");
 
                     // 2 Đạn Tỉa nhắm player
                     double targetedVx = 0;
@@ -1126,8 +1188,10 @@ public class GameManager {
                             targetedVy = (dy / dist) * 350.0;
                         }
                     }
-                    EnemyBullet diamond1 = new EnemyBullet(bossCenterX - 20, bossCenterY, targetedVx, targetedVy, 25, "bullet_enemy_diamond_yellow");
-                    EnemyBullet diamond2 = new EnemyBullet(bossCenterX + 20, bossCenterY, targetedVx, targetedVy, 25, "bullet_enemy_diamond_yellow");
+                    EnemyBullet diamond1 = new EnemyBullet(bossCenterX - 20, bossCenterY, targetedVx, targetedVy, 25,
+                            "bullet_enemy_diamond_yellow");
+                    EnemyBullet diamond2 = new EnemyBullet(bossCenterX + 20, bossCenterY, targetedVx, targetedVy, 25,
+                            "bullet_enemy_diamond_yellow");
 
                     EnemyBullet[] phase2Bullets = { laser1, laser2, diamond1, diamond2 };
                     for (EnemyBullet b : phase2Bullets) {
@@ -1174,7 +1238,8 @@ public class GameManager {
             lvl6_spawned5s = true;
         }
 
-        // 12s: 2 cục Asteroid rơi song song ở 2 bên tạo khe hẹp ở giữa + 3 SwarmEnemy chui qua khe
+        // 12s: 2 cục Asteroid rơi song song ở 2 bên tạo khe hẹp ở giữa + 3 SwarmEnemy
+        // chui qua khe
         if (elapsedSec >= 12.0 && !lvl6_spawned12s) {
             MeteorEnemy mLeft = new MeteorEnemy(30.0, -MeteorEnemy.sizeY);
             MeteorEnemy mRight = new MeteorEnemy(Main.WIDTH - MeteorEnemy.sizeX - 30.0, -MeteorEnemy.sizeY);
@@ -1183,7 +1248,8 @@ public class GameManager {
 
             double centerX = Main.WIDTH / 2.0;
             for (int i = 0; i < 3; i++) {
-                SwarmEnemy swarm = new SwarmEnemy(centerX - SwarmEnemy.sizeX / 2.0, -SwarmEnemy.sizeY - (i * 45), SwarmEnemy.TrajectoryType.STRAIGHT, 250.0, 0);
+                SwarmEnemy swarm = new SwarmEnemy(centerX - SwarmEnemy.sizeX / 2.0, -SwarmEnemy.sizeY - (i * 45),
+                        SwarmEnemy.TrajectoryType.STRAIGHT, 250.0, 0);
                 spawnEnemy(swarm);
             }
             lvl6_spawned12s = true;
@@ -1209,7 +1275,8 @@ public class GameManager {
             }
 
             SniperEnemy sLeft = new SniperEnemy(Main.WIDTH * 0.3, -SniperEnemy.sizeY - 100, 130.0, 1500, "AUTO");
-            SniperEnemy sRight = new SniperEnemy(Main.WIDTH * 0.7 - SniperEnemy.sizeX, -SniperEnemy.sizeY - 100, 130.0, 1500, "AUTO");
+            SniperEnemy sRight = new SniperEnemy(Main.WIDTH * 0.7 - SniperEnemy.sizeX, -SniperEnemy.sizeY - 100, 130.0,
+                    1500, "AUTO");
             sLeft.setBulletTexture("bullet_enemy_diamond_yellow");
             sRight.setBulletTexture("bullet_enemy_diamond_yellow");
             spawnEnemy(sLeft);
@@ -1237,7 +1304,8 @@ public class GameManager {
             spawnEnemy(tCenter);
 
             for (int i = 0; i < 4; i++) {
-                SwarmEnemy swarm = new SwarmEnemy(centerX + TankerEnemy.sizeX / 2.0, -SwarmEnemy.sizeY - 80 - (i * 35), SwarmEnemy.TrajectoryType.SINE_WAVE, 230.0, 0);
+                SwarmEnemy swarm = new SwarmEnemy(centerX + TankerEnemy.sizeX / 2.0, -SwarmEnemy.sizeY - 80 - (i * 35),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 230.0, 0);
                 spawnEnemy(swarm);
             }
             lvl6_spawned58s = true;
@@ -1278,7 +1346,8 @@ public class GameManager {
         // 🎬 Giai đoạn 1: Ảo giác bình yên (Giây 0 - 15)
         if (elapsedSec >= 3.0 && !lvl7_spawned5s) {
             for (int i = 0; i < 3; i++) {
-                SwarmEnemy swarm = new SwarmEnemy(100.0 + (i * 120), -SwarmEnemy.sizeY - (i * 30), SwarmEnemy.TrajectoryType.SINE_WAVE, 220.0, 0);
+                SwarmEnemy swarm = new SwarmEnemy(100.0 + (i * 120), -SwarmEnemy.sizeY - (i * 30),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 220.0, 0);
                 spawnEnemy(swarm);
             }
             lvl7_spawned5s = true;
@@ -1287,7 +1356,8 @@ public class GameManager {
         // 10s: Quái đỏ rớt 100% Item Upgrade Súng
         if (elapsedSec >= 10.0 && !lvl7_spawned10s) {
             double centerX = Main.WIDTH / 2.0 - NormalEnemy.sizeX / 2.0;
-            NormalEnemy eUpgradeRed = new NormalEnemy(centerX, -NormalEnemy.sizeY, 80.0, false, false, true, "enemy_normal_red");
+            NormalEnemy eUpgradeRed = new NormalEnemy(centerX, -NormalEnemy.sizeY, 80.0, false, false, true,
+                    "enemy_normal_red");
             spawnEnemy(eUpgradeRed);
             lvl7_spawned10s = true;
         }
@@ -1336,15 +1406,19 @@ public class GameManager {
         // 30s: Gọng kìm dọc (Trên: Swarm, Dưới: 2 Ambush)
         if (elapsedSec >= 30.0 && !lvl7_spawned30s) {
             for (int i = 0; i < 4; i++) {
-                SwarmEnemy swarm = new SwarmEnemy(80.0 + (i * 90), -SwarmEnemy.sizeY - (i * 20), SwarmEnemy.TrajectoryType.STRAIGHT, 240.0, 0);
+                SwarmEnemy swarm = new SwarmEnemy(80.0 + (i * 90), -SwarmEnemy.sizeY - (i * 20),
+                        SwarmEnemy.TrajectoryType.STRAIGHT, 240.0, 0);
                 spawnEnemy(swarm);
             }
 
             EliteEnemy b1 = new EliteEnemy(Main.WIDTH * 0.3, Main.HEIGHT + 50);
             EliteEnemy b2 = new EliteEnemy(Main.WIDTH * 0.7 - EliteEnemy.sizeX, Main.HEIGHT + 50);
-            b1.setSpeedY(-330.0); b1.setPos(b1.getX(), b1.getY(), 0);
-            b2.setSpeedY(-330.0); b2.setPos(b2.getX(), b2.getY(), 0);
-            spawnEnemy(b1); spawnEnemy(b2);
+            b1.setSpeedY(-330.0);
+            b1.setPos(b1.getX(), b1.getY(), 0);
+            b2.setSpeedY(-330.0);
+            b2.setPos(b2.getX(), b2.getY(), 0);
+            spawnEnemy(b1);
+            spawnEnemy(b2);
 
             lvl7_spawned30s = true;
         }
@@ -1361,7 +1435,8 @@ public class GameManager {
             lvl7_spawned40s = true;
         }
 
-        // 50s - 60s: Thế trận Thập Tự Crossfire (Trái/Phải: SideSniper, Trên: Tanker, Dưới: Ambush)
+        // 50s - 60s: Thế trận Thập Tự Crossfire (Trái/Phải: SideSniper, Trên: Tanker,
+        // Dưới: Ambush)
         if (elapsedSec >= 50.0 && !lvl7_warn50s) {
             playScene.showBottomWarning(true, Main.WIDTH / 2.0);
             AudioManager.getInstance().playSound("sfx_zap");
@@ -1379,16 +1454,20 @@ public class GameManager {
             // Dưới: 2 Ambush
             EliteEnemy bot1 = new EliteEnemy(centerX - 100, Main.HEIGHT + 50);
             EliteEnemy bot2 = new EliteEnemy(centerX + 100, Main.HEIGHT + 50);
-            bot1.setSpeedY(-320.0); bot1.setPos(bot1.getX(), bot1.getY(), 0);
-            bot2.setSpeedY(-320.0); bot2.setPos(bot2.getX(), bot2.getY(), 0);
-            spawnEnemy(bot1); spawnEnemy(bot2);
+            bot1.setSpeedY(-320.0);
+            bot1.setPos(bot1.getX(), bot1.getY(), 0);
+            bot2.setSpeedY(-320.0);
+            bot2.setPos(bot2.getX(), bot2.getY(), 0);
+            spawnEnemy(bot1);
+            spawnEnemy(bot2);
 
             // Hông Trái & Phải: 2 SideSniper
             SniperEnemy sideL = new SniperEnemy(-SniperEnemy.sizeX, Main.HEIGHT * 0.45, 140.0, 1500, "RIGHT");
             SniperEnemy sideR = new SniperEnemy(Main.WIDTH, Main.HEIGHT * 0.45, 140.0, 1500, "LEFT");
             sideL.setBulletTexture("bullet_enemy_diamond_yellow");
             sideR.setBulletTexture("bullet_enemy_diamond_yellow");
-            spawnEnemy(sideL); spawnEnemy(sideR);
+            spawnEnemy(sideL);
+            spawnEnemy(sideR);
 
             lvl7_spawned51s = true;
         }
@@ -1398,16 +1477,22 @@ public class GameManager {
             // SwarmEnemy túa ra từ 4 hướng bay cắt chéo màn hình
             for (int i = 0; i < 4; i++) {
                 // Trên xuống
-                SwarmEnemy topS = new SwarmEnemy(60.0 + (i * 90), -SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.STRAIGHT, 250.0, 0);
+                SwarmEnemy topS = new SwarmEnemy(60.0 + (i * 90), -SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.STRAIGHT,
+                        250.0, 0);
                 // Dưới lên
-                SwarmEnemy botS = new SwarmEnemy(80.0 + (i * 90), Main.HEIGHT + SwarmEnemy.sizeY, SwarmEnemy.TrajectoryType.DIAGONAL, -250.0, 0);
+                SwarmEnemy botS = new SwarmEnemy(80.0 + (i * 90), Main.HEIGHT + SwarmEnemy.sizeY,
+                        SwarmEnemy.TrajectoryType.DIAGONAL, -250.0, 0);
                 // Trái sang
-                SwarmEnemy leftS = new SwarmEnemy(-SwarmEnemy.sizeX, 100.0 + (i * 80), SwarmEnemy.TrajectoryType.DIAGONAL, 120.0, 220.0);
+                SwarmEnemy leftS = new SwarmEnemy(-SwarmEnemy.sizeX, 100.0 + (i * 80),
+                        SwarmEnemy.TrajectoryType.DIAGONAL, 120.0, 220.0);
                 // Phải sang
-                SwarmEnemy rightS = new SwarmEnemy(Main.WIDTH + SwarmEnemy.sizeX, 120.0 + (i * 80), SwarmEnemy.TrajectoryType.DIAGONAL, 120.0, -220.0);
+                SwarmEnemy rightS = new SwarmEnemy(Main.WIDTH + SwarmEnemy.sizeX, 120.0 + (i * 80),
+                        SwarmEnemy.TrajectoryType.DIAGONAL, 120.0, -220.0);
 
-                spawnEnemy(topS); spawnEnemy(botS);
-                spawnEnemy(leftS); spawnEnemy(rightS);
+                spawnEnemy(topS);
+                spawnEnemy(botS);
+                spawnEnemy(leftS);
+                spawnEnemy(rightS);
             }
             lvl7_spawned70s = true;
         }
@@ -1440,8 +1525,10 @@ public class GameManager {
         // 10s - 18s: 2 quái tiếp tế rớt Pill & Shield
         if (elapsedSec >= 10.0 && !lvl8_spawned10s) {
             double centerX = Main.WIDTH / 2.0;
-            NormalEnemy rPill = new NormalEnemy(centerX - 80, -NormalEnemy.sizeY, 80.0, false, false, true, "enemy_normal_red");
-            NormalEnemy rShield = new NormalEnemy(centerX + 80, -NormalEnemy.sizeY, 80.0, false, false, true, "enemy_normal_red");
+            NormalEnemy rPill = new NormalEnemy(centerX - 80, -NormalEnemy.sizeY, 80.0, false, false, true,
+                    "enemy_normal_red");
+            NormalEnemy rShield = new NormalEnemy(centerX + 80, -NormalEnemy.sizeY, 80.0, false, false, true,
+                    "enemy_normal_red");
             spawnEnemy(rPill);
             spawnEnemy(rShield);
             lvl8_spawned10s = true;
@@ -1462,11 +1549,14 @@ public class GameManager {
             lvl8_spawned25s = true;
         }
 
-        // 32s - 42s: Từng đàn EliteSwarm lượn sóng siêu nhanh (400 px/s) + văng Suicide Bullet khi nổ
+        // 32s - 42s: Từng đàn EliteSwarm lượn sóng siêu nhanh (400 px/s) + văng Suicide
+        // Bullet khi nổ
         if (elapsedSec >= 32.0 && !lvl8_spawned32s) {
             for (int i = 0; i < 6; i++) {
-                SwarmEnemy sw1 = new SwarmEnemy(60.0 + (i * 45), -SwarmEnemy.sizeY - (i * 35), SwarmEnemy.TrajectoryType.SINE_WAVE, 400.0, 0);
-                SwarmEnemy sw2 = new SwarmEnemy(Main.WIDTH - 60.0 - (i * 45), -SwarmEnemy.sizeY - (i * 35), SwarmEnemy.TrajectoryType.SINE_WAVE, 400.0, Math.PI);
+                SwarmEnemy sw1 = new SwarmEnemy(60.0 + (i * 45), -SwarmEnemy.sizeY - (i * 35),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 400.0, 0);
+                SwarmEnemy sw2 = new SwarmEnemy(Main.WIDTH - 60.0 - (i * 45), -SwarmEnemy.sizeY - (i * 35),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 400.0, Math.PI);
                 spawnEnemy(sw1);
                 spawnEnemy(sw2);
             }
@@ -1503,18 +1593,23 @@ public class GameManager {
             // EliteNormal thả đạn chùm từ trên
             EliteEnemy eTop1 = new EliteEnemy(Main.WIDTH * 0.3, -EliteEnemy.sizeY, 150.0);
             EliteEnemy eTop2 = new EliteEnemy(Main.WIDTH * 0.7 - EliteEnemy.sizeX, -EliteEnemy.sizeY, 150.0);
-            spawnEnemy(eTop1); spawnEnemy(eTop2);
+            spawnEnemy(eTop1);
+            spawnEnemy(eTop2);
 
             // Ambush từ dưới lên
             EliteEnemy aBot1 = new EliteEnemy(Main.WIDTH * 0.2, Main.HEIGHT + 50);
             EliteEnemy aBot2 = new EliteEnemy(Main.WIDTH * 0.8 - EliteEnemy.sizeX, Main.HEIGHT + 50);
-            aBot1.setSpeedY(-330.0); aBot1.setPos(aBot1.getX(), aBot1.getY(), 0);
-            aBot2.setSpeedY(-330.0); aBot2.setPos(aBot2.getX(), aBot2.getY(), 0);
-            spawnEnemy(aBot1); spawnEnemy(aBot2);
+            aBot1.setSpeedY(-330.0);
+            aBot1.setPos(aBot1.getX(), aBot1.getY(), 0);
+            aBot2.setSpeedY(-330.0);
+            aBot2.setPos(aBot2.getX(), aBot2.getY(), 0);
+            spawnEnemy(aBot1);
+            spawnEnemy(aBot2);
 
             // EliteSwarm lượn chéo
             for (int i = 0; i < 4; i++) {
-                SwarmEnemy sw = new SwarmEnemy(100.0 + (i * 80), -SwarmEnemy.sizeY - (i * 30), SwarmEnemy.TrajectoryType.DIAGONAL, 350.0, (i % 2 == 0 ? 150 : -150));
+                SwarmEnemy sw = new SwarmEnemy(100.0 + (i * 80), -SwarmEnemy.sizeY - (i * 30),
+                        SwarmEnemy.TrajectoryType.DIAGONAL, 350.0, (i % 2 == 0 ? 150 : -150));
                 spawnEnemy(sw);
             }
             lvl8_spawned75s = true;
@@ -1540,9 +1635,12 @@ public class GameManager {
         // 5s - 10s: 3 chiếc máy bay tiếp tế rớt Máu, Khiên, Pill Upgrade 100%!
         if (elapsedSec >= 5.0 && !lvl9_spawned5s) {
             double centerX = Main.WIDTH / 2.0;
-            NormalEnemy rHealth = new NormalEnemy(centerX - 120, -NormalEnemy.sizeY, 80.0, false, false, true, "enemy_normal_red");
-            NormalEnemy rShield = new NormalEnemy(centerX, -NormalEnemy.sizeY, 80.0, false, false, true, "enemy_normal_red");
-            NormalEnemy rPill = new NormalEnemy(centerX + 120, -NormalEnemy.sizeY, 80.0, false, false, true, "enemy_normal_red");
+            NormalEnemy rHealth = new NormalEnemy(centerX - 120, -NormalEnemy.sizeY, 80.0, false, false, true,
+                    "enemy_normal_red");
+            NormalEnemy rShield = new NormalEnemy(centerX, -NormalEnemy.sizeY, 80.0, false, false, true,
+                    "enemy_normal_red");
+            NormalEnemy rPill = new NormalEnemy(centerX + 120, -NormalEnemy.sizeY, 80.0, false, false, true,
+                    "enemy_normal_red");
             spawnEnemy(rHealth);
             spawnEnemy(rShield);
             spawnEnemy(rPill);
@@ -1571,11 +1669,13 @@ public class GameManager {
             }
         }
 
-        // 25s: Bầy EliteSwarm lướt lượn sóng qua khe hở (Ruồi tử thần - chết nhả Suicide Bullet)
+        // 25s: Bầy EliteSwarm lướt lượn sóng qua khe hở (Ruồi tử thần - chết nhả
+        // Suicide Bullet)
         if (elapsedSec >= 25.0 && !lvl9_spawned25s) {
             double centerX = Main.WIDTH / 2.0;
             for (int i = 0; i < 5; i++) {
-                SwarmEnemy sw = new SwarmEnemy(centerX, -SwarmEnemy.sizeY - (i * 35), SwarmEnemy.TrajectoryType.SINE_WAVE, 380.0, 0);
+                SwarmEnemy sw = new SwarmEnemy(centerX, -SwarmEnemy.sizeY - (i * 35),
+                        SwarmEnemy.TrajectoryType.SINE_WAVE, 380.0, 0);
                 spawnEnemy(sw);
             }
             lvl9_spawned25s = true;
@@ -1588,11 +1688,14 @@ public class GameManager {
             TankerEnemy t1 = new TankerEnemy(gap, -TankerEnemy.sizeY, 55.0, true);
             TankerEnemy t2 = new TankerEnemy(gap * 2 + TankerEnemy.sizeX, -TankerEnemy.sizeY, 55.0, true);
             TankerEnemy t3 = new TankerEnemy(gap * 3 + TankerEnemy.sizeX * 2, -TankerEnemy.sizeY, 55.0, true);
-            spawnEnemy(t1); spawnEnemy(t2); spawnEnemy(t3);
+            spawnEnemy(t1);
+            spawnEnemy(t2);
+            spawnEnemy(t3);
             lvl9_spawned45s = true;
         }
 
-        // 48s: Cảnh báo 3 dấu chấm than đỏ mép dưới màn hình + 49s: 3 AmbushEnemy thốc từ dưới lên!
+        // 48s: Cảnh báo 3 dấu chấm than đỏ mép dưới màn hình + 49s: 3 AmbushEnemy thốc
+        // từ dưới lên!
         if (elapsedSec >= 48.0 && elapsedSec < 49.0 && !lvl9_warn48s) {
             playScene.showBottomWarning(true, Main.WIDTH / 2.0);
             AudioManager.getInstance().playSound("sfx_zap");
@@ -1626,7 +1729,8 @@ public class GameManager {
             lvl9_spawned70s = true;
         }
 
-        // 73s: 4 EliteSniper thò ra từ 2 bên hông (2 Trái, 2 Phải), xả đạn Burst 3 liên thanh hình chữ Thập
+        // 73s: 4 EliteSniper thò ra từ 2 bên hông (2 Trái, 2 Phải), xả đạn Burst 3 liên
+        // thanh hình chữ Thập
         if (elapsedSec >= 73.0 && !lvl9_spawned73s) {
             SniperEnemy sLeft1 = new SniperEnemy(-SniperEnemy.sizeX, Main.HEIGHT * 0.35, 140.0, 500, "RIGHT");
             SniperEnemy sLeft2 = new SniperEnemy(-SniperEnemy.sizeX, Main.HEIGHT * 0.65, 140.0, 500, "RIGHT");
@@ -1871,7 +1975,8 @@ public class GameManager {
     }
 
     private void handleVictory() {
-        if (isVictory) return;
+        if (isVictory)
+            return;
         isVictory = true;
 
         score += 500;

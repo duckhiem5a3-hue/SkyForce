@@ -3,18 +3,18 @@ package com.nhom27.skyforce.entities.player;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.weapons.Bullet;
-import com.nhom27.skyforce.entities.weapons.SeekerBullet;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.managers.PlayerDataManager;
 import com.nhom27.skyforce.utils.AssetManager;
 import com.nhom27.skyforce.utils.SpriteInfo;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Polygon;
 
 public abstract class Player extends GameObject {
     protected String skinId = "blue";
@@ -43,10 +43,8 @@ public abstract class Player extends GameObject {
     public Player(String spriteKey, double startX, double startY) {
         super(spriteKey, startX, startY);
         SpriteInfo info = AssetManager.getSpriteInfo(spriteKey);
-        if (info != null && info.getHitbox() instanceof Polygon poly) {
-            Polygon copyPoly = new Polygon();
-            copyPoly.getPoints().addAll(poly.getPoints());
-            this.hitbox = copyPoly;
+        if (info != null && info.getHitbox() != null) {
+            this.hitbox = info.getHitbox();
         }
         this.bullets = new ArrayList<>();
 
@@ -61,7 +59,7 @@ public abstract class Player extends GameObject {
     }
 
     public static Player createPlayerForLevel(int level, double x, double y) {
-        String skin = com.nhom27.skyforce.managers.PlayerDataManager.getInstance().getEquippedSkin();
+        String skin = PlayerDataManager.getInstance().getEquippedSkin();
         return createPlayerForLevel(level, x, y, skin);
     }
 
@@ -72,9 +70,9 @@ public abstract class Player extends GameObject {
             case 2:
                 return new PlayerLevel2(x, y, skinId);
             case 3:
-            default:
                 return new PlayerLevel3(x, y, skinId);
         }
+        return null;
     }
 
     public String getSkinId() {
@@ -108,21 +106,27 @@ public abstract class Player extends GameObject {
     }
 
     public void copyStateFrom(Player oldPlayer) {
-        if (oldPlayer == null) return;
+        if (oldPlayer == null)
+            return;
         this.skinId = oldPlayer.skinId;
-        this.currentBulletTexture = oldPlayer.getBulletTexture();
         this.level = oldPlayer.level;
         this.currentXp = oldPlayer.currentXp;
         this.xpToNextLevel = oldPlayer.xpToNextLevel;
+
         this.health = Math.min(this.maxHealth, oldPlayer.health + (this.maxHealth - oldPlayer.maxHealth));
-        if (this.health <= 0) this.health = this.maxHealth;
+        if (this.health <= 0)
+            this.health = this.maxHealth;
+        this.currentBulletTexture = oldPlayer.getBulletTexture();
+
         this.timeSinceLastBullet = oldPlayer.timeSinceLastBullet;
+        this.bullets = oldPlayer.bullets;
         this.seekerBuffEndTime = oldPlayer.seekerBuffEndTime;
         this.shieldBuffEndTime = oldPlayer.shieldBuffEndTime;
         this.shotCount = oldPlayer.shotCount;
-        this.bullets = oldPlayer.bullets;
-        this.currentGlowTimer = oldPlayer.currentGlowTimer;
+
         this.setPos(oldPlayer.getX(), oldPlayer.getY());
+
+        this.currentGlowTimer = oldPlayer.currentGlowTimer;
         if (this.shieldView != null && oldPlayer.shieldView != null) {
             this.shieldView.setVisible(oldPlayer.shieldView.isVisible());
             this.shieldView.setOpacity(oldPlayer.shieldView.getOpacity());
@@ -130,7 +134,8 @@ public abstract class Player extends GameObject {
     }
 
     public Player addXp(int amount) {
-        if (amount <= 0) return this;
+        if (amount <= 0)
+            return this;
         this.currentXp += amount;
         int oldLevel = this.level;
 
@@ -192,7 +197,7 @@ public abstract class Player extends GameObject {
             if (shieldView != null) {
                 shieldView.setVisible(false);
             }
-            com.nhom27.skyforce.audio.AudioManager.getInstance().playSound("sfx_zap");
+            AudioManager.getInstance().playSound("sfx_player_shield_break");
             return;
         }
         this.health -= damage;
@@ -240,7 +245,8 @@ public abstract class Player extends GameObject {
     }
 
     public boolean shouldFireSeeker() {
-        if (!isSeekerActive()) return false;
+        if (!isSeekerActive())
+            return false;
         return (shotCount > 0 && shotCount % 4 == 0);
     }
 
@@ -314,7 +320,6 @@ public abstract class Player extends GameObject {
                 if (!shieldView.isVisible()) {
                     shieldView.setVisible(true);
                 }
-                shieldView.setRotate(0);
 
                 long remainingMs = getShieldBuffTimeRemaining();
                 if (remainingMs <= 3000) {

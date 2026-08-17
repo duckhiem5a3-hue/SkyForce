@@ -22,7 +22,7 @@ public class PlayerLevel3 extends Player {
         this.maxHealth = 100;
         this.health = this.maxHealth;
         this.speedBulletX = 0;
-        this.speedBulletY = -700;
+        this.speedBulletY = -900;
         this.currentBulletTexture = getBulletTexture();
         this.xpToNextLevel = calculateXpRequirement(3);
     }
