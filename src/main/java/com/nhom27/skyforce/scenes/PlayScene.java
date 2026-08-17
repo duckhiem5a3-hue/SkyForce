@@ -50,7 +50,6 @@ public class PlayScene {
     private Label levelLabel;
     private Label xpLabel;
     private ProgressBar xpBar;
-    private Label waveLabel;
     private Label buffStatusLabel;
     private HBox buffContainer;
 
@@ -189,12 +188,6 @@ public class PlayScene {
         topRightPanel.setAlignment(Pos.TOP_RIGHT);
         topRightPanel.setPickOnBounds(false);
 
-        // 3. Phía trên ở giữa (Màn chơi & Thanh máu Boss)
-        waveLabel = new Label("WAVE 1");
-        waveLabel.setFont(AssetManager.getFont("font_kenvector_future", 24));
-        waveLabel.setTextFill(Color.CYAN);
-        waveLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 8, 0.8, 0, 2));
-
         bossNameLabel = new Label("BOSS");
         bossNameLabel.setFont(AssetManager.getFont("font_kenvector_future", 14));
         bossNameLabel.setTextFill(Color.RED);
@@ -210,7 +203,7 @@ public class PlayScene {
         bossHealthBox.setVisible(false);
         bossHealthBox.setPickOnBounds(false);
 
-        VBox topCenterVBox = new VBox(6, waveLabel, bossHealthBox);
+        VBox topCenterVBox = new VBox(6, bossHealthBox);
         topCenterVBox.setAlignment(Pos.TOP_CENTER);
         topCenterVBox.setPickOnBounds(false);
 
@@ -301,19 +294,16 @@ public class PlayScene {
         }
     }
 
-    public void updateHUD(int score, int wave, int gold, Player player) {
+    public void updateHUD(int score, int gold, Player player) {
         if (goldLabel != null) {
             goldLabel.setText("GOLD: " + gold);
         }
-        updateHUD(score, wave, player);
+        updateHUD(score, player);
     }
 
-    public void updateHUD(int score, int wave, Player player) {
+    public void updateHUD(int score, Player player) {
         if (scoreLabel != null) {
             scoreLabel.setText("SCORE: " + score);
-        }
-        if (waveLabel != null) {
-            waveLabel.setText("WAVE " + wave);
         }
         if (player != null) {
             if (healthBar != null && healthLabel != null) {
@@ -380,7 +370,8 @@ public class PlayScene {
     }
 
     public void updateBossHUD(com.nhom27.skyforce.entities.base.BossObject boss) {
-        if (bossHealthBox == null) return;
+        if (bossHealthBox == null)
+            return;
         if (boss != null && boss.isAlive()) {
             bossHealthBox.setVisible(true);
             if (bossNameLabel != null) {
@@ -445,7 +436,8 @@ public class PlayScene {
             SceneManager.getInstance().switchScene("MenuScene");
         });
 
-        card.getChildren().addAll(titleLabel, finalScoreLabel, goldGainedLabel, totalGoldLabel, btnRestart, btnMainMenu);
+        card.getChildren().addAll(titleLabel, finalScoreLabel, goldGainedLabel, totalGoldLabel, btnRestart,
+                btnMainMenu);
 
         gameOverOverlay.getChildren().add(card);
         gamePane.getChildren().add(gameOverOverlay);
@@ -517,7 +509,8 @@ public class PlayScene {
             SceneManager.getInstance().switchScene("MenuScene");
         });
 
-        card.getChildren().addAll(titleLabel, finalScoreLabel, goldGainedLabel, totalGoldLabel, btnNextLevel, btnMainMenu);
+        card.getChildren().addAll(titleLabel, finalScoreLabel, goldGainedLabel, totalGoldLabel, btnNextLevel,
+                btnMainMenu);
 
         winOverlay.getChildren().add(card);
         gamePane.getChildren().add(winOverlay);

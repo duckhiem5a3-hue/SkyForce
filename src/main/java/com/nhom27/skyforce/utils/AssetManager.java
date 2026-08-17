@@ -371,6 +371,46 @@ public class AssetManager {
                                                 42, 20 // Khớp cánh trên (Trái)
                                 });
 
+                loadSpriteInfo("enemy_normal_blue",
+                                "/com/nhom27/skyforce/textures/entities/enemy_normal_blue.png", new double[] {
+                                                21, 0, // Mũi trái
+                                                62, 0, // Mũi phải
+                                                80, 13, // Đỉnh cánh phải
+                                                81, 64, // Đáy cánh phải
+                                                54, 82, // Đuôi phải
+                                                29, 82, // Đuôi trái
+                                                2, 64, // Đáy cánh trái
+                                                3, 13 // Đỉnh cánh trái
+                                });
+                loadSpriteInfo("enemy_normal_red",
+                                "/com/nhom27/skyforce/textures/entities/enemy_normal_red.png", new double[] {
+                                                21, 0, // Mũi trái
+                                                62, 0, // Mũi phải
+                                                80, 13, // Đỉnh cánh phải
+                                                81, 64, // Đáy cánh phải
+                                                54, 82, // Đuôi phải
+                                                29, 82, // Đuôi trái
+                                                2, 64, // Đáy cánh trái
+                                                3, 13 // Đỉnh cánh trái
+                                });
+                loadSpriteInfo("boss_mini_red", "/com/nhom27/skyforce/textures/entities/boss_mini_red.png",
+                                new double[] {
+                                                36, 1, // Mũi trái
+                                                56, 1, // Mũi phải
+                                                62, 9, // Cạnh mũi phải
+                                                64, 61, // Thân phải
+                                                88, 69, // Đỉnh cánh phải
+                                                92, 112, // Mũi cánh phải
+                                                64, 146, // Đuôi phải
+                                                46, 124, // Lõm đuôi (Nằm chuẩn trên trục tâm)
+                                                28, 146, // Đuôi trái
+                                                0, 112, // Mũi cánh trái
+                                                4, 69, // Đỉnh cánh trái
+                                                28, 61, // Thân trái
+                                                30, 9 // Cạnh mũi trái
+                                });
+
+                loadImage("bullet_boss_mini_red", "/com/nhom27/skyforce/textures/projectiles/bullet_boss_mini_red.png");
                 loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
                 loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");
                 loadImage("enemy_ship_3", "/com/nhom27/skyforce/textures/Spaceship_03_RED.png");
@@ -401,12 +441,7 @@ public class AssetManager {
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_round_purple.png");
                 loadImage("bullet_enemy_diamond_yellow",
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_diamond_yellow.png");
-                loadImage("enemy_normal_blue",
-                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_normal_blue.png");
-                loadImage("enemy_normal_red",
-                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_normal_red.png");
-                loadImage("enemy_sniper_green",
-                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_sniper_green.png");
+
                 loadImage("meteor_big",
                                 "/com/nhom27/skyforce/textures/entities/obstacles/meteor_big.png");
                 loadImage("obstacle_mine_red",

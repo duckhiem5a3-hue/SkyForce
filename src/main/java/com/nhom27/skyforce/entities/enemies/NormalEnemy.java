@@ -6,16 +6,22 @@ import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.main.Main;
 
 public class NormalEnemy extends EnemyObject {
-    public static int sizeX = Main.WIDTH * 7 / 100;
-    public static int sizeY = Main.WIDTH * 7 / 100;
     protected double speedY;
     protected double randomStopY;
-    protected boolean hasStopped = false;
-    protected boolean isStopping = false;
-    protected boolean canShoot = true;
-    protected boolean guaranteedDrop = false;
+    protected boolean hasStopped;
+    protected boolean isStopping; // Có tính năng dừng hay không
+    protected boolean canShoot; // Có thể bắn hay không
+    protected boolean guaranteedDrop;
     protected long lastBulletTime = 0;
     protected long fireRate = 2000; // ms
+
+    public NormalEnemy() {
+        this(150.0, false, false, false, "enemy_normal_blue");
+    }
+
+    public NormalEnemy(double speedY) {
+        this(speedY, false, false, false, "enemy_normal_blue");
+    }
 
     public NormalEnemy(double startX, double startY) {
         this(startX, startY, 150.0, false, false, false, "enemy_normal_blue");
@@ -25,8 +31,10 @@ public class NormalEnemy extends EnemyObject {
         this(startX, startY, speedY, false, false, false, "enemy_normal_blue");
     }
 
-    public NormalEnemy(double startX, double startY, double speedY, boolean canShoot, boolean isStopping, boolean guaranteedDrop, String spriteKey) {
-        super(spriteKey != null ? spriteKey : "enemy_normal_blue", startX, startY);
+    public NormalEnemy(double speedY, boolean canShoot, boolean isStopping,
+            boolean guaranteedDrop, String spriteKey) {
+        super(spriteKey != null ? spriteKey : "enemy_normal_blue");
+
         this.speedY = speedY;
         this.health = 30;
         this.collisionDamage = 20;
@@ -37,8 +45,14 @@ public class NormalEnemy extends EnemyObject {
             Random random = new Random();
             this.randomStopY = 50 + random.nextDouble() * (Main.HEIGHT * 0.45);
         }
-        this.setPos(startX, startY, 180);
     }
+
+    public NormalEnemy(double startX, double startY, double speedY, boolean canShoot, boolean isStopping,
+            boolean guaranteedDrop, String spriteKey) {
+        this(speedY, canShoot, isStopping, guaranteedDrop, spriteKey);
+        setPos(startX, startY);
+    }
+
 
     public boolean isGuaranteedDrop() {
         return guaranteedDrop;
@@ -61,8 +75,10 @@ public class NormalEnemy extends EnemyObject {
     }
 
     public boolean timeToFire(long now) {
-        if (!canShoot) return false;
-        if (isStopping && !hasStopped) return false;
+        if (!canShoot)
+            return false;
+        if (isStopping && !hasStopped)
+            return false;
         if (now - lastBulletTime >= fireRate) {
             lastBulletTime = now;
             return true;
@@ -79,22 +95,15 @@ public class NormalEnemy extends EnemyObject {
     }
 
     @Override
-    protected void checkDeath() {
-        if (this.health <= 0) {
-            this.isAlive = false;
-        }
-    }
-
-    @Override
     public void update() {
         if (isStopping) {
             if (!hasStopped) {
                 if (y <= randomStopY) {
                     y += speedY / 60.0;
-                    setPos(x, y, 180);
+                    setPos(x, y);
                 } else {
                     hasStopped = true;
-                    setPos(x, randomStopY, 180);
+                    setPos(x, randomStopY);
                 }
             }
         } else {

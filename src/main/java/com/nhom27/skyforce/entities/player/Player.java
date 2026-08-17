@@ -10,8 +10,6 @@ import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.managers.PlayerDataManager;
 import com.nhom27.skyforce.utils.AssetManager;
-import com.nhom27.skyforce.utils.SpriteInfo;
-
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,10 +40,6 @@ public abstract class Player extends GameObject {
 
     public Player(String spriteKey, double startX, double startY) {
         super(spriteKey, startX, startY);
-        SpriteInfo info = AssetManager.getSpriteInfo(spriteKey);
-        if (info != null && info.getHitbox() != null) {
-            this.hitbox = info.getHitbox();
-        }
         this.bullets = new ArrayList<>();
 
         Image shieldImg = AssetManager.getImage("char_shield");

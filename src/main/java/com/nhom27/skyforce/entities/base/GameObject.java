@@ -5,9 +5,11 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 import com.nhom27.skyforce.utils.AssetManager;
+import com.nhom27.skyforce.utils.SpriteInfo;
 
 public abstract class GameObject {
     // 1. Các thuộc tính Logic (Data)
@@ -85,10 +87,16 @@ public abstract class GameObject {
         }
     }
 
-    // Tối ưu
     public GameObject(String nameImage, double startX, double startY) {
-        Image img = AssetManager.getImage(nameImage);
-        if (img != null) {
+        this(nameImage);
+        setPos(startX, startY);
+    }
+
+    public GameObject(String nameImage) {
+        SpriteInfo info = AssetManager.getSpriteInfo(nameImage);
+
+        if (info != null && info.getImage() != null) {
+            Image img = info.getImage();
             this.view = new ImageView(img);
             this.sizeX = img.getWidth();
             this.sizeY = img.getHeight();
@@ -100,11 +108,16 @@ public abstract class GameObject {
             outline.setRadius(5); // Độ nhòe của viền
             outline.setSpread(0.6); // Độ đậm đặc của viền (0.0 đến 1.0)
             this.view.setEffect(outline);
+
+            if (info.getHitbox() != null) {
+                this.hitbox = info.getHitbox();
+            } else {
+                this.hitbox = new Rectangle(sizeX, sizeY);
+            }
         } else {
             this.view = new ImageView();
         }
         this.isAlive = true;
-        // setPos(startX, startY);
     }
 
     public abstract void update();
