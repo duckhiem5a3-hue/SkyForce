@@ -118,7 +118,7 @@ public class PlayScene {
         // NÚT PAUSE
         CustomButton btnPause = new CustomButton(50, 50, "button_pause_blue", () -> {
             if (gameManager != null) {
-                gameManager.pauseGame();
+                gameManager.pauseGame(); //làm cho GameManager.isPaused = false
             }
             showPauseMenu(true);
         });
@@ -447,6 +447,7 @@ public class PlayScene {
 
         gameOverOverlay.getChildren().add(card);
         gamePane.getChildren().add(gameOverOverlay);
+        
     }
 
     public void showWinMenu(int score, int goldGained) {

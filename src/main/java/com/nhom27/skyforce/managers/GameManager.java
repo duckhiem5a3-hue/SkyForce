@@ -2122,6 +2122,7 @@ public class GameManager {
     }
 
     private void handleGameOver() {
+        gameLayoutPane.getChildren().clear();
         isGameOver = true;
         stopGame();
         PlayerDataManager.getInstance().addGold(goldCollected);
@@ -2194,6 +2195,7 @@ public class GameManager {
     }
 
     public void restartGame() {
+        stopGame(); // Dừng vòng lặp cũ đang chạy ngầm trước khi setup lại
         setupGame();
         startGame();
     }

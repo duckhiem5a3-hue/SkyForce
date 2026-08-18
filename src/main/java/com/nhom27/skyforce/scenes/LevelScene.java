@@ -22,6 +22,13 @@ import javafx.scene.shape.Rectangle;
 
 public class LevelScene {
     private static LevelScene instance;
+    private static int cardWidth = 250;
+    private static int cardHeight = 500; 
+    private static int cardSpacing = 100;
+    private static int cardCornerRadii = 30;
+    private static int scrollSpeed = 1;
+
+
     private Scene scene;
     private HBox levelCardsContainer;
     private int selectedLevel = 1; // Mặc định chọn Level 1
@@ -35,8 +42,6 @@ public class LevelScene {
     private AnimationTimer inertiaTimer;
 
 
-    // Biến quản lý nút bấm giữ
-    private AnimationTimer buttonScrollTimer;
 
     private static class LevelInfo {
         int levelNumber;
@@ -102,15 +107,15 @@ public class LevelScene {
 
 
         // Container chứa tất cả các thẻ (bao gồm các thẻ k có trên màn hình)
-        levelCardsContainer = new HBox(220);     //spacing của mỗi thẻ là 180 ngang, 260 dọc
+        levelCardsContainer = new HBox(cardSpacing);     //spacing của mỗi thẻ là 180 ngang, 260 dọc
         levelCardsContainer.setAlignment(Pos.CENTER_LEFT);
 
 
 
         // Pane cardView cắt ra phần sẽ hiển thị trên màn hình của levelCardsContainer
         Pane cardView = new Pane(levelCardsContainer);
-        cardView.setPrefSize(Main.WIDTH, 300);
-        Rectangle clip = new Rectangle(Main.WIDTH, 300);        // Cắt view cho cardView
+        cardView.setPrefSize(Main.WIDTH, cardHeight + 30);
+        Rectangle clip = new Rectangle(Main.WIDTH, cardHeight + 30);        // Cắt view cho cardView
         cardView.setClip(clip);
 
 
@@ -165,6 +170,16 @@ public class LevelScene {
                 }
             }
         };
+        //Tính năng swipe bằng scroll chuột
+        cardView.setOnScroll(e -> {
+            // Dừng quán tính của thao tác kéo thả (nếu đang chạy) để tránh xung đột
+            inertiaTimer.stop();
+            double scrollDelta = e.getDeltaY();
+            double newX = levelCardsContainer.getTranslateX() - (scrollDelta * scrollSpeed);
+            levelCardsContainer.setTranslateX(newX);
+            clampScroll();
+        });
+
 
 
         refreshLevelCards();
@@ -201,7 +216,7 @@ public class LevelScene {
 
     private void clampScroll() {
         // Chiều rộng tổng của tất cả các thẻ + spacing (nói cách khác là chiểu rộng muốn có của levelCardsContainer
-        double contentWidth = levelList.size() * 180 + (levelList.size() - 1) * 220;
+        double contentWidth = levelList.size() * cardWidth + (levelList.size() - 1) * cardSpacing + 50;
         double viewCardWidth = Main.WIDTH - 40; //vì 2 card cuối phải cách biên trái/phải 20 pixel
 
         // Không cho phép kéo lố sang viền trái (TranslateX > 0)
@@ -235,29 +250,29 @@ public class LevelScene {
         for (LevelInfo level : levelList) {
             // Sử dụng StackPane làm thẻ Card để hình nền nằm dưới, chữ và nút đè lên trên
             StackPane card = new StackPane();
-            card.setPrefSize(180, 260);
+            card.setPrefSize(cardWidth,cardHeight);
             
             // Cắt góc tròn cho viền card
-            CornerRadii radii16 = new CornerRadii(16);
+            CornerRadii radii = new CornerRadii(cardCornerRadii);
             
             // 1. Cắt (Clip) hình nền level cho vừa thẻ Card và bo góc
             Image levelBgImg = AssetManager.getImage(level.imageName);
             if (levelBgImg != null) {
                 ImageView bgView = new ImageView(levelBgImg);
                 // Ép kích thước img nền vừa khung card
-                bgView.setFitWidth(180);
-                bgView.setFitHeight(260);
+                bgView.setFitWidth(cardWidth);
+                bgView.setFitHeight(cardHeight);
                 
                 // Crop góc bo tròn cho ảnh để không tràn viền
-                Rectangle clip = new Rectangle(180, 260);
-                clip.setArcWidth(32);
-                clip.setArcHeight(32);
+                Rectangle clip = new Rectangle(cardWidth, cardHeight);
+                clip.setArcWidth(cardCornerRadii*2);
+                clip.setArcHeight(cardCornerRadii*2);
                 bgView.setClip(clip);
                 
                 card.getChildren().add(bgView);
             } else {
                 // Nếu không load được ảnh, dùng nền xám đen fallback
-                card.setBackground(new Background(new BackgroundFill(Color.web("#1e2c3a"), radii16, Insets.EMPTY)));
+                card.setBackground(new Background(new BackgroundFill(Color.web("#1e2c3a"), radii, Insets.EMPTY)));
             }
 
             // 2. Viền Card (Vàng nếu đang chọn, Xanh nếu chưa chọn)
@@ -265,27 +280,27 @@ public class LevelScene {
             Color borderColor = isSelected ? Color.GOLD : Color.CYAN;
             
             Border defaultBorder = new Border(new BorderStroke(
-                    borderColor, BorderStrokeStyle.SOLID, radii16, new BorderWidths(isSelected ? 3 : 2)));  //viền dày hơn xíu với card đc chọn
+                    borderColor, BorderStrokeStyle.SOLID, radii, new BorderWidths(isSelected ? 3 : 2)));  //viền dày hơn xíu với card đc chọn
             Border hoverBorder = new Border(new BorderStroke(
-                    Color.GOLD, BorderStrokeStyle.SOLID, radii16, new BorderWidths(3)));     //
+                    Color.GOLD, BorderStrokeStyle.SOLID, radii, new BorderWidths(3)));     //
 
             card.setBorder(defaultBorder);
             card.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.rgb(0, 0, 0, 0.8), 10, 0.5, 0, 2));
 
             // Bố cục phần bên trên của card (Tiêu đề Level và Select Button nằm bên dưới)
-            VBox cardOverlay = new VBox(15);
+            VBox cardOverlay = new VBox(40);
             cardOverlay.setAlignment(Pos.CENTER);
             
             // Phủ một lớp bóng đen mờ đằng sau chữ để chữ không bị chìm vào nền ảnh sáng
-            cardOverlay.setStyle("-fx-background-color: rgba(0,0,0, 0.4); -fx-background-radius: 16;");
+            //cardOverlay.setStyle("-fx-background-color: rgba(0,0,0, 0.4); -fx-background-radius: 16;");
 
             Label nameLabel = new Label(level.name);
-            nameLabel.setFont(AssetManager.getFont("font_kenvector_future", 16));
+            nameLabel.setFont(AssetManager.getFont("font_kenvector_future", 25));
             nameLabel.setTextFill(isSelected ? Color.GOLD : Color.WHITE);
             nameLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 4, 1.0, 0, 1));
 
             CustomButton btnSelect = new CustomButton(isSelected ? "SELECTED" : "SELECT", 
-                                                      130, 40, 
+                                                      150, 40, 
                                                       isSelected ? "button_yellow" : "button_blue", 
                                                       () -> {
                 // Khi bấm nút select -> cập nhật biến và vẽ lại toàn bộ thẻ
