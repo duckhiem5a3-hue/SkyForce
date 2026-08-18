@@ -178,7 +178,7 @@ public class LevelScene {
             SceneManager.getInstance().switchScene("MenuScene");
         });
         CustomButton btnPlay = new CustomButton("PLAY", "button_green", () -> {
-            PlayScene playScene = new PlayScene();  //rồi chỗ này sẽ phải truyền level 
+            PlayScene playScene = new PlayScene(selectedLevel);
             SceneManager.getInstance().switchScene(playScene.getScene());
         });
         

@@ -5,9 +5,6 @@ import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.main.Main;
 
 public class SniperEnemy extends EnemyObject {
-    public static int sizeX = Main.WIDTH * 7 / 100;
-    public static int sizeY = Main.WIDTH * 7 / 100;
-
     public enum State {
         ENTERING,
         AIMING,
@@ -15,16 +12,16 @@ public class SniperEnemy extends EnemyObject {
         EXITING
     }
 
-    private State state = State.ENTERING;
-    private double speedY = 200.0;
-    private double exitSpeedX = 250.0;
-    private double exitSpeedY = 0.0;
-    private String exitDirection = "AUTO"; // AUTO, UP, LEFT, RIGHT
+    private State state;
+    private double speedY;
+    private double exitSpeedX;
+    private double exitSpeedY;
+    private String exitDirection; // AUTO, UP, LEFT, RIGHT
     private double targetY;
-    private long pauseStartTime = 0;
-    private long pauseDurationMs = 1500; // 1.5 giây ngắm dừng
-    private boolean readyToFire = false;
-    private double aimedAngle = 180;
+    private long pauseStartTime;
+    private long pauseDurationMs; // ngắm dừng
+    private boolean readyToFire;
+    private double aimedAngle = 0;
     private double aimedDirX = 0;
     private double aimedDirY = 1;
     private String bulletTexture = "bullet_enemy_diamond_yellow";
@@ -32,20 +29,19 @@ public class SniperEnemy extends EnemyObject {
 
     private boolean burstMode = false;
     private int burstShotsRemaining = 0;
-    private long lastBurstFireTime = 0;
+    private long lastBurstFireTime;
 
-    public SniperEnemy(double startX, double startY) {
-        this(startX, startY, 150.0, 1500, "AUTO");
+    public SniperEnemy() {
+        this(150.0, 1500, "AUTO");
     }
 
-    public SniperEnemy(double startX, double startY, double targetY, long pauseDurationMs, String exitDirection) {
-        super("enemy_sniper_green", startX, startY);
-        this.health = 40;
-        this.collisionDamage = 20;
+    public SniperEnemy(double targetY, long pauseDurationMs, String exitDirection) {
+        super("enemy_sniper_green", 40, 20);
+        this.state = State.ENTERING;
+        this.speedY = 200.0;
         this.targetY = targetY;
         this.pauseDurationMs = pauseDurationMs;
         this.exitDirection = exitDirection;
-        this.setPos(startX, startY, 180);
     }
 
     public void setBurstMode(boolean burstMode) {
@@ -114,10 +110,10 @@ public class SniperEnemy extends EnemyObject {
 
         if (state == State.ENTERING) {
             y += speedY / 60.0;
-            setPos(x, y, 180);
+            setPos(x, y);
             if (y >= targetY) {
                 y = targetY;
-                setPos(x, y, 180);
+                setPos(x, y);
                 state = State.AIMING;
                 pauseStartTime = System.currentTimeMillis();
             }
@@ -136,7 +132,7 @@ public class SniperEnemy extends EnemyObject {
                 if (dist > 0) {
                     aimedDirX = dx / dist;
                     aimedDirY = dy / dist;
-                    aimedAngle = Math.toDegrees(Math.atan2(dy, dx)) + 90;
+                    aimedAngle = Math.toDegrees(Math.atan2(dy, dx)) - 90; // -90 độ do ảnh của enemy hướng xuống dưới
                 }
             }
             setPos(x, y, aimedAngle);
@@ -174,11 +170,11 @@ public class SniperEnemy extends EnemyObject {
 
             double exitAngle = 180;
             if (exitSpeedY < 0) {
-                exitAngle = 0; // Quay đầu bay ngược lên trên
+                exitAngle = 180;
             } else if (exitSpeedX < 0) {
-                exitAngle = 270;
-            } else if (exitSpeedX > 0) {
                 exitAngle = 90;
+            } else if (exitSpeedX > 0) {
+                exitAngle = -90;
             }
             setPos(x, y, exitAngle);
 

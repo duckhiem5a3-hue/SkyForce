@@ -413,7 +413,15 @@ public class AssetManager {
                                                 28, 61, // Thân trái
                                                 30, 9 // Cạnh mũi trái
                                 });
-
+                loadSpriteInfo("enemy_sniper_green", "/com/nhom27/skyforce/textures/entities/enemy_sniper_green.png",
+                                new double[] { 1, 41, // Mép cánh trái
+                                                24, 2, // Mũi trái
+                                                80, 2, // Mũi phải
+                                                103, 41, // Mép cánh phải
+                                                89, 82, // Đuôi phải
+                                                52, 76, // Điểm lõm giữa đuôi (Nằm chuẩn trên trục tâm X = 52)
+                                                15, 82 // Đuôi trái
+                                });
                 loadImage("bullet_boss_mini_red", "/com/nhom27/skyforce/textures/projectiles/bullet_boss_mini_red.png");
                 loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
                 loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");

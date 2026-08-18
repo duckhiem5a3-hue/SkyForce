@@ -58,11 +58,15 @@ public class PlayScene {
     private ProgressBar bossHealthBar;
 
     public PlayScene() {
+        this(1);
+    }
+
+    public PlayScene(int level) {
         AudioManager.getInstance().playMusic("background_play_music");
         root = new StackPane();
 
-        setupBackground();
-        setupGameWorld();
+        setupBackground(level);
+        setupGameWorld(level);
         setupHUD();
 
         // Tạo Pause Overlay Menu
@@ -81,8 +85,11 @@ public class PlayScene {
         });
     }
 
-    private void setupBackground() {
-        Image bgImage = AssetManager.getImage("background_play");
+    private void setupBackground(int level) {
+        Image bgImage = AssetManager.getImage("background_level_" + level);
+        if (bgImage == null) {
+            bgImage = AssetManager.getImage("background_play");
+        }
         ImageView bgImageView = null;
 
         if (bgImage != null) {
@@ -96,14 +103,13 @@ public class PlayScene {
         }
     }
 
-    private void setupGameWorld() {
+    private void setupGameWorld(int level) {
         gamePane = new Pane();
         gamePane.setPrefSize(com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
         root.getChildren().add(gamePane);
 
-        gameManager = new GameManager(gamePane, this);
+        gameManager = new GameManager(gamePane, this, level);
         gameManager.startGame();
-
     }
 
     private void setupHUD() {

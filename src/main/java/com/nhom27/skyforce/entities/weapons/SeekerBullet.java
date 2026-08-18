@@ -87,7 +87,7 @@ public class SeekerBullet extends Bullet {
         double angle = Math.toDegrees(Math.atan2(speedY, speedX)) + 90;
         this.setPos(x, y, angle);
 
-        if (this.x < -60 || this.x > Main.WIDTH + 60 || this.y < -60 || this.y > Main.HEIGHT + 60) {
+        if (this.x < -sizeX || this.x > Main.WIDTH || this.y < -sizeY || this.y > Main.HEIGHT) {
             this.isAlive = false;
         }
     }

@@ -33,10 +33,9 @@ public class Bullet extends GameObject {
         x += speedX / 60;
         y += speedY / 60;
         this.setPos(x, y);
-        if (this.x < 0 || this.x > Main.WIDTH || this.y < 0 || this.y > Main.HEIGHT) {
+        if (this.x < -sizeX || this.x > Main.WIDTH || this.y < -sizeY || this.y > Main.HEIGHT) {
             this.isAlive = false;
         }
-        ;
     }
     /*
      * các class con StraightBullet và DiagonalBullet bị xóa bỏ

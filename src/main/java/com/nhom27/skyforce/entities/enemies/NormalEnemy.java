@@ -53,7 +53,6 @@ public class NormalEnemy extends EnemyObject {
         setPos(startX, startY);
     }
 
-
     public boolean isGuaranteedDrop() {
         return guaranteedDrop;
     }
