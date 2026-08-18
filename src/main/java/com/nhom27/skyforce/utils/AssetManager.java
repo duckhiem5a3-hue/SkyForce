@@ -422,6 +422,31 @@ public class AssetManager {
                                                 52, 76, // Điểm lõm giữa đuôi (Nằm chuẩn trên trục tâm X = 52)
                                                 15, 82 // Đuôi trái
                                 });
+                loadSpriteInfo("enemy_swarm_black", "/com/nhom27/skyforce/textures/entities/enemy_swarm_black.png",
+                                new double[] {
+                                                4, 2, // Mép cánh trái
+                                                16, 0, // Mũi trái
+                                                36, 14, // Thân trái trên
+                                                60, 14, // Thân phải trên
+                                                80, 0, // Mũi phải
+                                                92, 2, // Mép cánh phải
+                                                72, 72, // Đuôi cánh phải ngoài (Đã tạo thêm để cân với bên trái)
+                                                66, 76, // Đuôi cánh phải trong
+                                                58, 82, // Đáy thân phải
+                                                38, 82, // Đáy thân trái
+                                                30, 76, // Đuôi cánh trái trong
+                                                24, 72 // Đuôi cánh trái ngoài
+                                });
+
+                loadSpriteInfo("obstacle_asteroid_large",
+                                "/com/nhom27/skyforce/textures/obstacles/obstacle_asteroid_large.png", new double[] {
+                                                14, 13,
+                                                66, 1,
+                                                96, 37,
+                                                80, 90,
+                                                31, 95,
+                                                1, 58
+                                });
                 loadImage("bullet_boss_mini_red", "/com/nhom27/skyforce/textures/projectiles/bullet_boss_mini_red.png");
                 loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
                 loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");

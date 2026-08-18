@@ -13,6 +13,7 @@ import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.entities.base.GameObject;
 import com.nhom27.skyforce.entities.enemies.*;
 import com.nhom27.skyforce.entities.items.*;
+import com.nhom27.skyforce.entities.obstacles.Asteroid;
 import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.entities.weapons.Bullet;
 import com.nhom27.skyforce.entities.weapons.EnemyBullet;
@@ -72,6 +73,9 @@ public class GameManager {
     private long lvl2_lastFlyRainTime = 0;
     private boolean lvl2_spawned60s = false;
     private List<SniperEnemy> lvl2_deathSquad = new ArrayList<>();
+    private boolean lvl2_coinsSpawned = false;
+    private long lvl2_clearTime = 0;
+    private boolean lvl2_magneticActive = false;
 
     // Quản lý kịch bản Level 3
     private boolean lvl3_spawned5s = false;
@@ -88,12 +92,17 @@ public class GameManager {
     private int lvl3_queue25s_count = 0;
     private long lvl3_last25s_time = 0;
 
+    private boolean lvl3_spawned32s_meteors = false;
     private long lvl3_lastRainTime = 0;
 
     private boolean lvl3_spawned50s = false;
+    private boolean lvl3_spawned52s = false;
 
     private boolean lvl3_spawned70s = false;
     private List<SwarmEnemy> lvl3_finalWave = new ArrayList<>();
+    private boolean lvl3_coinsSpawned = false;
+    private long lvl3_clearTime = 0;
+    private boolean lvl3_magneticActive = false;
 
     // Quản lý kịch bản Level 4
     private boolean lvl4_spawned5s = false;
@@ -227,6 +236,9 @@ public class GameManager {
         lvl2_lastFlyRainTime = 0;
         lvl2_spawned60s = false;
         lvl2_deathSquad.clear();
+        lvl2_coinsSpawned = false;
+        lvl2_clearTime = 0;
+        lvl2_magneticActive = false;
 
         lvl3_spawned5s = false;
         lvl3_queue5s_count = 0;
@@ -238,10 +250,15 @@ public class GameManager {
         lvl3_spawned25s = false;
         lvl3_queue25s_count = 0;
         lvl3_last25s_time = 0;
+        lvl3_spawned32s_meteors = false;
         lvl3_lastRainTime = 0;
         lvl3_spawned50s = false;
+        lvl3_spawned52s = false;
         lvl3_spawned70s = false;
         lvl3_finalWave.clear();
+        lvl3_coinsSpawned = false;
+        lvl3_clearTime = 0;
+        lvl3_magneticActive = false;
 
         lvl4_spawned5s = false;
         lvl4_spawned12s = false;
@@ -643,22 +660,9 @@ public class GameManager {
             spawnLevel1Wave(now, elapsedSec);
         } else if (currentStageLevel == 2) {
             spawnLevel2Wave(now, elapsedSec);
+        } else if (currentStageLevel == 3) {
+            spawnLevel3Wave(now, elapsedSec);
         }
-        // else if (currentStageLevel == 3) {
-        // spawnLevel3Wave(now, elapsedSec);
-        // } else if (currentStageLevel == 4) {
-        // spawnLevel4Wave(now, elapsedSec);
-        // } else if (currentStageLevel == 5) {
-        // spawnLevel5Wave(now, elapsedSec);
-        // } else if (currentStageLevel == 6) {
-        // spawnLevel6Wave(now, elapsedSec);
-        // } else if (currentStageLevel == 7) {
-        // spawnLevel7Wave(now, elapsedSec);
-        // } else if (currentStageLevel == 8) {
-        // spawnLevel8Wave(now, elapsedSec);
-        // } else {
-        // spawnLevel9Wave(now, elapsedSec);
-        // }
     }
 
     private void spawnLevel1Wave(long now, double elapsedSec) {
@@ -756,7 +760,7 @@ public class GameManager {
 
             // 62s: Kết thúc - Sau 2s từ khi nổ hoặc khi toàn bộ vàng đã được hút hết
             boolean hasCoinsRemaining = powerUps.stream().anyMatch(p -> p instanceof CoinPowerUp && p.isAlive());
-            if (!hasCoinsRemaining && elapsedSinceBossDeath >= 1200) {
+            if (!hasCoinsRemaining) {
                 handleVictory();
             }
         }
@@ -895,165 +899,276 @@ public class GameManager {
 
         if (lvl2_spawned60s && !isVictory) {
             boolean allSquadDead = lvl2_deathSquad.stream().allMatch(e -> !e.isAlive());
-            if (allSquadDead || elapsedSec >= 75.0) {
-                for (int c = 0; c < 15; c++) {
-                    double dropX = Main.WIDTH / 2.0 + (random.nextDouble() - 0.5) * 160;
-                    double dropY = Main.HEIGHT * 0.3 + (random.nextDouble() - 0.5) * 100;
-                    CoinPowerUp coin = new CoinPowerUp(dropX, dropY);
-                    powerUps.add(coin);
-                    gameLayoutPane.getChildren().add(coin.getView());
+            if (allSquadDead) {
+                if (!lvl2_coinsSpawned) {
+                    for (int c = 0; c < 15; c++) {
+                        double dropX = Main.WIDTH / 2.0 + (random.nextDouble() - 0.5) * 160;
+                        double dropY = Main.HEIGHT * 0.3 + (random.nextDouble() - 0.5) * 100;
+                        CoinPowerUp coin = new CoinPowerUp(dropX, dropY);
+                        powerUps.add(coin);
+                        gameLayoutPane.getChildren().add(coin.getView());
+                    }
+                    lvl2_coinsSpawned = true;
+                    lvl2_clearTime = System.currentTimeMillis();
                 }
-                handleVictory();
+
+                long elapsedSinceClear = System.currentTimeMillis() - lvl2_clearTime;
+                if (elapsedSinceClear >= 500 && !lvl2_magneticActive) {
+                    lvl2_magneticActive = true;
+                }
+
+                if (lvl2_magneticActive) {
+                    for (PowerUp p : powerUps) {
+                        if (p instanceof CoinPowerUp coin && !coin.isMagnetized()) {
+                            coin.setMagnetized(true, player);
+                        }
+                    }
+                }
+
+                boolean hasCoinsRemaining = powerUps.stream().anyMatch(p -> p instanceof CoinPowerUp && p.isAlive());
+                if (!hasCoinsRemaining) {
+                    handleVictory();
+                }
             }
         }
     }
 
-    // private void spawnLevel3Wave(long now, double elapsedSec) {
-    // // 🎬 Giai đoạn 1: Điệu nhảy của bầy ruồi (Giây 0 - 20)
-    // // 5s: 1 hàng dọc 5 con SwarmEnemy bám đuôi nhau (cách 0.2s) bay lượn sóng từ
-    // // bên Trái
-    // if (elapsedSec >= 5.0 && !lvl3_spawned5s) {
-    // if (lvl3_queue5s_count < 5) {
-    // if (now - lvl3_last5s_time >= 200) {
-    // SwarmEnemy swarm = new SwarmEnemy(120.0, -SwarmEnemy.sizeY, 70.0, 0.02, 0);
-    // spawnEnemy(swarm);
-    // lvl3_queue5s_count++;
-    // lvl3_last5s_time = now;
-    // }
-    // } else {
-    // lvl3_spawned5s = true;
-    // }
-    // }
+    private void spawnLevel3Wave(long now, double elapsedSec) {
+        // ==================================================
+        // 🎬 GIAI ĐOẠN 1: ĐIỆU NHẢY CỦA BẦY RUỒI (Giây 0 - 20)
+        // ==================================================
 
-    // // 12s: 1 hàng dọc 5 con SwarmEnemy bám đuôi nhau bay lượn sóng từ bên Phải
-    // if (elapsedSec >= 12.0 && !lvl3_spawned12s) {
-    // if (lvl3_queue12s_count < 5) {
-    // if (now - lvl3_last12s_time >= 200) {
-    // SwarmEnemy swarm = new SwarmEnemy(Main.WIDTH - 120.0, -SwarmEnemy.sizeY,
-    // 70.0, 0.02, Math.PI);
-    // spawnEnemy(swarm);
-    // lvl3_queue12s_count++;
-    // lvl3_last12s_time = now;
-    // }
-    // } else {
-    // lvl3_spawned12s = true;
-    // }
-    // }
+        // 5s: 1 hàng dọc 5 con SwarmEnemy bám đuôi nhau bay từ mép trên bên Trái xuống
+        // theo hình lượn sóng (Sine wave)
+        if (elapsedSec >= 5.0 && !lvl3_spawned5s) {
+            if (lvl3_queue5s_count < 5) {
+                if (now - lvl3_last5s_time >= 300) {
+                    SwarmEnemy swarm = new SwarmEnemy(SwarmEnemy.TrajectoryType.SINE_WAVE, 180.0, 0, 60.0, 0.025, 0);
+                    swarm.spawnAt(swarm.getSizeX(), -swarm.getSizeY());
+                    spawnEnemy(swarm);
+                    lvl3_queue5s_count++;
+                    lvl3_last5s_time = now;
+                }
+            } else {
+                lvl3_spawned5s = true;
+            }
+        }
 
-    // // 18s: 1 con quái Đỏ mang ItemUpgrade bay thẳng chầm chậm ở giữa
-    // if (elapsedSec >= 18.0 && !lvl3_spawned18s) {
-    // NormalEnemy eUpgradeRed = new NormalEnemy(Main.WIDTH / 2.0 -
-    // NormalEnemy.sizeX / 2.0, -NormalEnemy.sizeY,
-    // 80.0, false, false, true, "enemy_normal_red");
-    // spawnEnemy(eUpgradeRed);
-    // lvl3_spawned18s = true;
-    // }
+        // 12s: 1 hàng dọc 5 con SwarmEnemy bám đuôi nhau lượn sóng từ mép Phải sang
+        if (elapsedSec >= 12.0 && !lvl3_spawned12s) {
+            if (lvl3_queue12s_count < 5) {
+                if (now - lvl3_last12s_time >= 300) {
+                    SwarmEnemy swarm = new SwarmEnemy(SwarmEnemy.TrajectoryType.SINE_WAVE, 180.0, 0, 60.0, 0.025,
+                            Math.PI);
+                    swarm.spawnAt(Main.WIDTH - 120, -swarm.getSizeY());
+                    spawnEnemy(swarm);
+                    lvl3_queue12s_count++;
+                    lvl3_last12s_time = now;
+                }
+            } else {
+                lvl3_spawned12s = true;
+            }
+        }
 
-    // // 🌪️ Giai đoạn 2: Cơn Lốc Màu Xanh (Giây 25 - 45)
-    // // 25s: 2 hàng SwarmEnemy (mỗi hàng 7 con) bay chéo đan hình chữ X
-    // if (elapsedSec >= 25.0 && !lvl3_spawned25s) {
-    // if (lvl3_queue25s_count < 7) {
-    // if (now - lvl3_last25s_time >= 160) {
-    // SwarmEnemy leftDiag = new SwarmEnemy(30.0, -SwarmEnemy.sizeY,
-    // SwarmEnemy.TrajectoryType.DIAGONAL,
-    // 230.0, 160.0);
-    // SwarmEnemy rightDiag = new SwarmEnemy(Main.WIDTH - 30.0, -SwarmEnemy.sizeY,
-    // SwarmEnemy.TrajectoryType.DIAGONAL, 230.0, -160.0);
-    // spawnEnemy(leftDiag);
-    // spawnEnemy(rightDiag);
-    // lvl3_queue25s_count++;
-    // lvl3_last25s_time = now;
-    // }
-    // } else {
-    // lvl3_spawned25s = true;
-    // }
-    // }
+        // 18s: 1 con quái Đỏ mang ItemUpgrade (PillPowerUp nâng cấp súng Cấp 2)
+        if (elapsedSec >= 18.0 && !lvl3_spawned18s) {
+            NormalEnemy eUpgradeRed = new NormalEnemy(150, false, false, true,
+                    "enemy_normal_red");
+            eUpgradeRed.setPos(Main.WIDTH / 2.0 - eUpgradeRed.getSizeX() / 2.0,
+                    -eUpgradeRed.getSizeY());
+            spawnEnemy(eUpgradeRed);
+            lvl3_spawned18s = true;
+        }
 
-    // // 32s - 42s: Rải thảm ruồi muỗi túa ra liên tục từ khắp mép trên màn hình
-    // if (elapsedSec >= 32.0 && elapsedSec <= 42.0) {
-    // if (now - lvl3_lastRainTime >= 400) {
-    // double spawnX = random.nextDouble() * (Main.WIDTH - SwarmEnemy.sizeX);
-    // SwarmEnemy swarm = new SwarmEnemy(spawnX, -SwarmEnemy.sizeY,
-    // SwarmEnemy.TrajectoryType.STRAIGHT, 260.0,
-    // 0);
-    // spawnEnemy(swarm);
-    // lvl3_lastRainTime = now;
-    // }
-    // }
+        // ==================================================
+        // ☄️ GIAI ĐOẠN 2: CHƯỚNG NGẠI VẬT TỪ KHÔNG GIAN (Giây 25 - 45)
+        // ==================================================
 
-    // // ⚠️ Giai đoạn 3: Chiến thuật nhiễu loạn (Giây 50 - 65)
-    // // 50s: 1 bầy SwarmEnemy lượn sóng ngang qua che tầm nhìn + 52s: 2
-    // SniperEnemy
-    // // nấp sau lưng ngắm bắn
-    // if (elapsedSec >= 50.0 && !lvl3_spawned50s) {
-    // for (int i = 0; i < 8; i++) {
-    // SwarmEnemy swarm = new SwarmEnemy(80.0 + (i * 35), -SwarmEnemy.sizeY - (i *
-    // 25), 80.0, 0.02, 0);
-    // spawnEnemy(swarm);
-    // }
+        // 25s: 1 Cục Thiên Thạch (Asteroid) khổng lồ trôi chầm chậm ở ngay giữa màn
+        // hình
+        // Cùng lúc đó, 2 hàng SwarmEnemy (mỗi hàng 7 con) bay chéo hình chữ X đan vào
+        // nhau
+        if (elapsedSec >= 25.0 && !lvl3_spawned25s) {
+            if (lvl3_queue25s_count == 0) {
+                Asteroid centerAsteroid = new Asteroid();
+                double centerX = Main.WIDTH / 2.0 - centerAsteroid.getSizeX() / 2.0;
+                centerAsteroid.setPos(centerX, -centerAsteroid.getSizeY());
+                spawnEnemy(centerAsteroid);
+            }
 
-    // SniperEnemy sLeft = new SniperEnemy(100.0, -SniperEnemy.sizeY - 100, 120.0,
-    // 1500, "AUTO");
-    // SniperEnemy sRight = new SniperEnemy(Main.WIDTH - 100.0 - SniperEnemy.sizeX,
-    // -SniperEnemy.sizeY - 100,
-    // 120.0, 1500, "AUTO");
-    // sLeft.setBulletTexture("bullet_enemy_diamond_yellow");
-    // sRight.setBulletTexture("bullet_enemy_diamond_yellow");
-    // spawnEnemy(sLeft);
-    // spawnEnemy(sRight);
+            if (lvl3_queue25s_count < 7) {
+                if (now - lvl3_last25s_time >= 300) {
+                    SwarmEnemy leftDiag = new SwarmEnemy(SwarmEnemy.TrajectoryType.DIAGONAL,
+                            230.0, 160.0);
+                    leftDiag.spawnAt(0, -leftDiag.getSizeY());
 
-    // lvl3_spawned50s = true;
-    // }
+                    SwarmEnemy rightDiag = new SwarmEnemy(SwarmEnemy.TrajectoryType.DIAGONAL,
+                            230.0, -160.0);
+                    rightDiag.spawnAt(Main.WIDTH - rightDiag.getSizeX(), -rightDiag.getSizeY());
 
-    // // 🎆 Giai đoạn 4: Mưa Sao Băng (Đại tiệc cuối màn - Giây 70 - 80)
-    // // 70s - 78s: 3 đội hình chữ V của SwarmEnemy (21 con) ập xuống cùng lúc
-    // if (elapsedSec >= 70.0 && !lvl3_spawned70s) {
-    // lvl3_finalWave.clear();
-    // double center = Main.WIDTH / 2.0;
+                    spawnEnemy(leftDiag);
+                    spawnEnemy(rightDiag);
+                    lvl3_queue25s_count++;
+                    lvl3_last25s_time = now;
+                }
+            } else {
+                lvl3_spawned25s = true;
+            }
+        }
 
-    // // Chữ V 1 (Giữa)
-    // createVFormation(center, -SwarmEnemy.sizeY, 7);
-    // // Chữ V 2 (Trái)
-    // createVFormation(center - 140, -SwarmEnemy.sizeY - 80, 7);
-    // // Chữ V 3 (Phải)
-    // createVFormation(center + 140, -SwarmEnemy.sizeY - 80, 7);
+        // 32s - 42s: 3 cục Thiên thạch trôi xuống tạo thành 2 "khe hẹp" trên màn hình.
+        // Quái SwarmEnemy túa ra liên tục, trôi qua các khe hẹp này như nước chảy qua
+        // khe đá.
+        if (elapsedSec >= 32.0 && !lvl3_spawned32s_meteors) {
+            Asteroid aLeft = new Asteroid();
+            aLeft.setPos(0.0, -aLeft.getSizeY());
 
-    // lvl3_spawned70s = true;
-    // }
+            Asteroid aCenter = new Asteroid();
+            aCenter.setPos(Main.WIDTH / 2.0 - aCenter.getSizeX() / 2.0,
+                    -aCenter.getSizeY() * 2);
 
-    // // 80s: Hoàn thành Level 3
-    // if (lvl3_spawned70s && !isVictory) {
-    // boolean allWaveDead = lvl3_finalWave.stream().allMatch(e -> !e.isAlive());
-    // if (allWaveDead || elapsedSec >= 80.0) {
-    // // Rớt đại tiệc 20 đồng Vàng!
-    // for (int c = 0; c < 20; c++) {
-    // double dropX = Main.WIDTH / 2.0 + (random.nextDouble() - 0.5) * 220;
-    // double dropY = Main.HEIGHT * 0.35 + (random.nextDouble() - 0.5) * 120;
-    // CoinPowerUp coin = new CoinPowerUp(dropX, dropY);
-    // powerUps.add(coin);
-    // gameLayoutPane.getChildren().add(coin.getView());
-    // }
-    // handleVictory();
-    // }
-    // }
-    // }
+            Asteroid aRight = new Asteroid();
+            aRight.setPos(Main.WIDTH - aRight.getSizeX(), -aRight.getSizeY());
 
-    // private void createVFormation(double apexX, double apexY, int countPerV) {
-    // int half = countPerV / 2;
-    // for (int i = 0; i <= half; i++) {
-    // SwarmEnemy eCenterLeft = new SwarmEnemy(apexX - (i * 35), apexY - (i * 35),
-    // SwarmEnemy.TrajectoryType.STRAIGHT, 230.0, 0);
-    // lvl3_finalWave.add(eCenterLeft);
-    // spawnEnemy(eCenterLeft);
+            spawnEnemy(aLeft);
+            spawnEnemy(aCenter);
+            spawnEnemy(aRight);
+            lvl3_spawned32s_meteors = true;
+        }
 
-    // if (i > 0) {
-    // SwarmEnemy eCenterRight = new SwarmEnemy(apexX + (i * 35), apexY - (i * 35),
-    // SwarmEnemy.TrajectoryType.STRAIGHT, 230.0, 0);
-    // lvl3_finalWave.add(eCenterRight);
-    // spawnEnemy(eCenterRight);
-    // }
-    // }
-    // }
+        if (elapsedSec >= 32.0 && elapsedSec <= 42.0) {
+            if (now - lvl3_lastRainTime >= 450) {
+                double gap1 = Main.WIDTH * 0.28;
+                double gap2 = Main.WIDTH * 0.72;
+                double spawnX = (random.nextBoolean()) ? gap1 : gap2;
+                SwarmEnemy swarm = new SwarmEnemy(260.0,
+                        0);
+                swarm.spawnAt(spawnX, -swarm.getSizeY());
+                spawnEnemy(swarm);
+                lvl3_lastRainTime = now;
+            }
+        }
+
+        // ==================================================
+        // ⚠️ GIAI ĐOẠN 3: CHIẾN THUẬT NHIỄU LOẠN (Giây 50 - 65)
+        // ==================================================
+
+        // 50s: 2 Thiên thạch trôi xuống ở rìa Trái và rìa Phải + 1 đàn SwarmEnemy bay
+        // ngang làm nhiễu loạn
+        if (elapsedSec >= 50.0 && !lvl3_spawned50s) {
+            Asteroid aLeft = new Asteroid();
+            aLeft.setPos(aLeft.getSizeX(), -aLeft.getSizeY());
+
+            Asteroid aRight = new Asteroid();
+            aRight.setPos(Main.WIDTH - 2 * aRight.getSizeX(), -aRight.getSizeY());
+
+            spawnEnemy(aLeft);
+            spawnEnemy(aRight);
+
+            for (int i = 0; i < 8; i++) {
+                SwarmEnemy swarm = new SwarmEnemy();
+                swarm.spawnAt(80.0 + (i * 35), -swarm.getSizeY() - (i * 25));
+                spawnEnemy(swarm);
+            }
+            lvl3_spawned50s = true;
+        }
+
+        // 52s: 2 con SniperEnemy bay xuống và đứng nấp ngay sau lưng 2 cục Thiên thạch
+        if (elapsedSec >= 52.0 && !lvl3_spawned52s) {
+            SniperEnemy sLeft = new SniperEnemy(150.0, 1000, "AUTO");
+            sLeft.setPos(sLeft.getSizeX(), -sLeft.getSizeY() * 2);
+
+            SniperEnemy sRight = new SniperEnemy(150.0, 1000, "AUTO");
+            sRight.setPos(Main.WIDTH - 2 * sRight.getSizeX(), -sRight.getSizeY() * 2);
+
+            sLeft.setBulletTexture("bullet_enemy_diamond_yellow");
+            sRight.setBulletTexture("bullet_enemy_diamond_yellow");
+
+            spawnEnemy(sLeft);
+            spawnEnemy(sRight);
+            lvl3_spawned52s = true;
+        }
+
+        // ==================================================
+        // 🎆 GIAI ĐOẠN 4: MƯA SAO BĂNG (SURVIVAL WAVE) (Giây 70 - 80)
+        // ==================================================
+
+        // 70s - 78s: 5-6 cục Thiên thạch nhỏ trôi lác đác + 3 đội hình chữ V của
+        // SwarmEnemy (21 con)
+        if (elapsedSec >= 70.0 && !lvl3_spawned70s) {
+            lvl3_finalWave.clear();
+
+            for (int i = 0; i < 5; i++) {
+                Asteroid a = new Asteroid();
+                double meteorX = 30.0 + i * ((Main.WIDTH - 60 - a.getSizeX()) / 4.0);
+                a.setPos(meteorX, -a.getSizeY() - (i % 2 * 60));
+                spawnEnemy(a);
+            }
+
+            double center = Main.WIDTH / 2.0;
+            createVFormation(center, 7);
+            createVFormation(center - center / 2.0, 7);
+            createVFormation(center + center / 2.0, 7);
+
+            lvl3_spawned70s = true;
+        }
+
+        // 80s: Hoàn thành Level 3
+        if (lvl3_spawned70s && !isVictory) {
+            boolean allWaveDead = lvl3_finalWave.stream().allMatch(e -> !e.isAlive());
+            if (allWaveDead || elapsedSec >= 80.0) {
+                if (!lvl3_coinsSpawned) {
+                    // Rớt đại tiệc 25 đồng Vàng!
+                    for (int c = 0; c < 25; c++) {
+                        double dropX = Main.WIDTH / 2.0 + (random.nextDouble() - 0.5) * 220;
+                        double dropY = Main.HEIGHT * 0.35 + (random.nextDouble() - 0.5) * 120;
+                        CoinPowerUp coin = new CoinPowerUp(dropX, dropY);
+                        powerUps.add(coin);
+                        gameLayoutPane.getChildren().add(coin.getView());
+                    }
+                    lvl3_coinsSpawned = true;
+                    lvl3_clearTime = System.currentTimeMillis();
+                }
+
+                long elapsedSinceClear = System.currentTimeMillis() - lvl3_clearTime;
+                if (elapsedSinceClear >= 500 && !lvl3_magneticActive) {
+                    lvl3_magneticActive = true;
+                }
+
+                if (lvl3_magneticActive) {
+                    for (PowerUp p : powerUps) {
+                        if (p instanceof CoinPowerUp coin && !coin.isMagnetized()) {
+                            coin.setMagnetized(true, player);
+                        }
+                    }
+                }
+
+                boolean hasCoinsRemaining = powerUps.stream().anyMatch(p -> p instanceof CoinPowerUp && p.isAlive());
+                if (!hasCoinsRemaining) {
+                    handleVictory();
+                }
+            }
+        }
+    }
+
+    private void createVFormation(double apexX, int countPerV) {
+        int half = countPerV / 2;
+        for (int i = 0; i <= half; i++) {
+            SwarmEnemy eCenterLeft = new SwarmEnemy(230.0, 0);
+            eCenterLeft.spawnAt(apexX - (i * eCenterLeft.getSizeX()),
+                    -eCenterLeft.getSizeY() - (i * eCenterLeft.getSizeY()));
+            lvl3_finalWave.add(eCenterLeft);
+            spawnEnemy(eCenterLeft);
+
+            if (i > 0) {
+                SwarmEnemy eCenterRight = new SwarmEnemy(230.0, 0);
+                eCenterRight.spawnAt(apexX + (i * eCenterRight.getSizeX()),
+                        -eCenterRight.getSizeY() - (i * eCenterRight.getSizeY()));
+                lvl3_finalWave.add(eCenterRight);
+                spawnEnemy(eCenterRight);
+            }
+        }
+    }
 
     // private void spawnLevel4Wave(long now, double elapsedSec) {
     // // 🎬 Giai đoạn 1: Chạm trán Xe Tăng (Giây 0 - 20)

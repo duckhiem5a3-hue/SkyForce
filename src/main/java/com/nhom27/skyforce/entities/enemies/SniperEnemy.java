@@ -44,6 +44,11 @@ public class SniperEnemy extends EnemyObject {
         this.exitDirection = exitDirection;
     }
 
+    public SniperEnemy(double startX, double startY, double targetY, long pauseDurationMs, String exitDirection) {
+        this(targetY, pauseDurationMs, exitDirection);
+        setPos(startX, startY, 180);
+    }
+
     public void setBurstMode(boolean burstMode) {
         this.burstMode = burstMode;
         if (burstMode) {
