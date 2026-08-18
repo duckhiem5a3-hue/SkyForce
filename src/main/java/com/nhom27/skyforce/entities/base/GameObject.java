@@ -19,8 +19,8 @@ public abstract class GameObject {
     protected boolean isAlive;
     protected int timeLived;
     protected Shape hitbox; // Thuộc tính đa giác (dùng để kiểm tra va chạm)
-    public double sizeX;
-    public double sizeY;
+    protected double sizeX;
+    protected double sizeY;
 
     public Node getView() {
         return this.view;
