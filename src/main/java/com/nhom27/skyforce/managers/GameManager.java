@@ -1550,10 +1550,11 @@ public class GameManager {
     }
 
     private void handleGameOver() {
+        gameLayoutPane.getChildren().clear();
         isGameOver = true;
         stopGame();
         PlayerDataManager.getInstance().addGold(goldCollected);
-        PlayerDataManager.getInstance().checkAndUpdateHighScore(score);
+        PlayerDataManager.getInstance().checkAndUpdateHighScore(score,currentStageLevel);
         playScene.showGameOverMenu(score, goldCollected);
     }
 
@@ -1585,7 +1586,7 @@ public class GameManager {
 
         stopGame();
         PlayerDataManager.getInstance().addGold(goldCollected);
-        PlayerDataManager.getInstance().checkAndUpdateHighScore(score);
+        PlayerDataManager.getInstance().checkAndUpdateHighScore(score,currentStageLevel);
 
         if (playScene != null) {
             playScene.showWinMenu(score, goldCollected);
@@ -1622,6 +1623,7 @@ public class GameManager {
     }
 
     public void restartGame() {
+        stopGame(); // Dừng vòng lặp cũ đang chạy ngầm trước khi setup lại
         setupGame();
         startGame();
     }
