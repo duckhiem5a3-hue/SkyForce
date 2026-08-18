@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.managers.PlayerDataManager;
 import com.nhom27.skyforce.ui.buttons.CustomButton;
 import com.nhom27.skyforce.utils.AssetManager;
 
@@ -255,7 +256,7 @@ public class LevelScene {
             // Cắt góc tròn cho viền card
             CornerRadii radii = new CornerRadii(cardCornerRadii);
             
-            // 1. Cắt (Clip) hình nền level cho vừa thẻ Card và bo góc
+            // Cắt (Clip) hình nền level cho vừa thẻ Card và bo góc
             Image levelBgImg = AssetManager.getImage(level.imageName);
             if (levelBgImg != null) {
                 ImageView bgView = new ImageView(levelBgImg);
@@ -275,7 +276,7 @@ public class LevelScene {
                 card.setBackground(new Background(new BackgroundFill(Color.web("#1e2c3a"), radii, Insets.EMPTY)));
             }
 
-            // 2. Viền Card (Vàng nếu đang chọn, Xanh nếu chưa chọn)
+            // Viền Card (Vàng nếu đang chọn, Xanh nếu chưa chọn)
             boolean isSelected = (level.levelNumber == selectedLevel);
             Color borderColor = isSelected ? Color.GOLD : Color.CYAN;
             
@@ -287,17 +288,19 @@ public class LevelScene {
             card.setBorder(defaultBorder);
             card.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.rgb(0, 0, 0, 0.8), 10, 0.5, 0, 2));
 
-            // Bố cục phần bên trên của card (Tiêu đề Level và Select Button nằm bên dưới)
+
+            // Bố cục phần bên trên của card (Bao gồm Tiêu đề Level và Select Button nằm bên dưới)
             VBox cardOverlay = new VBox(40);
             cardOverlay.setAlignment(Pos.CENTER);
             
-            // Phủ một lớp bóng đen mờ đằng sau chữ để chữ không bị chìm vào nền ảnh sáng
-            //cardOverlay.setStyle("-fx-background-color: rgba(0,0,0, 0.4); -fx-background-radius: 16;");
+
 
             Label nameLabel = new Label(level.name);
             nameLabel.setFont(AssetManager.getFont("font_kenvector_future", 25));
             nameLabel.setTextFill(isSelected ? Color.GOLD : Color.WHITE);
             nameLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 4, 1.0, 0, 1));
+
+
 
             CustomButton btnSelect = new CustomButton(isSelected ? "SELECTED" : "SELECT", 
                                                       150, 40, 
@@ -308,9 +311,7 @@ public class LevelScene {
                 selectedLevel = level.levelNumber;
                 refreshLevelCards();
             });
-
-            // 4. XỬ LÝ HOVER THAY ĐỔI VIỀN
-            // Khi di chuột vào nút, thẻ card đổi viền vàng (nếu chưa select)
+            // Khi di chuột (hover) vào nút, thẻ card đổi viền vàng (nếu chưa select)
             btnSelect.setOnMouseEntered(e -> {
                 if (!isSelected) card.setBorder(hoverBorder);
             });
@@ -318,7 +319,19 @@ public class LevelScene {
                 if (!isSelected) card.setBorder(defaultBorder);
             });
 
-            cardOverlay.getChildren().addAll(nameLabel, btnSelect);
+
+            //Highscore cho mỗi thẻ
+            int highScore = PlayerDataManager.getInstance().getHighScore(level.levelNumber);
+            Label highScoreLabel = new Label("BEST: " + highScore);
+            highScoreLabel.setFont(AssetManager.getFont("font_kenvector_future", 25));
+            highScoreLabel.setTextFill(Color.web("#f39c12")); // Màu vàng cam sang trọng
+            highScoreLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.BLACK, 4, 0.8, 0, 1));
+            highScoreLabel.setPadding(new Insets(5, 0, 0, 0));
+
+
+
+
+            cardOverlay.getChildren().addAll(nameLabel, btnSelect, highScoreLabel);
             card.getChildren().add(cardOverlay);
             
             levelCardsContainer.getChildren().add(card);

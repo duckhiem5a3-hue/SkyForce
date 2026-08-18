@@ -2241,7 +2241,7 @@ public class GameManager {
         isGameOver = true;
         stopGame();
         PlayerDataManager.getInstance().addGold(goldCollected);
-        PlayerDataManager.getInstance().checkAndUpdateHighScore(score);
+        PlayerDataManager.getInstance().checkAndUpdateHighScore(score,currentStageLevel);
         playScene.showGameOverMenu(score, goldCollected);
     }
 
@@ -2273,7 +2273,7 @@ public class GameManager {
 
         stopGame();
         PlayerDataManager.getInstance().addGold(goldCollected);
-        PlayerDataManager.getInstance().checkAndUpdateHighScore(score);
+        PlayerDataManager.getInstance().checkAndUpdateHighScore(score,currentStageLevel);
 
         if (playScene != null) {
             playScene.showWinMenu(score, goldCollected);

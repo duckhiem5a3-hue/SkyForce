@@ -16,6 +16,10 @@ public class PlayerDataManager {
 
     private static final String KEY_TOTAL_GOLD = "total_gold";
     private static final String KEY_HIGH_SCORE = "high_score";
+    private static final String KEY_HIGH_SCORE_1 = "high_score1";
+    private static final String KEY_HIGH_SCORE_2 = "high_score2";
+    private static final String KEY_HIGH_SCORE_3 = "high_score3";
+    private static final String KEY_HIGH_SCORE_4 = "high_score4";
     private static final String KEY_EQUIPPED_SKIN = "equipped_skin";
     private static final String KEY_UNLOCKED_SKINS = "unlocked_skins";
 
@@ -80,6 +84,20 @@ public class PlayerDataManager {
     public int getHighScore() {
         return Integer.parseInt(props.getProperty(KEY_HIGH_SCORE, "0"));
     }
+    public int getHighScore(int level) {
+        switch (level) {
+            default: 
+                return Integer.parseInt(props.getProperty(KEY_HIGH_SCORE, "0"));
+            case 1:
+                return Integer.parseInt(props.getProperty(KEY_HIGH_SCORE_1, "0"));
+            case 2:
+                return Integer.parseInt(props.getProperty(KEY_HIGH_SCORE_2, "0"));
+            case 3:
+                return Integer.parseInt(props.getProperty(KEY_HIGH_SCORE_3, "0"));
+            case 4:
+                return Integer.parseInt(props.getProperty(KEY_HIGH_SCORE_4, "0"));  
+        }
+    }
 
     public void checkAndUpdateHighScore(int currentScore) {
         int highestScore = getHighScore();
@@ -89,6 +107,31 @@ public class PlayerDataManager {
             System.out.println("Kỷ lục mới thiết lập: " + currentScore);
         }
     }
+    public void checkAndUpdateHighScore(int currentScore, int level) {
+        int highestScore = getHighScore(level);
+        if (currentScore > highestScore) {
+            switch (level) {
+                default:
+                    return;
+                case 1:
+                    props.setProperty(KEY_HIGH_SCORE_1, String.valueOf(currentScore));
+                    break;
+                case 2:
+                    props.setProperty(KEY_HIGH_SCORE_2, String.valueOf(currentScore));
+                    break;
+                case 3:
+                    props.setProperty(KEY_HIGH_SCORE_3, String.valueOf(currentScore));
+                    break;
+                case 4:
+                    props.setProperty(KEY_HIGH_SCORE_4, String.valueOf(currentScore));
+                    break;
+            }
+            props.setProperty(KEY_HIGH_SCORE, String.valueOf(currentScore));
+            saveData();
+            System.out.println("Kỷ lục mới thiết lập ở level: " + level + " là " + currentScore + "điểm");
+        }
+    }
+
 
     // ==========================================
     // CÁC HÀM QUẢN LÝ SKIN
