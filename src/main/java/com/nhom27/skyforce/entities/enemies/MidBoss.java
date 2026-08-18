@@ -4,22 +4,26 @@ import com.nhom27.skyforce.entities.base.BossObject;
 import com.nhom27.skyforce.main.Main;
 
 public class MidBoss extends BossObject {
-    public static int sizeX = Main.WIDTH * 22 / 100;
-    public static int sizeY = Main.WIDTH * 22 / 100;
+    private double targetY;
+    private double speedY;
+    private double swaySpeedX;
+    private boolean swayRight;
+    private boolean hasStopped;
+    private long lastBulletTime;
+    private long phase1FireRate; // 3 giây nhả 1 vòng 12 viên đạn tím
+    private long phase2FireRate; // Phase 2: Laser + Đạn tỉa
 
-    private double targetY = 120.0;
-    private double speedY = 70.0;
-    private double swaySpeedX = 100.0;
-    private boolean swayRight = true;
-    private boolean hasStopped = false;
-    private long lastBulletTime = 0;
-    private long phase1FireRate = 3000; // 3 giây nhả 1 vòng 12 viên đạn tím
-    private long phase2FireRate = 2500; // Phase 2: Laser + Đạn tỉa
-
-    public MidBoss(double startX, double startY) {
-        super("enemy_shooter", startX, startY, 3000, "LEVEL 5 MID-BOSS: PHÁO ĐÀI BAY");
-        this.collisionDamage = 50;
-        this.setPos(startX, startY, 180);
+    public MidBoss() {
+        super("boss_mid_red", 3000, "LEVEL 5 MID-BOSS: PHÁO ĐÀI BAY");
+        this.collisionDamage = 500;
+        this.targetY = 120.0;
+        this.speedY = 70.0;
+        this.swaySpeedX = 100.0;
+        this.swayRight = true;
+        this.hasStopped = false;
+        this.lastBulletTime = 0;
+        this.phase1FireRate = 3000;
+        this.phase2FireRate = 2500;
     }
 
     public boolean isPhase2() {
@@ -64,7 +68,7 @@ public class MidBoss extends BossObject {
                 }
             }
         }
-        setPos(x, y, 180);
+        setPos(x, y);
         checkDeath();
     }
 }

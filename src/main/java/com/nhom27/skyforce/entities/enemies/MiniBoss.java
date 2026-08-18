@@ -11,7 +11,7 @@ public class MiniBoss extends BossObject {
 
     public MiniBoss() {
         super("boss_mini_red", 600, "LEVEL 1 MINI-BOSS");
-        this.collisionDamage = 50;
+        this.collisionDamage = 500;
         this.targetY = 100.0;
         this.speedY = 80.0;
         this.hasStopped = false;

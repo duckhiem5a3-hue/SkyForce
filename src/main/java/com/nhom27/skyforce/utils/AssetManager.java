@@ -413,6 +413,22 @@ public class AssetManager {
                                                 28, 61, // Thân trái
                                                 30, 9 // Cạnh mũi trái
                                 });
+                loadSpriteInfo("boss_mid_red", "/com/nhom27/skyforce/textures/entities/boss_mid_red.png", new double[] {
+                                28, 6, // Đỉnh cánh trên (Trái)
+                                61, 48, // Lõm vào giữa phần đầu (Trái)
+                                110, 48, // Lõm vào giữa phần đầu (Phải)
+                                143, 6, // Đỉnh cánh trên (Phải)
+                                151, 15, // Cạnh lồi phía trên (Phải)
+                                166, 116, // Mép cánh chĩa ra xa nhất (Phải)
+                                145, 143, // Góc nhọn dưới cùng (Phải)
+                                104, 121, // Lõm vào thân dưới (Phải)
+                                99, 97, // Lõi trung tâm dưới (Phải)
+                                72, 97, // Lõi trung tâm dưới (Trái)
+                                67, 121, // Lõm vào thân dưới (Trái)
+                                26, 143, // Góc nhọn dưới cùng (Trái)
+                                5, 116, // Mép cánh chĩa ra xa nhất (Trái)
+                                20, 15 // Cạnh lồi phía trên (Trái)
+                });
                 loadSpriteInfo("enemy_sniper_green", "/com/nhom27/skyforce/textures/entities/enemy_sniper_green.png",
                                 new double[] { 1, 41, // Mép cánh trái
                                                 24, 2, // Mũi trái
@@ -436,6 +452,15 @@ public class AssetManager {
                                                 38, 82, // Đáy thân trái
                                                 30, 76, // Đuôi cánh trái trong
                                                 24, 72 // Đuôi cánh trái ngoài
+                                });
+                loadSpriteInfo("enemy_tanker_red", "/com/nhom27/skyforce/textures/entities/enemy_tanker_red.png",
+                                new double[] {
+                                                12, 0, // Góc trên trái
+                                                89, 0, // Góc trên phải (Phẳng lì, Y = 0)
+                                                100, 45, // Cạnh nhô ra xa nhất bên phải
+                                                80, 73, // Góc dưới phải
+                                                21, 73, // Góc dưới trái (Phẳng lì, Y = 73)
+                                                1, 45 // Cạnh nhô ra xa nhất bên trái
                                 });
 
                 loadSpriteInfo("obstacle_asteroid_large",

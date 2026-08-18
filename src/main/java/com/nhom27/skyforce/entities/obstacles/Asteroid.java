@@ -4,8 +4,6 @@ import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.main.Main;
 
 public class Asteroid extends EnemyObject {
-    public static int sizeX = Main.WIDTH * 14 / 100;
-    public static int sizeY = Main.WIDTH * 14 / 100;
     private double speedY = 60.0;
     private double rotationAngle = 0;
 

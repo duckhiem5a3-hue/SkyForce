@@ -56,6 +56,10 @@ public class SniperEnemy extends EnemyObject {
         }
     }
 
+    public void setSpeedY(double speedY) {
+        this.speedY = speedY;
+    }
+
     public String getBulletTexture() {
         return bulletTexture;
     }
