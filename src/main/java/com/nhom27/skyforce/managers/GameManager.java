@@ -56,6 +56,8 @@ public class GameManager {
      */
     private LevelScript currentLevelScript;
 
+    private BossObject currentActiveBoss = null;
+
     private Set<KeyCode> activeKeys = new HashSet<>();
     private boolean isDebug = true;
 
@@ -75,11 +77,11 @@ public class GameManager {
         return currentLevelScript;
     }
 
-    public void handleKeyPressed(javafx.scene.input.KeyCode code) {
+    public void handleKeyPressed(KeyCode code) {
         activeKeys.add(code);
     }
 
-    public void handleKeyReleased(javafx.scene.input.KeyCode code) {
+    public void handleKeyReleased(KeyCode code) {
         activeKeys.remove(code);
     }
 
@@ -122,7 +124,6 @@ public class GameManager {
 
         if (playScene != null) {
             playScene.showWarningBanner(false);
-            playScene.showBottomWarning(false, 0);
         }
 
         this.vfxManager = new VFXManager(this.gameLayoutPane);
@@ -139,15 +140,7 @@ public class GameManager {
         }
 
         // Bật debug hiển thị Hitbox của Player nếu isDebug = true
-        if (isDebug && player.getHitbox() != null) {
-            player.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ mờ 30%
-            player.getHitbox().setStroke(Color.YELLOW); // Viền vàng
-            player.getHitbox().setStrokeWidth(2);
-
-            if (!gameLayoutPane.getChildren().contains(player.getHitbox())) {
-                gameLayoutPane.getChildren().add(player.getHitbox());
-            }
-        }
+        renderDebugHitbox(player);
 
         // setup chuột
         // gameLayoutPane.setOnMouseMoved(e -> player.movePlayer(e.getX(), e.getY()));
@@ -186,14 +179,7 @@ public class GameManager {
         if (player.getShieldView() != null) {
             gameLayoutPane.getChildren().add(player.getShieldView());
         }
-        if (isDebug && player.getHitbox() != null) {
-            player.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
-            player.getHitbox().setStroke(Color.YELLOW);
-            player.getHitbox().setStrokeWidth(2);
-            if (!gameLayoutPane.getChildren().contains(player.getHitbox())) {
-                gameLayoutPane.getChildren().add(player.getHitbox());
-            }
-        }
+        renderDebugHitbox(player);
     }
 
     private void updateGame(long now) {
@@ -206,17 +192,17 @@ public class GameManager {
                 double speed = 10.0;
                 double dx = 0;
                 double dy = 0;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.W)
-                        || activeKeys.contains(javafx.scene.input.KeyCode.UP))
+                if (activeKeys.contains(KeyCode.W)
+                        || activeKeys.contains(KeyCode.UP))
                     dy -= speed;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.S)
-                        || activeKeys.contains(javafx.scene.input.KeyCode.DOWN))
+                if (activeKeys.contains(KeyCode.S)
+                        || activeKeys.contains(KeyCode.DOWN))
                     dy += speed;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.A)
-                        || activeKeys.contains(javafx.scene.input.KeyCode.LEFT))
+                if (activeKeys.contains(KeyCode.A)
+                        || activeKeys.contains(KeyCode.LEFT))
                     dx -= speed;
-                if (activeKeys.contains(javafx.scene.input.KeyCode.D)
-                        || activeKeys.contains(javafx.scene.input.KeyCode.RIGHT))
+                if (activeKeys.contains(KeyCode.D)
+                        || activeKeys.contains(KeyCode.RIGHT))
                     dx += speed;
 
                 if (dx != 0 || dy != 0) {
@@ -234,17 +220,9 @@ public class GameManager {
             // Tự động bắn đạn của người chơi
             if (now - player.getTimeSinceLastBullet() >= player.getFireRate()) {
                 AudioManager.getInstance().playSound("sfx_laser");
-                for (Bullet bullet : player.fireBullet(enemies)) { // tạo đạn mới
-                    gameLayoutPane.getChildren().add(bullet.getView()); // render đạn mới
-                    if (isDebug && bullet.getHitbox() != null) { // render debug viền cho đạn mới
-                        bullet.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3)); // Nền đỏ
-                        bullet.getHitbox().setStroke(Color.YELLOW); // Viền vàng
-                        bullet.getHitbox().setStrokeWidth(2);
-
-                        if (!gameLayoutPane.getChildren().contains(bullet.getHitbox())) {
-                            gameLayoutPane.getChildren().add(bullet.getHitbox());
-                        }
-                    }
+                for (Bullet bullet : player.fireBullet(enemies)) {
+                    gameLayoutPane.getChildren().add(bullet.getView());
+                    renderDebugHitbox(bullet);
                 }
                 player.setTimeSinceLastBullet(now);
             }
@@ -256,8 +234,12 @@ public class GameManager {
             Bullet b = bulletIter.next();
             b.update();
             if (!b.isAlive()) {
-                gameLayoutPane.getChildren().remove(b.getView());
-                gameLayoutPane.getChildren().remove(b.getHitbox());
+                if (b.getView() != null) {
+                    gameLayoutPane.getChildren().remove(b.getView());
+                }
+                if (b.getHitbox() != null) {
+                    gameLayoutPane.getChildren().remove(b.getHitbox());
+                }
                 bulletIter.remove();
             }
         }
@@ -281,82 +263,20 @@ public class GameManager {
         // Triệu hồi kẻ địch theo Strategy Pattern
         spawnEnemyWave(now);
 
-        // Cập nhật kẻ địch (xóa an toàn nhờ vào Iterator)
+        // Cập nhật kẻ địch (Đa hình Polymorphism)
         Iterator<EnemyObject> enemyIter = enemies.iterator();
         while (enemyIter.hasNext()) {
             EnemyObject e = enemyIter.next();
-            if (e instanceof SniperEnemy sniperEnemy) {
-                sniperEnemy.setPlayer(player);
-            }
             e.update();
+            e.attack(this, now, player);
             if (!e.isAlive()) {
-                if (currentStageLevel == 8 && e instanceof SwarmEnemy swarm) {
-                    double startX = swarm.getX() + swarm.getSizeX() / 2.0;
-                    double startY = swarm.getY() + swarm.getSizeY() / 2.0;
-                    double targetedVx = 0;
-                    double targetedVy = 250.0;
-                    if (player != null && player.isAlive()) {
-                        double dx = player.getX() - startX;
-                        double dy = player.getY() - startY;
-                        double dist = Math.hypot(dx, dy);
-                        if (dist > 0) {
-                            targetedVx = (dx / dist) * 250.0;
-                            targetedVy = (dy / dist) * 250.0;
-                        }
-                    }
-                    EnemyBullet sBullet = new EnemyBullet(startX, startY, targetedVx, targetedVy, 15,
-                            "bullet_enemy_round_purple");
-                    spawnEnemyBullet(sBullet);
+                if (e.getView() != null) {
+                    gameLayoutPane.getChildren().remove(e.getView());
                 }
-                gameLayoutPane.getChildren().remove(e.getView());
                 if (e.getHitbox() != null) {
                     gameLayoutPane.getChildren().remove(e.getHitbox());
                 }
                 enemyIter.remove();
-            } else if (e instanceof NormalEnemy normalEnemy) {
-                if (normalEnemy.timeToFire(now)) {
-                    double startX = normalEnemy.getX() + normalEnemy.getSizeX() / 2.0 - 5;
-                    double startY = normalEnemy.getY() + normalEnemy.getSizeY();
-                    EnemyBullet eBullet = new EnemyBullet(startX, startY, 0, 120.0, 15, "bullet_enemy_round_purple");
-                    spawnEnemyBullet(eBullet);
-                }
-            } else if (e instanceof SniperEnemy sniperEnemy) {
-                if (sniperEnemy.isReadyToFire()) {
-                    double bulletSpeed = 350.0;
-                    double speedX = sniperEnemy.getAimedDirX() * bulletSpeed;
-                    double speedY = sniperEnemy.getAimedDirY() * bulletSpeed;
-                    double startX = sniperEnemy.getX() + sniperEnemy.getSizeX() / 2.0;
-                    double startY = sniperEnemy.getY() + sniperEnemy.getSizeY();
-                    EnemyBullet eBullet = new EnemyBullet(startX, startY, speedX, speedY, 25, "bullet_enemy_laser");
-                    spawnEnemyBullet(eBullet);
-                }
-            } else if (e instanceof MiniBoss miniBoss) {
-                if (miniBoss.timeToFire(now)) {
-                    double startX = miniBoss.getX() + miniBoss.getSizeX() / 2.0 - 5;
-                    double startY = miniBoss.getY() + miniBoss.getSizeY();
-
-                    double totalSpeed = 120.0;
-                    double radLeft = Math.toRadians(-20);
-                    double radRight = Math.toRadians(20);
-
-                    EnemyBullet b1 = new EnemyBullet(startX, startY, 0, totalSpeed, 15, "bullet_boss_mini_red");
-                    EnemyBullet b2 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radLeft),
-                            totalSpeed * Math.cos(radLeft), 15, "bullet_boss_mini_red");
-                    EnemyBullet b3 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radRight),
-                            totalSpeed * Math.cos(radRight), 15, "bullet_boss_mini_red");
-
-                    EnemyBullet[] bullets = { b1, b2, b3 };
-                    for (EnemyBullet b : bullets) {
-                        spawnEnemyBullet(b);
-                    }
-                }
-            } else if (e instanceof TankerEnemy tankerEnemy) {
-                if (tankerEnemy.timeToFire(now)) {
-                    double startX = tankerEnemy.getX() + tankerEnemy.getSizeX() / 2.0 - 5;
-                    double startY = tankerEnemy.getY() + tankerEnemy.getSizeY();
-                    EnemyBullet eBullet = new EnemyBullet(startX, startY, 0, 280.0, 15, "bullet_enemy_round_purple");
-                    spawnEnemyBullet(eBullet);
-                }
             }
         }
 
@@ -366,8 +286,12 @@ public class GameManager {
             PowerUp p = powerUpIter.next();
             p.update();
             if (!p.isAlive()) {
-                gameLayoutPane.getChildren().remove(p.getView());
-                gameLayoutPane.getChildren().remove(p.getHitbox());
+                if (p.getView() != null) {
+                    gameLayoutPane.getChildren().remove(p.getView());
+                }
+                if (p.getHitbox() != null) {
+                    gameLayoutPane.getChildren().remove(p.getHitbox());
+                }
                 powerUpIter.remove();
             }
         }
@@ -378,14 +302,12 @@ public class GameManager {
         // Update HUD
         playScene.updateHUD(score, goldCollected, player);
 
-        BossObject activeBoss = null;
-        for (EnemyObject enemy : enemies) {
-            if (enemy instanceof BossObject boss && boss.isAlive()) {
-                activeBoss = boss;
-                break;
+        if (currentActiveBoss != null) {
+            if (!currentActiveBoss.isAlive()) {
+                currentActiveBoss = null;
             }
         }
-        playScene.updateBossHUD(activeBoss);
+        playScene.updateBossHUD(currentActiveBoss);
 
         // Check Game Over
         if (player != null && (!player.isAlive() || player.getHealth() <= 0)) {
@@ -411,6 +333,22 @@ public class GameManager {
     }
 
     /**
+     * Phương thức phụ trợ hiển thị khung Hitbox debug cho bất kỳ GameObject nào.
+     *
+     * @param obj GameObject cần hiển thị khung hitbox
+     */
+    private void renderDebugHitbox(GameObject obj) {
+        if (isDebug && obj != null && obj.getHitbox() != null) {
+            obj.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
+            obj.getHitbox().setStroke(Color.YELLOW);
+            obj.getHitbox().setStrokeWidth(2);
+            if (!gameLayoutPane.getChildren().contains(obj.getHitbox())) {
+                gameLayoutPane.getChildren().add(obj.getHitbox());
+            }
+        }
+    }
+
+    /**
      * Thêm một kẻ địch vào màn chơi và hiển thị lên giao diện (public helper cho
      * LevelScript).
      *
@@ -420,15 +358,14 @@ public class GameManager {
         if (newEnemy != null) {
             enemies.add(newEnemy);
 
+            if (newEnemy instanceof BossObject boss) {
+                this.currentActiveBoss = boss;
+            }
+
             if (newEnemy.getView() != null) {
                 gameLayoutPane.getChildren().add(newEnemy.getView());
             }
-            if (isDebug && newEnemy.getHitbox() != null) {
-                newEnemy.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
-                newEnemy.getHitbox().setStroke(Color.YELLOW);
-                newEnemy.getHitbox().setStrokeWidth(2);
-                gameLayoutPane.getChildren().add(newEnemy.getHitbox());
-            }
+            renderDebugHitbox(newEnemy);
         }
     }
 
@@ -444,14 +381,7 @@ public class GameManager {
         if (bullet.getView() != null && !gameLayoutPane.getChildren().contains(bullet.getView())) {
             gameLayoutPane.getChildren().add(bullet.getView());
         }
-        if (isDebug && bullet.getHitbox() != null) {
-            bullet.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
-            bullet.getHitbox().setStroke(Color.YELLOW);
-            bullet.getHitbox().setStrokeWidth(2);
-            if (!gameLayoutPane.getChildren().contains(bullet.getHitbox())) {
-                gameLayoutPane.getChildren().add(bullet.getHitbox());
-            }
-        }
+        renderDebugHitbox(bullet);
     }
 
     /**
@@ -466,14 +396,7 @@ public class GameManager {
         if (powerUp.getView() != null && !gameLayoutPane.getChildren().contains(powerUp.getView())) {
             gameLayoutPane.getChildren().add(powerUp.getView());
         }
-        if (isDebug && powerUp.getHitbox() != null) {
-            powerUp.getHitbox().setFill(Color.rgb(255, 0, 0, 0.3));
-            powerUp.getHitbox().setStroke(Color.YELLOW);
-            powerUp.getHitbox().setStrokeWidth(2);
-            if (!gameLayoutPane.getChildren().contains(powerUp.getHitbox())) {
-                gameLayoutPane.getChildren().add(powerUp.getHitbox());
-            }
-        }
+        renderDebugHitbox(powerUp);
     }
 
     // Xử lý va chạm
@@ -497,11 +420,10 @@ public class GameManager {
 
                     if (!enemy.isAlive()) {
                         score += 5;
-                        double scaleFactor = 4.0;
                         vfxManager.spawnExplosionSpriteSheet(enemy.getX() + enemy.getSizeX() / 2,
                                 enemy.getY() + enemy.getSizeY() / 2,
-                                enemy.getSizeX() * scaleFactor,
-                                enemy.getSizeY() * scaleFactor);
+                                enemy.getSizeX() * 4.0,
+                                enemy.getSizeY() * 4.0);
                         AudioManager.getInstance().playSound("sfx_explosion_enemy");
 
                         // Thông báo tới currentLevelScript khi kẻ địch bị hạ (dùng cho MiniBoss /
@@ -542,7 +464,7 @@ public class GameManager {
                         AudioManager.getInstance().playSound("sfx_explosion_enemy");
                         player.setHealth(0);
                         player.setAlive(false);
-                        vfxManager.spawnScreenEffect(false);
+                        vfxManager.spawnScreenEffect("damaged");
                         break;
                     } else {
                         enemy.setAlive(false);
@@ -553,7 +475,7 @@ public class GameManager {
                         AudioManager.getInstance().playSound("sfx_explosion_enemy");
                         player.takeDamage(enemy.getCollisionDamage());
                         vfxManager.applyPlayerGlow(player, "damaged");
-                        vfxManager.spawnScreenEffect(false);
+                        vfxManager.spawnScreenEffect("damaged");
                     }
                 }
             }
@@ -577,6 +499,7 @@ public class GameManager {
                         gameLayoutPane.getChildren().remove(eBullet.getHitbox());
                     }
                     eBulletIter.remove();
+                    vfxManager.spawnScreenEffect("damaged");
                 }
             }
 

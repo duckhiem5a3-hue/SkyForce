@@ -10,7 +10,6 @@ import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -39,7 +38,8 @@ public class VFXManager {
             img2 = AssetManager.getImage("vfx_hit_player_blue_2");
         }
 
-        if (img1 == null) return;
+        if (img1 == null)
+            return;
 
         ImageView effectView = new ImageView(img1);
 
@@ -70,15 +70,12 @@ public class VFXManager {
         timeline.play();
     }
 
-    public void spawnImpactEffect(double x, double y) {
-        spawnImpactEffect(x, y, "blue");
-    }
-
     // Lớp quản lý 1 vụ nổ riêng biệt (chuẩn Hướng đối tượng OOP cơ bản)
     private static class ExplosionAnimation {
         private int currentFrame = 0;
 
-        public ExplosionAnimation(Pane gamePane, Image sheet, double x, double y, double targetWidth, double targetHeight) {
+        public ExplosionAnimation(Pane gamePane, Image sheet, double x, double y, double targetWidth,
+                double targetHeight) {
             int cols = 8;
             int rows = 8;
             int totalFrames = cols * rows;
@@ -124,60 +121,57 @@ public class VFXManager {
     }
 
     public void applyPlayerGlow(Player player, String cases) {
-        if (player.getView() == null) return;
+        if (player.getView() == null)
+            return;
 
-
-        if (player.getGlowTimer() != null) { //nếu đang ở trong 1 trong 3 trạng thái (đc buff/ hồi máu/nhận dame)
-            player.getGlowTimer().stop();    //cắt trạng thái (delay) đó, vì đã nhận được trạng thái mới (đồng nghĩa với bỏ hành động khi kết thúc đếm ngược) 
-        }                                    
+        // Dừng hiệu ứng cũ nếu có (Cơ chế Đè hiệu ứng ưu tiên cái mới nhất)
+        if (player.getGlowTimer() != null) {
+            player.getGlowTimer().stop();
+        }
 
         DropShadow glow = new DropShadow();
-        double durations = 800; // default
+        double durations = 800; // default cho heal và damaged
 
+        // Cài đặt màu sắc và thời gian
         if (cases.equals("heal")) {
             glow.setColor(Color.LIMEGREEN);
         } else if (cases.equals("damaged")) {
             glow.setColor(Color.RED);
         } else if (cases.equals("shield")) {
-            glow.setColor(Color.DEEPSKYBLUE);    
-            durations = 1200;
+            glow.setColor(Color.DEEPSKYBLUE);
+            durations = player.getShieldBuffTimeRemaining();
         } else if (cases.equals("buffed")) {
             glow.setColor(Color.GOLD);
-
-            /*Lấy thời gian trực tiếp từ Player. 
-            -> Nếu được gọi độc lập khi đang không trong trạng thái buff vàng để kích buff vàng mới:
-               -> Hàm activateSeekerBuff sẽ luôn đc gọi trước nó (trong class SeekerPowerUp, hàm activateSeekerBuff)
-                  và reset thời gian của getSeekerBuffTimeRemaining() về 10000
-
-            -> Nếu được gọi dưới tư cách 1 hàm đệ quy (bởi 1 hàm gọi hiệu ứng màu xanh/đỏ, khi mà 1 hàm gọi buff vàng trước đó vẫn chưa hết thời gian (dòng 157)
-               -> Lấy thời gian hiện có của hàm gọi buff vàng trước đó 
-            */
-            durations = player.getSeekerBuffTimeRemaining(); 
+            durations = player.getSeekerBuffTimeRemaining();
         }
 
+        // Cài đặt thông số tỏa sáng
         glow.setRadius(25);
-        if(cases == "shield") {glow.setRadius(35);}
         glow.setSpread(0.6);
-        if(cases == "shield") {glow.setSpread(0.8);}
 
         player.getView().setEffect(glow);
 
+        // Xử lý logic khôi phục sau khi hết thời gian
         PauseTransition delay = new PauseTransition(Duration.millis(durations));
         delay.setOnFinished(e -> {
-            if (!cases.equals("buffed") && player.isSeekerActive()) {
-                applyPlayerGlow(player, "buffed"); 
+            // Luôn kiểm tra trạng thái thực tế của Player thay vì chỉ dựa vào chuỗi "cases"
+            if (player.isSeekerActive() && !cases.equals("buffed")) {
+                applyPlayerGlow(player, "buffed");
             } else {
-                player.getView().setEffect(null); //tiền đề cho trạng thái dòng 122
+                // Trả về nguyên trạng
+                DropShadow defaultOutline = new DropShadow();
+                defaultOutline.setColor(Color.WHITE);
+                defaultOutline.setRadius(5);
+                defaultOutline.setSpread(0.6);
+                player.getView().setEffect(defaultOutline);
             }
         });
 
-        //lưu timer mới, trường hợp có hiệu ứng khác chen ngang thì hủy 
         player.setGlowTimer(delay);
         delay.play();
-
     }
 
-    public void spawnScreenEffect(boolean addHealth) {
+    public void spawnScreenEffect(String effectType) {
         double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;
         double height = (gamePane != null && gamePane.getHeight() > 0) ? gamePane.getHeight() : Main.HEIGHT;
 
@@ -186,24 +180,47 @@ public class VFXManager {
 
         // 2. Tạo hiệu ứng viền xanh lá (Vignette) bằng RadialGradient
         // Trong suốt ở tâm, tỏa màu xanh lá mượt ra phía mép màn hình
-        //viền đỏ nếu nhận sát thương 
+        // viền đỏ nếu nhận sát thương
 
-        RadialGradient vignetteGradient = new RadialGradient(
+        RadialGradient healGradient = new RadialGradient(
                 0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
                 new Stop(0.0, Color.TRANSPARENT),
                 new Stop(0.4, Color.TRANSPARENT),
                 new Stop(1.0, Color.rgb(46, 204, 113, 0.75)) // Màu xanh lá neon hồi máu
         );
-        RadialGradient vignetteGradient2 = new RadialGradient(
+        RadialGradient damageGradient = new RadialGradient(
                 0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
                 new Stop(0.0, Color.TRANSPARENT),
                 new Stop(0.4, Color.TRANSPARENT),
-                new Stop(1.0, Color.rgb(255, 60, 0, 0.75)) // Màu xanh lá neon hồi máu
+                new Stop(1.0, Color.rgb(255, 60, 0, 0.75)) // Màu đỏ báo động trúng đạn
         );
-        if(addHealth) {
-            screenOverlay.setFill(vignetteGradient);
-        } else {
-            screenOverlay.setFill(vignetteGradient2);
+        RadialGradient shieldGradient = new RadialGradient(
+                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.TRANSPARENT),
+                new Stop(0.4, Color.TRANSPARENT),
+                new Stop(1.0, Color.rgb(0, 191, 255, 0.8))); // Màu xanh báo hiệu nhặt khiên
+        RadialGradient buffGradient = new RadialGradient(
+                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
+                new Stop(0.0, Color.TRANSPARENT),
+                new Stop(0.4, Color.TRANSPARENT),
+                new Stop(1.0, Color.rgb(0, 255, 255, 0.8))); // Màu xanh báo hiệu cường hóa
+
+        switch (effectType) {
+            case "heal":
+                screenOverlay.setFill(healGradient);
+                break;
+            case "damaged":
+                screenOverlay.setFill(damageGradient);
+                break;
+            case "shield":
+                screenOverlay.setFill(shieldGradient);
+                break;
+            case "buffed":
+                screenOverlay.setFill(buffGradient);
+                break;
+            default:
+                System.out.println("Lỗi hiệu ứng: " + effectType);
+                return;
         }
 
         // Đảm bảo không cản trở tương tác chuột
@@ -213,56 +230,6 @@ public class VFXManager {
         gamePane.getChildren().add(screenOverlay);
 
         // 3. Hiệu ứng mờ dần FadeOut
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(800), screenOverlay);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e -> gamePane.getChildren().remove(screenOverlay));
-        fadeOut.play();
-    }
-
-
-
-    public void spawnScreenSeekerEffect() {
-        double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;
-        double height = (gamePane != null && gamePane.getHeight() > 0) ? gamePane.getHeight() : Main.HEIGHT;
-
-        Rectangle screenOverlay = new Rectangle(width, height);
-
-        RadialGradient vignetteGradient = new RadialGradient(
-                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
-                new Stop(0.0, Color.TRANSPARENT),
-                new Stop(0.4, Color.TRANSPARENT),
-                new Stop(1.0, Color.rgb(0, 225, 255, 0.75)));
-        screenOverlay.setFill(vignetteGradient);
-        screenOverlay.setMouseTransparent(true);
-
-        gamePane.getChildren().add(screenOverlay);
-
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(800), screenOverlay);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e -> gamePane.getChildren().remove(screenOverlay));
-        fadeOut.play();
-    }
-
-    
-
-    public void spawnScreenShieldEffect() {
-        double width = (gamePane != null && gamePane.getWidth() > 0) ? gamePane.getWidth() : Main.WIDTH;
-        double height = (gamePane != null && gamePane.getHeight() > 0) ? gamePane.getHeight() : Main.HEIGHT;
-
-        Rectangle screenOverlay = new Rectangle(width, height);
-
-        RadialGradient vignetteGradient = new RadialGradient(
-                0, 0, 0.5, 0.5, 0.75, true, CycleMethod.NO_CYCLE,
-                new Stop(0.0, Color.TRANSPARENT),
-                new Stop(0.4, Color.TRANSPARENT),
-                new Stop(1.0, Color.rgb(0, 191, 255, 0.8)));
-        screenOverlay.setFill(vignetteGradient);
-        screenOverlay.setMouseTransparent(true);
-
-        gamePane.getChildren().add(screenOverlay);
-
         FadeTransition fadeOut = new FadeTransition(Duration.millis(800), screenOverlay);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);

@@ -1,6 +1,9 @@
 package com.nhom27.skyforce.entities.enemies;
 
 import com.nhom27.skyforce.entities.base.BossObject;
+import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.entities.weapons.EnemyBullet;
+import com.nhom27.skyforce.managers.GameManager;
 
 public class MiniBoss extends BossObject {
     private double targetY;
@@ -29,6 +32,29 @@ public class MiniBoss extends BossObject {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void attack(GameManager gm, long now, Player player) {
+        if (gm != null && timeToFire(now)) {
+            double startX = getX() + getSizeX() / 2.0 - 5;
+            double startY = getY() + getSizeY();
+
+            double totalSpeed = 120.0;
+            double radLeft = Math.toRadians(-20);
+            double radRight = Math.toRadians(20);
+
+            EnemyBullet b1 = new EnemyBullet(startX, startY, 0, totalSpeed, 15, "bullet_boss_mini_red");
+            EnemyBullet b2 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radLeft),
+                    totalSpeed * Math.cos(radLeft), 15, "bullet_boss_mini_red");
+            EnemyBullet b3 = new EnemyBullet(startX, startY, totalSpeed * Math.sin(radRight),
+                    totalSpeed * Math.cos(radRight), 15, "bullet_boss_mini_red");
+
+            EnemyBullet[] bullets = { b1, b2, b3 };
+            for (EnemyBullet b : bullets) {
+                gm.spawnEnemyBullet(b);
+            }
+        }
     }
 
     @Override

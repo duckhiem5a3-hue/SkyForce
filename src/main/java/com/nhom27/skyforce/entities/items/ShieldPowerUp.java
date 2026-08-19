@@ -19,8 +19,9 @@ public class ShieldPowerUp extends PowerUp {
         AudioManager.getInstance().playSound("sfx_item_powerup_lightning");
 
         if (vfxManager != null) {
-            vfxManager.applyPlayerGlow(player,"shield");
-            vfxManager.spawnScreenShieldEffect();
+            vfxManager.applyPlayerGlow(player, "shield");
+            vfxManager.spawnScreenEffect("shield");
+            ;
         }
     }
 }

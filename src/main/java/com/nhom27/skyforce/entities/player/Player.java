@@ -127,11 +127,10 @@ public abstract class Player extends GameObject {
         }
     }
 
-    public Player addXp(int amount) {
+    public void addXp(int amount) {
         if (amount <= 0)
-            return this;
+            return;
         this.currentXp += amount;
-        int oldLevel = this.level;
 
         while (this.level < this.maxLevel && this.currentXp >= this.xpToNextLevel) {
             this.currentXp -= this.xpToNextLevel;
@@ -142,13 +141,6 @@ public abstract class Player extends GameObject {
         if (this.level >= this.maxLevel) {
             this.currentXp = this.xpToNextLevel;
         }
-
-        if (this.level > oldLevel) {
-            Player upgradedPlayer = createPlayerForLevel(this.level, x, y, skinId);
-            upgradedPlayer.copyStateFrom(this);
-            return upgradedPlayer;
-        }
-        return this;
     }
 
     public abstract List<Bullet> fireBullet(List<EnemyObject> enemies);

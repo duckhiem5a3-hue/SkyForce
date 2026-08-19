@@ -2,7 +2,9 @@ package com.nhom27.skyforce.entities.enemies;
 
 import com.nhom27.skyforce.entities.base.EnemyObject;
 import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.entities.weapons.EnemyBullet;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.managers.GameManager;
 
 public class SniperEnemy extends EnemyObject {
     public enum State {
@@ -192,6 +194,22 @@ public class SniperEnemy extends EnemyObject {
             }
         }
         checkDeath();
+    }
+
+    @Override
+    public void attack(GameManager gm, long now, Player player) {
+        if (gm == null)
+            return;
+        setPlayer(player);
+        if (isReadyToFire()) {
+            double bulletSpeed = 350.0;
+            double speedX = getAimedDirX() * bulletSpeed;
+            double speedY = getAimedDirY() * bulletSpeed;
+            double startX = getX() + getSizeX() / 2.0;
+            double startY = getY() + getSizeY();
+            EnemyBullet eBullet = new EnemyBullet(startX, startY, speedX, speedY, 25, "bullet_enemy_laser");
+            gm.spawnEnemyBullet(eBullet);
+        }
     }
 
     @Override

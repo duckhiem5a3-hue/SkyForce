@@ -3,7 +3,10 @@ package com.nhom27.skyforce.entities.enemies;
 import java.util.Random;
 
 import com.nhom27.skyforce.entities.base.EnemyObject;
+import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.entities.weapons.EnemyBullet;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.managers.GameManager;
 
 public class NormalEnemy extends EnemyObject {
     protected double speedY;
@@ -91,6 +94,16 @@ public class NormalEnemy extends EnemyObject {
 
     public void setFireRate(long fireRate) {
         this.fireRate = fireRate;
+    }
+
+    @Override
+    public void attack(GameManager gm, long now, Player player) {
+        if (gm != null && timeToFire(now)) {
+            double startX = getX() + getSizeX() / 2.0 - 5;
+            double startY = getY() + getSizeY();
+            EnemyBullet eBullet = new EnemyBullet(startX, startY, 0, 120.0, 15, "bullet_enemy_round_purple");
+            gm.spawnEnemyBullet(eBullet);
+        }
     }
 
     @Override

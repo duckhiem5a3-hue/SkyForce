@@ -19,7 +19,7 @@ public class PillPowerUp extends PowerUp {
         player.addXp(50);
         AudioManager.getInstance().playSound("sfx_item_health_pickup");
 
-        vfxManager.applyPlayerGlow(player,"heal");
-        vfxManager.spawnScreenEffect(true);
+        vfxManager.applyPlayerGlow(player, "heal");
+        vfxManager.spawnScreenEffect("heal");
     }
 }

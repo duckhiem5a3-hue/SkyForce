@@ -37,11 +37,4 @@ public class Bullet extends GameObject {
             this.isAlive = false;
         }
     }
-    /*
-     * các class con StraightBullet và DiagonalBullet bị xóa bỏ
-     * Field incline được sinh ra để tạo độ nghiêng cho đạn
-     * incline dương: nghiêng sang phải
-     * incline âm: nghiêng sang trái
-     * incline bằng 0: không nghiêng (straight bullet)
-     */
 }

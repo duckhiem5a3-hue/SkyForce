@@ -14,8 +14,10 @@ import com.nhom27.skyforce.managers.GameManager;
 
 /**
  * Class kịch bản dành riêng cho Level 5.
- * Chứa toàn bộ cờ trạng thái, kịch bản cảnh báo đỏ, xuất hiện MidBoss, đạn Phase 1 / Phase 2 của Boss,
- * vụ nổ liên hoàn khi diệt Boss, lực hút từ tính thu gom vàng và màn hình chiến thắng.
+ * Chứa toàn bộ cờ trạng thái, kịch bản cảnh báo đỏ, xuất hiện MidBoss, đạn
+ * Phase 1 / Phase 2 của Boss,
+ * vụ nổ liên hoàn khi diệt Boss, lực hút từ tính thu gom vàng và màn hình chiến
+ * thắng.
  */
 public class Level5Script implements LevelScript {
 
@@ -115,17 +117,21 @@ public class Level5Script implements LevelScript {
                         double rad = Math.toRadians(angleDeg);
                         double vx = totalSpeed * Math.sin(rad);
                         double vy = totalSpeed * Math.cos(rad);
-                        EnemyBullet b = new EnemyBullet(bossCenterX, bossCenterY, vx, vy, 15, "bullet_enemy_round_purple");
+                        EnemyBullet b = new EnemyBullet(bossCenterX, bossCenterY, vx, vy, 15,
+                                "bullet_enemy_round_purple");
                         gameManager.spawnEnemyBullet(b);
                     }
                 } else {
-                    // Phase 2: Tử Quang (2 Tia Laser 50 Dmg + 2 Đạn Tỉa Kim Cương 25 Dmg nhắm player)
-                    gameManager.getVFXManager().spawnScreenEffect(true);
+                    // Phase 2: Tử Quang (2 Tia Laser 50 Dmg + 2 Đạn Tỉa Kim Cương 25 Dmg nhắm
+                    // player)
+                    gameManager.getVFXManager().spawnScreenEffect("damaged");
                     AudioManager.getInstance().playSound("sfx_zap");
 
                     // 2 Tia Laser chéo
-                    EnemyBullet laser1 = new EnemyBullet(bossCenterX - 40, bossCenterY, -50.0, 380.0, 50, "bullet_enemy_laser");
-                    EnemyBullet laser2 = new EnemyBullet(bossCenterX + 40, bossCenterY, 50.0, 380.0, 50, "bullet_enemy_laser");
+                    EnemyBullet laser1 = new EnemyBullet(bossCenterX - 40, bossCenterY, -50.0, 380.0, 50,
+                            "bullet_enemy_laser");
+                    EnemyBullet laser2 = new EnemyBullet(bossCenterX + 40, bossCenterY, 50.0, 380.0, 50,
+                            "bullet_enemy_laser");
 
                     // 2 Đạn Tỉa nhắm player
                     double targetedVx = 0;
@@ -140,8 +146,10 @@ public class Level5Script implements LevelScript {
                             targetedVy = (dy / dist) * 350.0;
                         }
                     }
-                    EnemyBullet diamond1 = new EnemyBullet(bossCenterX - 20, bossCenterY, targetedVx, targetedVy, 25, "bullet_enemy_diamond_yellow");
-                    EnemyBullet diamond2 = new EnemyBullet(bossCenterX + 20, bossCenterY, targetedVx, targetedVy, 25, "bullet_enemy_diamond_yellow");
+                    EnemyBullet diamond1 = new EnemyBullet(bossCenterX - 20, bossCenterY, targetedVx, targetedVy, 25,
+                            "bullet_enemy_diamond_yellow");
+                    EnemyBullet diamond2 = new EnemyBullet(bossCenterX + 20, bossCenterY, targetedVx, targetedVy, 25,
+                            "bullet_enemy_diamond_yellow");
 
                     EnemyBullet[] phase2Bullets = { laser1, laser2, diamond1, diamond2 };
                     for (EnemyBullet b : phase2Bullets) {
@@ -167,7 +175,8 @@ public class Level5Script implements LevelScript {
                 }
             }
 
-            // Sau khi toàn bộ vàng đã được hút hết (hoặc quá 3s), hiển thị bảng chiến thắng WinMenu
+            // Sau khi toàn bộ vàng đã được hút hết (hoặc quá 3s), hiển thị bảng chiến thắng
+            // WinMenu
             boolean hasCoinsRemaining = gameManager.getPowerUps().stream()
                     .anyMatch(p -> p instanceof CoinPowerUp && p.isAlive());
             if (!hasCoinsRemaining || elapsedSinceClear >= 3000) {
@@ -181,7 +190,7 @@ public class Level5Script implements LevelScript {
     public void onEnemyKilled(EnemyObject enemy, GameManager gameManager) {
         if (enemy instanceof MidBoss midBoss && !lvl5_victoryTriggered) {
             lvl5_victoryTriggered = true;
-            gameManager.getVFXManager().spawnScreenEffect(false);
+            gameManager.getVFXManager().spawnScreenEffect("buffed");
 
             // Vụ nổ liên hoàn tại vị trí của MidBoss
             for (int i = 0; i < 8; i++) {
@@ -193,8 +202,10 @@ public class Level5Script implements LevelScript {
 
             // Rớt đại tiệc 30 đồng Vàng xung quanh vị trí nổ của Boss!
             for (int c = 0; c < 30; c++) {
-                double dropX = midBoss.getX() + midBoss.getSizeX() / 2.0 + (gameManager.getRandom().nextDouble() - 0.5) * 260;
-                double dropY = midBoss.getY() + midBoss.getSizeY() / 2.0 + (gameManager.getRandom().nextDouble() - 0.5) * 150;
+                double dropX = midBoss.getX() + midBoss.getSizeX() / 2.0
+                        + (gameManager.getRandom().nextDouble() - 0.5) * 260;
+                double dropY = midBoss.getY() + midBoss.getSizeY() / 2.0
+                        + (gameManager.getRandom().nextDouble() - 0.5) * 150;
                 CoinPowerUp coin = new CoinPowerUp(dropX, dropY);
                 gameManager.addPowerUp(coin);
             }

@@ -1,5 +1,8 @@
 package com.nhom27.skyforce.entities.base;
 
+import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.managers.GameManager;
+
 public abstract class EnemyObject extends GameObject {
     protected int health;
     protected int collisionDamage;
@@ -67,6 +70,18 @@ public abstract class EnemyObject extends GameObject {
         if (this.health <= 0) {
             this.isAlive = false;
         }
+    }
+
+    /**
+     * Phương thức đa hình xử lý hành động tấn công (bắn đạn) của kẻ địch.
+     * Các class con triển khai sẽ tự chịu trách nhiệm tính toán và sinh đạn tương
+     * ứng.
+     *
+     * @param gm     Quản lý GameManager để gọi spawnEnemyBullet
+     * @param now    Timestamp hiện tại
+     * @param player Tham chiếu tới máy bay người chơi
+     */
+    public void attack(GameManager gm, long now, Player player) {
     }
 
     public abstract void update();

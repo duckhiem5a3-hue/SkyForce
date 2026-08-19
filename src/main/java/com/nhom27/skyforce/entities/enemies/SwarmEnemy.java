@@ -1,7 +1,10 @@
 package com.nhom27.skyforce.entities.enemies;
 
 import com.nhom27.skyforce.entities.base.EnemyObject;
+import com.nhom27.skyforce.entities.player.Player;
+import com.nhom27.skyforce.entities.weapons.EnemyBullet;
 import com.nhom27.skyforce.main.Main;
+import com.nhom27.skyforce.managers.GameManager;
 
 public class SwarmEnemy extends EnemyObject {
     public enum TrajectoryType {
@@ -51,6 +54,28 @@ public class SwarmEnemy extends EnemyObject {
         super.setPos(startX, startY);
         this.originX = startX;
         this.phase = 0;
+    }
+
+    @Override
+    public void attack(GameManager gm, long now, Player player) {
+        if (!isAlive() && gm != null && gm.getCurrentStageLevel() == 8) {
+            double startX = getX() + getSizeX() / 2.0;
+            double startY = getY() + getSizeY() / 2.0;
+            double targetedVx = 0;
+            double targetedVy = 250.0;
+            if (player != null && player.isAlive()) {
+                double dx = player.getX() - startX;
+                double dy = player.getY() - startY;
+                double dist = Math.hypot(dx, dy);
+                if (dist > 0) {
+                    targetedVx = (dx / dist) * 250.0;
+                    targetedVy = (dy / dist) * 250.0;
+                }
+            }
+            EnemyBullet sBullet = new EnemyBullet(startX, startY, targetedVx, targetedVy, 15,
+                    "bullet_enemy_round_purple");
+            gm.spawnEnemyBullet(sBullet);
+        }
     }
 
     @Override

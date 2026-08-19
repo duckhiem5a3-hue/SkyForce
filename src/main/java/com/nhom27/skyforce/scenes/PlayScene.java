@@ -57,6 +57,9 @@ public class PlayScene {
     private Label bossNameLabel;
     private ProgressBar bossHealthBar;
 
+    private StackPane warningBanner;
+    private javafx.animation.FadeTransition warningAnimation;
+
     public PlayScene() {
         this(1);
     }
@@ -72,7 +75,7 @@ public class PlayScene {
         // Tạo Pause Overlay Menu
         createPauseOverlay();
 
-        scene = new Scene(root, com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
+        scene = new Scene(root, Main.WIDTH, Main.HEIGHT);
         scene.setOnKeyPressed(e -> {
             if (gameManager != null) {
                 gameManager.handleKeyPressed(e.getCode());
@@ -94,8 +97,8 @@ public class PlayScene {
 
         if (bgImage != null) {
             bgImageView = new ImageView(bgImage);
-            bgImageView.setFitWidth(com.nhom27.skyforce.main.Main.WIDTH);
-            bgImageView.setFitHeight(com.nhom27.skyforce.main.Main.HEIGHT);
+            bgImageView.setFitWidth(Main.WIDTH);
+            bgImageView.setFitHeight(Main.HEIGHT);
             root.getChildren().add(bgImageView);
         } else {
             System.out.println("Lỗi: Không tìm thấy ảnh nền play!");
@@ -105,7 +108,7 @@ public class PlayScene {
 
     private void setupGameWorld(int level) {
         gamePane = new Pane();
-        gamePane.setPrefSize(com.nhom27.skyforce.main.Main.WIDTH, com.nhom27.skyforce.main.Main.HEIGHT);
+        gamePane.setPrefSize(Main.WIDTH, Main.HEIGHT);
         root.getChildren().add(gamePane);
 
         gameManager = new GameManager(gamePane, this, level);
@@ -118,7 +121,7 @@ public class PlayScene {
         // NÚT PAUSE
         CustomButton btnPause = new CustomButton(50, 50, "button_pause_blue", () -> {
             if (gameManager != null) {
-                gameManager.pauseGame(); //làm cho GameManager.isPaused = false
+                gameManager.pauseGame(); // làm cho GameManager.isPaused = false
             }
             showPauseMenu(true);
         });
@@ -447,7 +450,7 @@ public class PlayScene {
 
         gameOverOverlay.getChildren().add(card);
         gamePane.getChildren().add(gameOverOverlay);
-        
+
     }
 
     public void showWinMenu(int score, int goldGained) {
@@ -523,40 +526,59 @@ public class PlayScene {
         gamePane.getChildren().add(winOverlay);
     }
 
-    private Label warningLabel;
-
     public void showWarningBanner(boolean show) {
-        if (warningLabel == null) {
-            warningLabel = new Label("WARNING: MINI-BOSS!");
-            warningLabel.setFont(AssetManager.getFont("font_kenvector_future", 26));
-            warningLabel.setTextFill(Color.RED);
-            warningLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.YELLOW, 12, 0.8, 0, 0));
-            warningLabel.setMouseTransparent(true);
-            StackPane.setAlignment(warningLabel, Pos.CENTER);
-            root.getChildren().add(warningLabel);
-        }
-        warningLabel.setVisible(show);
-        if (show) {
-            warningLabel.toFront();
-        }
-    }
+        if (warningBanner == null) {
+            warningBanner = new StackPane();
+            warningBanner.setMaxHeight(80); // Chiều cao của dải băng
 
-    private Label bottomWarningLabel;
+            // 1. Tạo nền Gradient Đỏ - Đen mang cảm giác báo động
+            LinearGradient bgGradient = new LinearGradient(
+                    0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.web("#3a0000", 0.7)), // Đỏ mờ ở viền trên
+                    new Stop(0.5, Color.web("#ff0000", 0.4)), // Đỏ sáng ở giữa
+                    new Stop(1, Color.web("#3a0000", 0.7)) // Đỏ mờ ở viền dưới
+            );
+            warningBanner
+                    .setBackground(new Background(new BackgroundFill(bgGradient, CornerRadii.EMPTY, Insets.EMPTY)));
 
-    public void showBottomWarning(boolean show, double posX) {
-        if (bottomWarningLabel == null) {
-            bottomWarningLabel = new Label("! AMBUSH !");
-            bottomWarningLabel.setFont(AssetManager.getFont("font_kenvector_future", 20));
-            bottomWarningLabel.setTextFill(Color.RED);
-            bottomWarningLabel.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.YELLOW, 10, 0.8, 0, 0));
-            bottomWarningLabel.setMouseTransparent(true);
-            root.getChildren().add(bottomWarningLabel);
+            // 2. Thêm viền đỏ rực ở cạnh trên và dưới của dải băng
+            warningBanner.setBorder(new Border(new BorderStroke(
+                    Color.RED, Color.RED, Color.RED, Color.RED,
+                    BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE,
+                    CornerRadii.EMPTY, new BorderWidths(2, 0, 2, 0), Insets.EMPTY)));
+
+            // 3. Chữ cảnh báo (Thêm icon tam giác cảnh báo cho ngầu)
+            Label textLabel = new Label("⚠ WARNING: BOSS APPROACHING ⚠");
+            textLabel.setFont(AssetManager.getFont("font_kenvector_future", 32));
+            textLabel.setTextFill(Color.WHITE);
+
+            // Hiệu ứng chữ phát sáng đỏ kết hợp vàng
+            DropShadow glow = new DropShadow(BlurType.GAUSSIAN, Color.RED, 20, 0.8, 0, 0);
+            DropShadow innerGlow = new DropShadow(BlurType.GAUSSIAN, Color.YELLOW, 5, 0.5, 0, 0);
+            glow.setInput(innerGlow);
+            textLabel.setEffect(glow);
+
+            // 4. Lắp ráp và Căn giữa
+            warningBanner.getChildren().add(textLabel);
+            warningBanner.setMouseTransparent(true);
+            StackPane.setAlignment(warningBanner, Pos.CENTER);
+
+            // 5. Tạo Animation nhấp nháy chớp tắt (Nhịp đập dồn dập)
+            warningAnimation = new javafx.animation.FadeTransition(javafx.util.Duration.millis(350), warningBanner);
+            warningAnimation.setFromValue(0.3); // Mờ 30%
+            warningAnimation.setToValue(1.0); // Sáng 100%
+            warningAnimation.setCycleCount(javafx.animation.Animation.INDEFINITE);
+            warningAnimation.setAutoReverse(true); // Tự động đảo chiều (sáng -> mờ -> sáng)
+
+            root.getChildren().add(warningBanner);
         }
-        bottomWarningLabel.setVisible(show);
+
+        warningBanner.setVisible(show);
         if (show) {
-            bottomWarningLabel.setLayoutX(posX - 40);
-            bottomWarningLabel.setLayoutY(Main.HEIGHT - 70);
-            bottomWarningLabel.toFront();
+            warningBanner.toFront();
+            warningAnimation.play(); // Bật nhấp nháy khi hiện
+        } else {
+            warningAnimation.stop(); // Tắt nhấp nháy khi ẩn để tiết kiệm CPU
         }
     }
 
