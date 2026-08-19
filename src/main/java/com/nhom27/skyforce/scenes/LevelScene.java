@@ -154,7 +154,6 @@ public class LevelScene {
 
             // Sự kiện Click chọn
             row.setOnMouseClicked(e -> {
-                AudioManager.getInstance().playSound("sfx_click");
                 selectedLevel = level.levelNumber;
                 updateLevelListState();
             });

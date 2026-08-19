@@ -414,20 +414,9 @@ public class AssetManager {
                                                 30, 9 // Cạnh mũi trái
                                 });
                 loadSpriteInfo("boss_mid_red", "/com/nhom27/skyforce/textures/entities/boss_mid_red.png", new double[] {
-                                28, 6, // Đỉnh cánh trên (Trái)
-                                61, 48, // Lõm vào giữa phần đầu (Trái)
-                                110, 48, // Lõm vào giữa phần đầu (Phải)
-                                143, 6, // Đỉnh cánh trên (Phải)
-                                151, 15, // Cạnh lồi phía trên (Phải)
-                                166, 116, // Mép cánh chĩa ra xa nhất (Phải)
-                                145, 143, // Góc nhọn dưới cùng (Phải)
-                                104, 121, // Lõm vào thân dưới (Phải)
-                                99, 97, // Lõi trung tâm dưới (Phải)
-                                72, 97, // Lõi trung tâm dưới (Trái)
-                                67, 121, // Lõm vào thân dưới (Trái)
-                                26, 143, // Góc nhọn dưới cùng (Trái)
-                                5, 116, // Mép cánh chĩa ra xa nhất (Trái)
-                                20, 15 // Cạnh lồi phía trên (Trái)
+                                19, 4, 28, 0, 39, 18, 62, 18, 61, 43, 111, 43, 110, 18, 133, 17, 144, 0, 154, 4, 142,
+                                46, 149, 55, 131, 67, 137, 76, 137, 89, 171, 116, 168, 148, 148, 150, 126, 127, 45, 126,
+                                26, 150, 3, 147, 1, 115, 37, 85, 36, 64, 23, 56, 30, 43
                 });
                 loadSpriteInfo("enemy_sniper_green", "/com/nhom27/skyforce/textures/entities/enemy_sniper_green.png",
                                 new double[] { 1, 41, // Mép cánh trái
@@ -473,14 +462,7 @@ public class AssetManager {
                                                 1, 58
                                 });
                 loadImage("bullet_boss_mini_red", "/com/nhom27/skyforce/textures/projectiles/bullet_boss_mini_red.png");
-                loadImage("enemy_ship_1", "/com/nhom27/skyforce/textures/Spaceship_01_RED.png");
-                loadImage("enemy_ship_2", "/com/nhom27/skyforce/textures/Spaceship_02_RED.png");
-                loadImage("enemy_ship_3", "/com/nhom27/skyforce/textures/Spaceship_03_RED.png");
-                loadImage("bullet_enemy_1", "/com/nhom27/skyforce/textures/entities/weapons/laserRed12.png");
-                loadImage("bullet_enemy_2", "/com/nhom27/skyforce/textures/entities/weapons/laserRed14.png");
-                loadImage("bullet_enemy_3", "/com/nhom27/skyforce/textures/entities/weapons/laserRed16.png");
 
-                loadImage("powerup", "/com/nhom27/skyforce/textures/Flame_01.png");
                 loadImage("bullet_enemy_laser",
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_laser.png");
                 loadImage("bullet_player_blue",
@@ -504,61 +486,8 @@ public class AssetManager {
                 loadImage("bullet_enemy_diamond_yellow",
                                 "/com/nhom27/skyforce/textures/projectiles/bullet_enemy_diamond_yellow.png");
 
-                loadImage("meteor_big",
-                                "/com/nhom27/skyforce/textures/entities/obstacles/meteor_big.png");
-                loadImage("obstacle_mine_red",
-                                "/com/nhom27/skyforce/textures/entities/obstacles/obstacle_mine_red.png");
-                loadSpriteInfo("enemy_straight",
-                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_straight_black.png",
-                                new double[] {
-                                                16, 0,
-                                                36, 8,
-                                                38, 17,
-                                                55, 17,
-                                                57, 8,
-                                                76, 0,
-                                                92, 25,
-                                                71, 83,
-                                                57, 78,
-                                                62, 58,
-                                                29, 58,
-                                                34, 78,
-                                                22, 83,
-                                                0, 25
-                                });
-                loadSpriteInfo("enemy_sine_orbit",
-                                "/com/nhom27/skyforce/textures/entities/enemies/enemy_sine_orbit_black.png",
-                                new double[] {
-                                                2, 2,
-                                                17, 0,
-                                                37, 13,
-                                                61, 13,
-                                                78, 0,
-                                                93, 2,
-                                                76, 74,
-                                                66, 74,
-                                                66, 78,
-                                                60, 83,
-                                                36, 83,
-                                                30, 78,
-                                                30, 74,
-                                                20, 74
-                                });
-
                 loadImage("item_coin_gold", "/com/nhom27/skyforce/textures/powerups/item_coin_gold.png");
-                loadSpriteInfo("enemy_shooter", "/com/nhom27/skyforce/textures/entities/enemies/enemy_shooter.png",
-                                new double[] {
-                                                27, 0,
-                                                1, 28,
-                                                6, 82,
-                                                27, 84,
-                                                30, 145,
-                                                61, 143,
-                                                60, 86,
-                                                85, 79,
-                                                92, 35,
-                                                69, 1
-                                });
+
                 loadImage("item_pill_blue", "/com/nhom27/skyforce/textures/powerups/item_pill_blue.png");
                 loadImage("item_powerup_lightning",
                                 "/com/nhom27/skyforce/textures/powerups/item_powerup_lightning.png");
