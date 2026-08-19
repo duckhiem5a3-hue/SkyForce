@@ -1,7 +1,10 @@
-package com.nhom27.skyforce.scenes;
+package com.nhom27.skyforce.managers;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.nhom27.skyforce.scenes.MenuScene;
+import com.nhom27.skyforce.scenes.ShopScene;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -43,7 +46,7 @@ public class SceneManager {
         } else if ("ShopScene".equals(name)) {
             com.nhom27.skyforce.audio.AudioManager.getInstance().playMusic("background_home_music");
             if (ShopScene.getInstance() == null) {
-                ShopScene shopScene = new ShopScene();
+                ShopScene shopScene = ShopScene.getInstance();
                 addScene("ShopScene", shopScene.getScene());
             }
             ShopScene.getInstance().onShown();

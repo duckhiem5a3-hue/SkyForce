@@ -5,7 +5,8 @@ import com.nhom27.skyforce.entities.player.Player;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.managers.GameManager;
 import com.nhom27.skyforce.managers.PlayerDataManager;
-import com.nhom27.skyforce.ui.buttons.CustomButton;
+import com.nhom27.skyforce.managers.SceneManager;
+import com.nhom27.skyforce.ui.CustomButton;
 import com.nhom27.skyforce.utils.AssetManager;
 
 import javafx.geometry.Insets;

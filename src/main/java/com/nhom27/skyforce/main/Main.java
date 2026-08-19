@@ -1,9 +1,8 @@
 package com.nhom27.skyforce.main;
 
 import com.nhom27.skyforce.audio.AudioManager;
-
+import com.nhom27.skyforce.managers.SceneManager;
 import com.nhom27.skyforce.scenes.MenuScene;
-import com.nhom27.skyforce.scenes.SceneManager;
 import com.nhom27.skyforce.utils.AssetManager;
 
 import javafx.application.Application;
@@ -31,7 +30,7 @@ public class Main extends Application {
         SceneManager.getInstance().setPrimaryStage(primaryStage);
 
         // Bật Menu trang chủ
-        MenuScene menuScene = new MenuScene();
+        MenuScene menuScene = MenuScene.getInstance();
         SceneManager.getInstance().addScene("MenuScene", menuScene.getScene());
         SceneManager.getInstance().switchScene("MenuScene");
 

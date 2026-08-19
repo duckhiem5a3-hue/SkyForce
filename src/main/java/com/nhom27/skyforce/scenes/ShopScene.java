@@ -6,7 +6,8 @@ import java.util.List;
 import com.nhom27.skyforce.audio.AudioManager;
 import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.managers.PlayerDataManager;
-import com.nhom27.skyforce.ui.buttons.CustomButton;
+import com.nhom27.skyforce.managers.SceneManager;
+import com.nhom27.skyforce.ui.CustomButton;
 import com.nhom27.skyforce.utils.AssetManager;
 
 import javafx.geometry.Insets;
@@ -54,13 +55,15 @@ public class ShopScene {
 
     private final List<SkinInfo> skinList = new ArrayList<>();
 
-    public ShopScene() {
-        instance = this;
+    private ShopScene() {
         initSkinData();
         createShopScene();
     }
 
     public static ShopScene getInstance() {
+        if (instance == null) {
+            instance = new ShopScene();
+        }
         return instance;
     }
 
@@ -179,7 +182,8 @@ public class ShopScene {
             // Nút bấm tương ứng
             CustomButton actionBtn;
             if (isEquipped) {
-                actionBtn = new CustomButton("EQUIPPED", 150, 42, "button_green", () -> {});
+                actionBtn = new CustomButton("EQUIPPED", 150, 42, "button_green", () -> {
+                });
             } else if (isUnlocked) {
                 actionBtn = new CustomButton("EQUIP", 150, 42, "button_blue", () -> {
                     dataMgr.setEquippedSkin(skin.id);
