@@ -1,34 +1,55 @@
-# ✈️ Sky Force - Game Lập Trình Nâng Cao (Nhóm 27)
+# Sky Force - Nhóm 27
 
-Dự án phát triển tựa game bắn máy bay không gian (Sky Force) sử dụng ngôn ngữ Java và thư viện đồ họa JavaFX.
+## 1. Mô tả bài toán và phạm vi hệ thống
 
-## 🛠️ Công Nghệ Sử Dụng
+- **Sky Force - Nhóm 27** là một tựa game hành động bắn phi thuyền không gian màn hình dọc (2D Space Shooter).
+- Hệ thống bao gồm một vòng lặp game hoàn chỉnh với các giao diện: Menu chính, Cửa hàng (Shop), Chọn màn chơi (Level Select) và Màn hình chiến đấu (Play Scene).
+- Người chơi sẽ điều khiển phi thuyền né tránh chướng ngại vật, tiêu diệt các làn sóng kẻ địch đa dạng, thu thập vật phẩm nâng cấp và đối đầu với các trùm (Boss) ở cuối màn.
 
-- **Ngôn ngữ:** Java (Phiên bản 25 LTS)
-- **Thư viện đồ họa:** JavaFX (Phiên bản 25)
-- **Quản lý dự án & Thư viện:** Maven
+## 2. Công nghệ sử dụng, môi trường chạy và yêu cầu cài đặt
 
-## 📋 Phân Chia Công Việc
+- **Ngôn ngữ lập trình:** Java.
+- **Thư viện giao diện đồ họa:** JavaFX.
+- **Tài nguyên hình ảnh & âm thanh:** Sử dụng bộ tài nguyên "Kenney Space Shooter Remastered" (License CC0).
+- **Yêu cầu cài đặt:** Cần cài đặt Java Development Kit (JDK) phiên bản hỗ trợ JavaFX. Nếu chạy trên các phiên bản Java mới (từ Java 11 trở lên), cần cấu hình thêm JavaFX SDK vào thư viện của project.
 
-🔗 [Bảng theo dõi tiến độ công việc (Google Sheets)](https://docs.google.com/spreadsheets/d/12zK3o1sXtFvutcf5oWN5eaRMgX2s167UalnCQwqeb_g)
+## 3. Cấu trúc module chính
 
-## 📂 Cấu Trúc Thư Mục
+Dự án được tổ chức theo mô hình quản lý phân tầng rõ ràng:
 
-Dự án áp dụng mô hình phân tách rõ ràng (MVC-like) để tối ưu việc quản lý:
+- `com.nhom27.skyforce.main`: Chứa các lớp khởi chạy chương trình chính là `Main` và `Launcher`.
+- `com.nhom27.skyforce.managers`: Nơi chứa các hệ thống quản lý lõi bao gồm vòng lặp game (`GameManager`), chuyển đổi màn hình (`SceneManager`), hiệu ứng hình ảnh (`VFXManager`) và dữ liệu người chơi (`PlayerDataManager`).
+- `com.nhom27.skyforce.entities`: Quản lý toàn bộ thực thể trong game, chia thành các gói nhỏ: `player` (người chơi), `enemies` (kẻ địch/boss), `weapons` (các loại đạn), `items` (vật phẩm hỗ trợ) và `obstacles` (chướng ngại vật như thiên thạch).
+- `com.nhom27.skyforce.levels`: Nơi lưu trữ kịch bản xuất hiện kẻ địch cho từng màn chơi từ Level 1 đến Level 6 thông qua `LevelScriptFactory`.
+- `com.nhom27.skyforce.scenes`: Thiết kế các giao diện UI của trò chơi như `MenuScene`, `PlayScene`, `ShopScene`, và `LevelScene`.
+- `com.nhom27.skyforce.audio` & `utils`: Xử lý hệ thống nhạc nền/âm thanh (`AudioManager`) và nạp tài nguyên tĩnh (`AssetManager`).
 
-- `src/main/java/com/nhom27/skyforce/`: Chứa toàn bộ mã nguồn Java.
-  - `main/`: Lõi chương trình, chứa launcher độc lập gọi hàm main (để Maven tải thư viện trước khi khởi tạo Application) và Game Loop.
-  - `entities/`: Các thực thể như Player, Enemy, Bullet.
-  - `graphics/`: Xử lý hình ảnh tĩnh, Animation.
-  - `input/`: Điều khiển bàn phím, chuột.
-  - `audio/`: Xử lý âm thanh, nhạc nền.
-  - `utils/`: Tiện ích dùng chung, tính toán va chạm.
-- `src/main/resources/com/nhom27/skyforce/`: Chứa tài nguyên vật lý.
-  - `textures/`: Hình ảnh (.png, .jpg).
-  - `sounds/`: Âm thanh hiệu ứng và nhạc nền (.ogg, .mp3).
+## 4. Câu lệnh dòng lệnh để chạy chương trình
 
-## 📝 Quy Tắc Đặt Tên Tài Nguyên
+Lớp chạy chính (Entry Point) của chương trình được đặt tại `com.nhom27.skyforce.main.Launcher`[cite: 3]. Tùy thuộc vào công cụ build bạn đang sử dụng (Maven/Gradle) hoặc chạy thuần, bạn có thể cấu hình IDE để chạy trực tiếp class này.
 
-**Công thức chuẩn cho Hình ảnh:**
-`[nhóm]_[tên_đối_tượng]_[đặc_điểm_hoặc_cấp_độ]_[trạng_thái].png`
-_(Ví dụ: `vfx_explosion_8x8_sheet.png`)_
+Nếu chạy bằng dòng lệnh cơ bản (đã cài đặt sẵn JavaFX trên biến môi trường):
+
+```bash
+# Biên dịch (chỉ mang tính minh họa, đường dẫn JavaFX thay đổi theo máy)
+javac --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.media -d bin src/com/nhom27/skyforce/main/*.java
+
+# Chạy chương trình
+java --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.media -cp bin com.nhom27.skyforce.main.Launcher
+```
+
+## 5. Danh sách chức năng đã hoàn thành
+
+- Hệ thống điều khiển & Chiến đấu: Hỗ trợ người chơi di chuyển phi thuyền và bắn đạn tự động, bao gồm nâng cấp sức mạnh đạn và đạn đuổi (Seeker Bullet).
+
+- Đa dạng kẻ địch: Tích hợp nhiều loại quái với AI quỹ đạo bay và cách tấn công khác nhau như Normal, Sniper, Swarm, Tanker, cùng các boss lớn (MiniBoss, MidBoss).
+
+- Hệ thống vật phẩm (Power-ups): Quái vật rơi ra Tiền vàng (Coin), Thuốc hồi máu/XP (Pill), Khiên năng lượng (Shield) và Bùa đạn đuổi (Seeker).
+
+- Tiến trình màn chơi: Hoàn thành 6 kịch bản Level khác nhau, tăng dần độ khó với hệ thống sinh quái vật theo đợt (Wave).
+
+- Cửa hàng (Shop): Cho phép người dùng sử dụng số vàng thu thập được để mua và trang bị các ngoại trang (Skin) phi thuyền khác nhau như Blue, Green, Orange, Red.
+
+- Lưu trữ dữ liệu tự động: Game có khả năng lưu và tải dữ liệu liên tục về Tổng số vàng, Điểm kỷ lục (High Score) từng màn và Skin đã mở khóa thông qua file savegame.properties.
+
+- Hiệu ứng Nghe - Nhìn: Hoàn thiện hệ thống âm thanh (nhạc nền, SFX bắn đạn, cháy nổ, nhặt đồ) và các hiệu ứng hình ảnh (Vignette cảnh báo đỏ, viền sáng, nổ SpriteSheet).
