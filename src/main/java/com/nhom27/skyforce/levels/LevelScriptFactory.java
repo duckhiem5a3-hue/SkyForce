@@ -1,7 +1,8 @@
 package com.nhom27.skyforce.levels;
 
 /**
- * Class Factory chịu trách nhiệm khởi tạo class LevelScript tương ứng với Level chỉ định (Factory Pattern).
+ * Class Factory chịu trách nhiệm khởi tạo class LevelScript tương ứng với Level
+ * chỉ định (Factory Pattern).
  */
 public class LevelScriptFactory {
 
@@ -18,6 +19,7 @@ public class LevelScriptFactory {
             case 3 -> new Level3Script();
             case 4 -> new Level4Script();
             case 5 -> new Level5Script();
+            case 6 -> new Level6Script();
             default -> new Level1Script();
         };
     }
