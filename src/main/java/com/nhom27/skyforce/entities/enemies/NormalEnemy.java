@@ -101,7 +101,7 @@ public class NormalEnemy extends EnemyObject {
         if (gm != null && timeToFire(now)) {
             double startX = getX() + getSizeX() / 2.0 - 5;
             double startY = getY() + getSizeY();
-            EnemyBullet eBullet = new EnemyBullet(startX, startY, 0, 120.0, 15, "bullet_enemy_round_purple");
+            EnemyBullet eBullet = new EnemyBullet(startX, startY, 0, 300, 15, "bullet_enemy_round_purple");
             gm.spawnEnemyBullet(eBullet);
         }
     }
@@ -120,7 +120,7 @@ public class NormalEnemy extends EnemyObject {
             }
         } else {
             y += speedY / 60.0;
-            setPos(x, y, 180);
+            setPos(x, y);
             if (y > Main.HEIGHT + 100) {
                 isAlive = false;
             }

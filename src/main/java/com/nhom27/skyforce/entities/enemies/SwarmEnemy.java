@@ -26,17 +26,11 @@ public class SwarmEnemy extends EnemyObject {
     }
 
     public SwarmEnemy(double speedY, double speedX) {
-        super("enemy_swarm_black", 10, 10);
-        this.trajectoryType = TrajectoryType.STRAIGHT;
-        this.speedY = speedY;
-        this.speedX = speedX;
+        this(TrajectoryType.STRAIGHT, speedY, speedX, 60.0, 0.025, 0);
     }
 
     public SwarmEnemy(TrajectoryType trajectoryType, double speedY, double speedX) {
-        super("enemy_swarm_black", 10, 10);
-        this.trajectoryType = trajectoryType;
-        this.speedY = speedY;
-        this.speedX = speedX;
+        this(trajectoryType, speedY, speedX, 60.0, 0.025, 0);
     }
 
     public SwarmEnemy(TrajectoryType trajectoryType, double speedY, double speedX, double amplitude, double frequency,
@@ -53,7 +47,6 @@ public class SwarmEnemy extends EnemyObject {
     public void spawnAt(double startX, double startY) {
         super.setPos(startX, startY);
         this.originX = startX;
-        this.phase = 0;
     }
 
     @Override
@@ -99,7 +92,7 @@ public class SwarmEnemy extends EnemyObject {
 
         setPos(x, y, angle);
 
-        if (y > Main.HEIGHT || x < -sizeX || x > Main.WIDTH) {
+        if (y > Main.HEIGHT + sizeY || x < -sizeX - 200 || x > Main.WIDTH + 200) {
             isAlive = false;
         }
         checkDeath();

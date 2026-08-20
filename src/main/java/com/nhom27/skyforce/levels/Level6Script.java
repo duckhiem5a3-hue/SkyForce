@@ -11,10 +11,13 @@ import com.nhom27.skyforce.main.Main;
 import com.nhom27.skyforce.managers.GameManager;
 
 /**
- * Class kịch bản dành riêng cho Level 6 (Endless Void - Chế độ Vô Tận Ngẫu Nhiên).
- * Được nâng cấp với thuật toán sinh quái ngẫu nhiên đa dạng (Procedural Generation):
+ * Class kịch bản dành riêng cho Level 6 (Endless Void - Chế độ Vô Tận Ngẫu
+ * Nhiên).
+ * Được nâng cấp với thuật toán sinh quái ngẫu nhiên đa dạng (Procedural
+ * Generation):
  * - 10 kịch bản sóng quái độc lập & sóng kết hợp (Hybrid Waves).
- * - Biến thiên ngẫu nhiên về số lượng, tốc độ, góc di chuyển, biên độ sóng sine.
+ * - Biến thiên ngẫu nhiên về số lượng, tốc độ, góc di chuyển, biên độ sóng
+ * sine.
  * - Sóng thả hòm tiếp tế ngẫu nhiên (Supply Drop Wave).
  * - Cảnh báo Boss ngẫu nhiên vị trí & hỗ trợ quái nhỏ.
  */
@@ -124,7 +127,8 @@ public class Level6Script implements LevelScript {
     }
 
     /**
-     * Pattern 0: Mưa thiên thạch ngẫu nhiên với kích thước, vị trí và tốc độ lệch nhau.
+     * Pattern 0: Mưa thiên thạch ngẫu nhiên với kích thước, vị trí và tốc độ lệch
+     * nhau.
      */
     private void spawnRandomAsteroidStorm(GameManager gm) {
         Random r = gm.getRandom();
@@ -138,7 +142,8 @@ public class Level6Script implements LevelScript {
     }
 
     /**
-     * Pattern 1: Bầy quái Swarm biến hình với các kiểu quỹ đạo ngẫu nhiên (Sine, Straight, Diagonal).
+     * Pattern 1: Bầy quái Swarm biến hình với các kiểu quỹ đạo ngẫu nhiên (Sine,
+     * Straight, Diagonal).
      */
     private void spawnDynamicSwarmWave(GameManager gm) {
         Random r = gm.getRandom();
@@ -150,12 +155,12 @@ public class Level6Script implements LevelScript {
         double speedX = (r.nextDouble() - 0.5) * 160.0;
         double amp = 40.0 + r.nextDouble() * 80.0;
         double freq = 0.015 + r.nextDouble() * 0.02;
-        double startX = 60 + r.nextDouble() * (Main.WIDTH - 120);
+        double startX = 60 + r.nextDouble() * (Main.WIDTH - 220);
 
         for (int i = 0; i < count; i++) {
             double phase = (i * 0.4);
             SwarmEnemy swarm = new SwarmEnemy(selectedType, baseSpeedY, speedX, amp, freq, phase);
-            swarm.spawnAt(startX, -swarm.getSizeY() - (i * 45));
+            swarm.spawnAt(startX, -swarm.getSizeY() - (i * swarm.getSizeY()));
             gm.spawnEnemy(swarm);
         }
     }
@@ -196,7 +201,8 @@ public class Level6Script implements LevelScript {
     }
 
     /**
-     * Pattern 4: Tập đoàn Phi cơ Chiến đấu (Blue / Red Normal Enemy) bay theo V-Shape hoặc Hàng Ngang.
+     * Pattern 4: Tập đoàn Phi cơ Chiến đấu (Blue / Red Normal Enemy) bay theo
+     * V-Shape hoặc Hàng Ngang.
      */
     private void spawnFighterSquadron(GameManager gm) {
         Random r = gm.getRandom();
@@ -212,7 +218,8 @@ public class Level6Script implements LevelScript {
 
             NormalEnemy enemy = new NormalEnemy(speed, isRed, isStopping, isRed, sprite);
             double offsetX = isVShape ? (i - count / 2.0) * 55.0 : (i * 65.0) - (count * 30.0);
-            double offsetY = isVShape ? -Math.abs(i - count / 2.0) * 45.0 - enemy.getSizeY() : -i * 50.0 - enemy.getSizeY();
+            double offsetY = isVShape ? -Math.abs(i - count / 2.0) * 45.0 - enemy.getSizeY()
+                    : -i * 50.0 - enemy.getSizeY();
 
             double spawnX = Math.max(20, Math.min(Main.WIDTH - enemy.getSizeX() - 20, centerX + offsetX));
             enemy.setPos(spawnX, offsetY);
@@ -243,7 +250,8 @@ public class Level6Script implements LevelScript {
     }
 
     /**
-     * Pattern 6: Đội hình Tinh nhuệ (Tanker đi trước che chắn, Quái đỏ bắn laser đi sau).
+     * Pattern 6: Đội hình Tinh nhuệ (Tanker đi trước che chắn, Quái đỏ bắn laser đi
+     * sau).
      */
     private void spawnEliteArmoredConvoy(GameManager gm) {
         Random r = gm.getRandom();
@@ -271,7 +279,8 @@ public class Level6Script implements LevelScript {
     }
 
     /**
-     * Pattern 7: Cơn bão Swarm Zic-Zac (2 toán quái Swarm đan chéo từ trái và phải).
+     * Pattern 7: Cơn bão Swarm Zic-Zac (2 toán quái Swarm đan chéo từ trái và
+     * phải).
      */
     private void spawnSineSwarmCrossfire(GameManager gm) {
         int count = 4;
@@ -288,7 +297,8 @@ public class Level6Script implements LevelScript {
     }
 
     /**
-     * Pattern 8: Chuyến hàng tiếp tế đặc biệt (Quái đỏ mang 100% PowerUp rớt vật phẩm quý).
+     * Pattern 8: Chuyến hàng tiếp tế đặc biệt (Quái đỏ mang 100% PowerUp rớt vật
+     * phẩm quý).
      */
     private void spawnSupplyDropRaid(GameManager gm) {
         Random r = gm.getRandom();
@@ -370,7 +380,8 @@ public class Level6Script implements LevelScript {
                 gameManager.getPlayScene().showWarningBanner(false);
             }
 
-            // Boss rớt ngẫu nhiên 15-25 đồng Vàng + 1 PowerUp hỗ trợ đặc biệt (Shield/Pill/Seeker)
+            // Boss rớt ngẫu nhiên 15-25 đồng Vàng + 1 PowerUp hỗ trợ đặc biệt
+            // (Shield/Pill/Seeker)
             Random r = gameManager.getRandom();
             int coinCount = 15 + r.nextInt(11);
             for (int c = 0; c < coinCount; c++) {

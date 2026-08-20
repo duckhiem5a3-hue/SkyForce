@@ -35,7 +35,7 @@ public class TankerEnemy extends EnemyObject {
         if (gm != null && timeToFire(now)) {
             double startX = getX() + getSizeX() / 2.0 - 5;
             double startY = getY() + getSizeY();
-            EnemyBullet eBullet = new EnemyBullet(startX, startY, 0, 280.0, 15, "bullet_enemy_round_purple");
+            EnemyBullet eBullet = new EnemyBullet(startX, startY, 0, 400.0, 5, "bullet_enemy_round_purple");
             gm.spawnEnemyBullet(eBullet);
         }
     }
