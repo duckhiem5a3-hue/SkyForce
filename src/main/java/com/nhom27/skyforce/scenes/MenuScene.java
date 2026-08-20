@@ -97,7 +97,7 @@ public class MenuScene {
             SceneManager.getInstance().switchScene(LevelScene.getInstance().getScene());
         });
         CustomButton btnShop = new CustomButton("Shop", "button_blue", () -> {
-            SceneManager.getInstance().switchScene("ShopScene");
+            SceneManager.getInstance().switchScene(ShopScene.getInstance().getScene());
         });
         String soundStatus = AudioManager.getInstance().isMuted() ? "Music: Off" : "Music: On";
         btnSound = new CustomButton(soundStatus, "button_blue", () -> {
