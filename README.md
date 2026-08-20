@@ -1,19 +1,18 @@
 # Sky Force - Nhóm 27
 
-## 1. Mô tả bài toán và phạm vi hệ thống
+## I. Mô tả bài toán và phạm vi hệ thống
 
 - **Sky Force - Nhóm 27** là một tựa game hành động bắn phi thuyền không gian màn hình dọc (2D Space Shooter).
 - Hệ thống bao gồm một vòng lặp game hoàn chỉnh với các giao diện: Menu chính, Cửa hàng (Shop), Chọn màn chơi (Level Select) và Màn hình chiến đấu (Play Scene).
 - Người chơi sẽ điều khiển phi thuyền né tránh chướng ngại vật, tiêu diệt các làn sóng kẻ địch đa dạng, thu thập vật phẩm nâng cấp và đối đầu với các trùm (Boss) ở cuối màn.
 
-## 2. Công nghệ sử dụng, môi trường chạy và yêu cầu cài đặt
+## II. Công nghệ sử dụng, môi trường chạy và yêu cầu cài đặt
 
 - **Ngôn ngữ lập trình:** Java.
 - **Thư viện giao diện đồ họa:** JavaFX.
-- **Tài nguyên hình ảnh & âm thanh:** Sử dụng bộ tài nguyên "Kenney Space Shooter Remastered" (License CC0).
 - **Yêu cầu cài đặt:** Cần cài đặt Java Development Kit (JDK) phiên bản hỗ trợ JavaFX. Nếu chạy trên các phiên bản Java mới (từ Java 11 trở lên), cần cấu hình thêm JavaFX SDK vào thư viện của project.
 
-## 3. Cấu trúc module chính
+## III. Cấu trúc module chính
 
 Dự án được tổ chức theo mô hình quản lý phân tầng rõ ràng:
 
@@ -24,7 +23,7 @@ Dự án được tổ chức theo mô hình quản lý phân tầng rõ ràng:
 - `com.nhom27.skyforce.scenes`: Thiết kế các giao diện UI của trò chơi như `MenuScene`, `PlayScene`, `ShopScene`, và `LevelScene`.
 - `com.nhom27.skyforce.audio` & `utils`: Xử lý hệ thống nhạc nền/âm thanh (`AudioManager`) và nạp tài nguyên tĩnh (`AssetManager`).
 
-## 4. Câu lệnh dòng lệnh để chạy chương trình
+## IV. Câu lệnh dòng lệnh để chạy chương trình
 
 Lớp chạy chính (Entry Point) của chương trình được đặt tại `com.nhom27.skyforce.main.Launcher`[cite: 3]. Tùy thuộc vào công cụ build bạn đang sử dụng (Maven/Gradle) hoặc chạy thuần, bạn có thể cấu hình IDE để chạy trực tiếp class này.
 
@@ -38,18 +37,44 @@ javac --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.med
 java --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.media -cp bin com.nhom27.skyforce.main.Launcher
 ```
 
-## 5. Danh sách chức năng đã hoàn thành
+## V. Danh sách chức năng đã hoàn thành
 
-- Hệ thống điều khiển & Chiến đấu: Hỗ trợ người chơi di chuyển phi thuyền và bắn đạn tự động, bao gồm nâng cấp sức mạnh đạn và đạn đuổi (Seeker Bullet).
+### 1. Cơ chế Người chơi (Player Mechanics)
 
-- Đa dạng kẻ địch: Tích hợp nhiều loại quái với AI quỹ đạo bay và cách tấn công khác nhau như Normal, Sniper, Swarm, Tanker, cùng các boss lớn (MiniBoss, MidBoss).
+- **Hệ thống điều khiển:** Áp dụng bắt sự kiện chuột (Mouse Dragged) và bàn phím (W/A/S/D, Mũi tên) để điều hướng phi thuyền mượt mà trong giới hạn không gian màn hình.
+- **Hệ thống cấp độ và kinh nghiệm (Leveling System):** Phi thuyền có thanh kinh nghiệm (XP). Khi thăng cấp (tối đa Level 3), phi thuyền tự động thay đổi kết cấu đạn: từ 1 tia thẳng -> 2 tia song song -> 3 tia tỏa quạt.
+- **Hệ thống Sinh tồn:** Quản lý linh hoạt thanh Máu (HP) của phi thuyền; trò chơi sẽ kết thúc (Game Over) khi máu bằng 0.
 
-- Hệ thống vật phẩm (Power-ups): Quái vật rơi ra Tiền vàng (Coin), Thuốc hồi máu/XP (Pill), Khiên năng lượng (Shield) và Bùa đạn đuổi (Seeker).
+### 2. Kẻ địch (Enemy)
 
-- Tiến trình màn chơi: Hoàn thành 6 kịch bản Level khác nhau, tăng dần độ khó với hệ thống sinh quái vật theo đợt (Wave).
+- **Đa dạng chủng loại:** Tích hợp nhiều loại kẻ địch mang đặc tính riêng biệt: NormalEnemy (bay thẳng), TankerEnemy (đóng vai trò lá chắn máu cao), SwarmEnemy (bay lượn sóng) và Asteroid (thiên thạch rớt ngẫu nhiên).
+- **Địch Ngắm bắn (Sniper Enemy):** Lập trình cho kẻ địch có khả năng dừng lại giữa không trung, tính toán khoảng cách và góc độ để nhắm bắn trực tiếp vào tọa độ hiện tại của người chơi.
+- **Hệ thống Trùm (Boss Mechanics):** Thiết kế MiniBoss và MidBoss với lượng máu lớn. MidBoss được lập trình 2 giai đoạn (Phase 1: Bắn đạn tỏa 360 độ; Phase 2: Nhả tia laser kép cường độ cao).
 
-- Cửa hàng (Shop): Cho phép người dùng sử dụng số vàng thu thập được để mua và trang bị các ngoại trang (Skin) phi thuyền khác nhau như Blue, Green, Orange, Red.
+### 3. Hệ thống Vật phẩm và Cường hóa (Items & Buffs)
 
-- Lưu trữ dữ liệu tự động: Game có khả năng lưu và tải dữ liệu liên tục về Tổng số vàng, Điểm kỷ lục (High Score) từng màn và Skin đã mở khóa thông qua file savegame.properties.
+- **Rớt vật phẩm:** Kẻ địch bị tiêu diệt có tỷ lệ rơi ra Tiền vàng (Coin) và các bùa lợi.
+- **Lực hút từ tính (Magnetic Pull):** Thuật toán tự động thu gom toàn bộ tiền vàng bay về phía phi thuyền khi kết thúc màn chơi hoặc khi diệt xong Boss (đối với các màn 1, 5).
+- **Đa dạng bùa lợi (Power-ups):**
+  - **Pill:** Hồi phục HP và tăng điểm XP.
+  - **Shield:** Kích hoạt lớp khiên năng lượng chặn hoàn toàn 1 lần sát thương.
+  - **Seeker:** Kích hoạt hệ thống "Đạn thông minh", tự động dò tìm và chuyển hướng bay về phía kẻ địch gần nhất.
 
-- Hiệu ứng Nghe - Nhìn: Hoàn thiện hệ thống âm thanh (nhạc nền, SFX bắn đạn, cháy nổ, nhặt đồ) và các hiệu ứng hình ảnh (Vignette cảnh báo đỏ, viền sáng, nổ SpriteSheet).
+### 4. Hệ thống Màn chơi và Tiến trình (Level Design)
+
+- **Kịch bản thời gian thực (Campaign):** Cung cấp 5 màn chơi có cốt truyện. Các đợt lính (Wave) được lập trình xuất hiện chính xác theo từng mốc giây (Ví dụ: Đội hình chữ V, Bức tường xe tăng).
+- **Sinh tồn vô tận (Endless Mode):** Màn 6 áp dụng thuật toán sinh cấu trúc ngẫu nhiên (Structured Randomness). Trò chơi tự động bốc ngẫu nhiên các đội hình lính, tăng dần tốc độ xuất hiện và gọi Boss mỗi 10 đợt.
+- **Cảnh báo Động:** Xuất hiện băng rôn cảnh báo đỏ nhấp nháy trên màn hình trước khi Boss xuất hiện.
+
+### 5. Lưu trữ Dữ liệu và Cửa hàng (Data & Shop)
+
+- **Lưu trữ bền vững (Persistence):** Ứng dụng lớp Properties để đọc/ghi dữ liệu. Trò chơi tự động lưu Tổng số tiền Vàng, Điểm kỷ lục của từng màn và danh sách Skin đã mở khóa xuống tệp vật lý `savegame.properties`.
+- **Cửa hàng Ngoại trang:** Cung cấp hệ thống Shop để người chơi dùng Vàng mua các loại phi thuyền mới (Blue, Green, Orange, Red), trực tiếp thay đổi ngoại hình máy bay và màu đạn khi chiến đấu.
+
+### 6. Trải nghiệm Đa phương tiện (Audio & VFX)
+
+- **Xử lý Âm thanh:** Quản lý độc lập luồng Nhạc nền (MediaPlayer) và Hiệu ứng SFX (AudioClip). Tích hợp tính năng Bật/Tắt âm thanh toàn cục.
+- **Kỹ xảo Hình ảnh (VFX):**
+  - Cơ chế đổi viền màn hình (Vignette) khi nhận sát thương hoặc nhận hiệu ứng có lợi.
+  - Hiệu ứng chuyển động (AnimationTimer) cho các vụ nổ SpriteSheet và tia lửa va chạm.
+  - Các nút bấm UI được tích hợp hiệu ứng Scale (nảy lên) và Neon Glow (tỏa sáng) khi tương tác chuột.
